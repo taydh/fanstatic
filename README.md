@@ -7,7 +7,7 @@ There is no stable version yet, currently under experiment.
 ## Overview
 In the spirit to easily build a smarter frontend web page using only HTML and Javascript (client side)
 we come up with this method to made html and javascript include (hopefully) more simple.
-It can be used either for dynamic or static web page.
+It can be used either for dynamic or static web page (an ajax-static, so it need to be run under web server and cannot be opened locally).
 
 ## Getting Started
 Prepare the templates
