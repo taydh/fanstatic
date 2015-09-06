@@ -52,8 +52,8 @@ var myname = function(shadowId, args)
   
   var shadow = $('#'+shadowId);
   var template = shadow.html();
-	var output = Mustache.render(template, view);
-	shadow.html(output);
+  var output = Mustache.render(template, {name: 'John Doe'});
+  shadow.html(output);
 }
 ```
 
@@ -76,7 +76,8 @@ QPanel.InsertAfter('container', './templates/', 'myname').done();
 There are several features that will be described later, such as:
 - Template arguments
 - Template request cached flag
-- Multiple type template load (content-and-script, content-only, or script-only)
-- Sequential asyncronous include
+- Different type of template loading (content-and-script, content-only, or script-only)
+- Sequential asyncronous template include
+- Sequential asyncronous include cleaning
 
 Thank you
