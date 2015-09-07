@@ -1,0 +1,58 @@
+<html>
+<head>
+	<title>Test QPanel 2.1.0</title>
+	<script src="/static/js/jquery.min.js"></script>
+	<script src="/static/js/mustache.min.js"></script>
+	<script src="/static/js/qpanel_2.1.0.js"></script>
+</head>
+
+<body>
+	<h1>Test QPanel 2.1.0</h1>
+	
+	<h2>Non-Sequential loading</h2>
+	<div id="main"></div>
+	
+	<hr />
+	
+	<h2>Sequential loading</h2>
+	<div id="sequential"></div>
+	
+	<hr />
+	
+	<h2>Clearing Non-Sequential and Sequencial</h2>
+	<div id="clear"></div>
+	
+	<script>
+		/* Non-Sequential loading, because ajax asynchronous nature templates will show up unpredictably */
+		QPanel.AppendTo('main', 'templates', 'template01').done();
+		QPanel.AppendTo('main', 'templates', 'template02').content({weather: 'sunny', doSomething: 'go swimming'}).done();
+		QPanel.AppendTo('main', 'templates', 'group01/template01').script().done();
+		QPanel.AppendTo('main', 'templates', 'group01/template02').script({date:new Date()}).done();
+		QPanel.AppendTo('main', 'templates', 'group01/template03').scriptOnly({data: 123}).done();
+		
+		/* Sequential loading, now template will show up one after another */
+		QPanel.AppendTo('sequential', 'templates', 'template01').done(function(){
+			QPanel.AppendTo('sequential', 'templates', 'template02').content({weather: 'sunny', doSomething: 'go swimming'}).done(function(){
+				QPanel.AppendTo('sequential', 'templates', 'group01/template01').script().done(function(){
+					QPanel.AppendTo('sequential', 'templates', 'group01/template02').script({date:new Date()}).done(function(){
+						QPanel.AppendTo('sequential', 'templates', 'group01/template03').scriptOnly({data: 123}).done();
+					});
+				});
+			});
+		});
+		
+		/* Clearing up non-and-sequential loading, make enough loading time to do both */
+		var counter = QPanel.CreateCounter(function(){ $('#clear').append('<div>(clear!)</div>') });
+		
+		QPanel.AppendTo('clear', 'templates', 'template01').count(counter).done(function(){
+			QPanel.AppendTo('clear', 'templates', 'template02').content({weather: 'sunny', doSomething: 'go swimming'}).count(counter).done();
+		});
+		
+		QPanel.AppendTo('clear', 'templates', 'group01/template01').script().count(counter).done();
+
+		QPanel.AppendTo('clear', 'templates', 'group01/template02').script({date:new Date()}).count(counter).done(function(){
+			QPanel.AppendTo('clear', 'templates', 'group01/template03').scriptOnly({data: 123}).count(counter).done();
+		});
+	</script>
+</body>
+</html>

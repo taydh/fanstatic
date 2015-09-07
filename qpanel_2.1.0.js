@@ -1,6 +1,13 @@
 var QPanel = {};
 
+QPanel.TemplateContents = {};
+QPanel.Scripts = {};
+
 QPanel.GetTimeString = function(){ return new Date().getTime(); }
+QPanel.PathJoin = function(path, templateName){
+	if(path.charAt(path.length - 1) != '/'){ path += '/'; }
+	return path + templateName;
+}
 
 QPanel.ReplaceID = function(id)
 {
@@ -9,8 +16,8 @@ QPanel.ReplaceID = function(id)
 	return newID;
 }
 
-QPanel.TemplateContents = {};
-QPanel.GetTemplateId = function(path, templateName){ return (path + templateName).replace('/','_'); }
+QPanel.GetTemplateId = function(path, templateName){ return QPanel.PathJoin(path, templateName).replace('/','_'); }
+QPanel.GetTemplateScriptName = function(templateName){ return templateName.replace('/', '_'); }
 
 QPanel.RegContent = function(path, templateName, cached, next)
 {
@@ -19,7 +26,7 @@ QPanel.RegContent = function(path, templateName, cached, next)
 	if(QPanel.TemplateContents[templateId] === undefined){
 		
 		$.ajax({
-			url: (path + templateName + '.htm'),
+			url: (QPanel.PathJoin(path, templateName) + '.htm'),
 			cache: cached,
 			success: function(content){
 				QPanel.TemplateContents[templateId] = content;
@@ -31,18 +38,16 @@ QPanel.RegContent = function(path, templateName, cached, next)
 	}
 }
 
-QPanel.GetWindowScriptName = function(templateName){ return 'QPANELSCRIPT_'+templateName; }
-
 QPanel.RegScript = function(path, templateName, cached, next)
 {
-	if(typeof window[QPanel.GetWindowScriptName(templateName)] !== 'function'){
+	if(typeof QPanel.Scripts[QPanel.GetTemplateScriptName(templateName)] !== 'function'){
 		
 		$.ajax({
-			url: (path + templateName + '.js'),
+			url: (QPanel.PathJoin(path, templateName) + '.js'),
 			dataType: "script",
 			cache: cached,
 			success: function(){
-				if(typeof window[QPanel.GetWindowScriptName(templateName)] === 'function'){
+				if(typeof QPanel.Scripts[QPanel.GetTemplateScriptName(templateName)] === 'function'){
 					// success
 				}
 				else{
@@ -68,7 +73,7 @@ QPanel.RegScript = function(path, templateName, cached, next)
 QPanel.GetAddTemplateInfoDefault = function()
 {
 	return {
-		loadType: 'content-and-script', //>> content-only | content-and-script | script-only
+		loadType: 'content-only', //>> content-only | content-and-script | script-only
 		placement: 'append', //>> prepend | append | before | after
 		container: '',
 		path: '',
@@ -88,7 +93,7 @@ QPanel.ApplyMustache = function(shadowid, args)
 
 QPanel.InsertTemplate = function(info)
 {
-	//args = {placement, container, path, templateName, cached, withScript, scriptArgs, next, counter}
+	if(info.counter !== null) info.counter.count();
 	
 	var applyScript = function(info){
 		// create a "shadow DOM"
@@ -99,10 +104,10 @@ QPanel.InsertTemplate = function(info)
 		shadow.innerHTML = QPanel.TemplateContents[templateId];
 		document.body.appendChild(shadow);
 		
-		if(window[QPanel.GetWindowScriptName(info.templateName)] !== undefined){
+		if(QPanel.Scripts[QPanel.GetTemplateScriptName(info.templateName)] !== undefined){
 			// insert shadow dom as first arguments
 			var params = [shadow.id, info.scriptArgs];
-			window[QPanel.GetWindowScriptName(info.templateName)].apply(this, params);
+			QPanel.Scripts[QPanel.GetTemplateScriptName(info.templateName)].apply(this, params);
 		}
 		else if(Mustache !== undefined){ // apply mustachejs
 			 QPanel.ApplyMustache(shadow.id, info.scriptArgs);
@@ -123,9 +128,14 @@ QPanel.InsertTemplate = function(info)
 		document.body.removeChild(shadow);
 	};
 	
-	if(info.counter !== null) info.counter.count();
-	
 	switch(info.loadType){
+	case 'content-only':
+		QPanel.RegContent(info.path, info.templateName, !info.useTrail, function(){
+			applyScript(info);
+			info.next();
+			if(info.counter !== null) info.counter.done();
+		});
+		break;
 	case 'content-and-script':
 		QPanel.RegContent(info.path, info.templateName, !info.useTrail, function(){
 			QPanel.RegScript(info.path, info.templateName, !info.useTrail, function(){
@@ -133,28 +143,6 @@ QPanel.InsertTemplate = function(info)
 				info.next();
 				if(info.counter !== null) info.counter.done();
 			});
-		});
-		break;
-	case 'content-only':
-		QPanel.RegContent(info.path, info.templateName, !info.useTrail, function(){
-			
-			applyScript(info);
-			
-			// var templateId = QPanel.GetTemplateId(info.path, info.templateName);
-// 			
-// 			switch(info.placement){
-// 			case 'append': $('#'+info.container).append(QPanel.TemplateContents[templateId]); break;
-// 			case 'prepend': $('#'+info.container).prepend(QPanel.TemplateContents[templateId]); break;
-// 			case 'before': $('#'+info.container).before(QPanel.TemplateContents[templateId]); break;
-// 			case 'after': $('#'+info.container).after(QPanel.TemplateContents[templateId]); break;
-// 			default: 
-// 				console.log('QPanel: unknown AddContent placement info "' + info.placement + '", append instead');
-// 				$('#'+info.container).append(QPanel.TemplateContents[templateId]);
-// 				break;
-// 			}
-		
-			info.next();
-			if(info.counter !== null) info.counter.done();
 		});
 		break;
 	case 'script-only':
@@ -170,7 +158,7 @@ QPanel.InsertTemplate = function(info)
 	}
 }
 
-QPanel.ExecutionChain = function(placement, container, path, templateName, scriptArgs)
+QPanel.ExecutionChain = function(placement, container, path, templateName)
 {
 	this.info = QPanel.GetAddTemplateInfoDefault();
 	
@@ -178,38 +166,36 @@ QPanel.ExecutionChain = function(placement, container, path, templateName, scrip
 	this.info.path = path;
 	this.info.templateName = templateName;
 
-	if(scriptArgs === undefined){
-		this.info.loadType = 'content-only';
-	}
-	else{
-		this.info.scriptArgs = scriptArgs;
-	}
-	
-	this.contentOnly = function()
+	this.content = function(args)
 	{
 		this.info.loadType = 'content-only';
-		
+		this.info.scriptArgs = args;
+		return this;
+	}
+
+	this.script = function(args)
+	{
+		this.info.loadType = 'content-and-script';
+		this.info.scriptArgs = args;
 		return this;
 	}
 	
-	this.scriptOnly = function()
+	this.scriptOnly = function(args)
 	{
 		this.info.loadType = 'script-only';
-		
+		this.info.scriptArgs = args;
 		return this;
 	}
 	
 	this.count = function(counter)
 	{
 		if(counter !== undefined) this.info.counter = counter;
-		
 		return this;
 	};
 	
 	this.cached = function(isCached)
 	{
 		if(isCached !== undefined) this.info.useTrail = !isCached;
-		
 		return this;
 	}
 	
@@ -239,7 +225,7 @@ QPanel.CreateCounter = function(onFinish)
 	}();
 }
 
-QPanel.Add = function(placement, container, path, templateName, scriptArgs)
+QPanel.Include = function(placement, container, path, templateName, scriptArgs)
 {
 	return new QPanel.ExecutionChain(placement, container, path, templateName, scriptArgs);
 }
@@ -247,13 +233,13 @@ QPanel.Add = function(placement, container, path, templateName, scriptArgs)
 /* SHORTCUT INSERT */
 
 QPanel.AppendTo = function(container, path, templateName, scriptArgs)
-{ return QPanel.Add('append', container, path, templateName, scriptArgs); }
+{ return QPanel.Include('append', container, path, templateName, scriptArgs); }
 
 QPanel.PrependTo = function(container, path, templateName, scriptArgs)
-{ return QPanel.Add('prepend', container, path, templateName, scriptArgs); }
+{ return QPanel.Include('prepend', container, path, templateName, scriptArgs); }
 
 QPanel.InsertBefore = function(container, path, templateName, scriptArgs)
-{ return QPanel.Add('before', container, path, templateName, scriptArgs); }
+{ return QPanel.Include('before', container, path, templateName, scriptArgs); }
 
 QPanel.InsertAfter = function(container, path, templateName, scriptArgs)
-{ return QPanel.Add('after', container, path, templateName, scriptArgs); }
+{ return QPanel.Include('after', container, path, templateName, scriptArgs); }
