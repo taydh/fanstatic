@@ -80,4 +80,7 @@ There are several features that will be described later, such as:
 - Sequential asyncronous template include
 - Sequential asyncronous include cleaning
 
+## Test Page
+A test page is alive at http://taufanay.github.io/test-qpanel-2.1.0/
+
 Thank you
