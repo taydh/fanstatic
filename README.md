@@ -81,6 +81,6 @@ There are several features that will be described later, such as:
 - Sequential asyncronous include cleaning
 
 ## Test Page
-A test page is alive at http://taufanay.github.io/test-qpanel-2.1.0/
+A test page is alive at http://taydh.github.io/qpanel/test-qpanel-2.1.0/
 
 Thank you
