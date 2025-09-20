@@ -1,0 +1,11 @@
+:root {
+/* .display-5 */
+--stbs-font-size--display-5: calc(1.425rem + 2.1vw);
+--stbs-font-weight--display-5: 300;
+--stbs-line-height--display-5: 1.2;
+
+/* .display-6 */
+--stbs-font-size--display-6: calc(1.375rem + 1.5vw);
+--stbs-font-weight--display-6: 300;
+--stbs-line-height--display-6: 1.2;
+}

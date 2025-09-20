@@ -1,0 +1,27 @@
+<script>
+	return async function(roof, data) {
+		var settings = await fanstatic.fetchJson('./blog/settings.json')
+		var usp = new URLSearchParams(window.location.search)
+
+		if (!usp.has('post')) {
+			await fanstatic.append(roof, './blog/' + settings.postsIndexPage, {
+				data: {
+					settings: settings,
+				}
+			})
+		}
+		else {
+			let slug = usp.get('post')
+			let post = null
+
+			if (post = settings.posts.find(o => o.slug == slug)) {
+				await fanstatic.loadTemplates([
+					'./assets/component/layout_blog.html',
+					'./blog/' + post.slug + '.html'])
+				
+				await fanstatic.append(roof, './assets/component/layout_blog.html')
+				await fanstatic.append(roof.querySelector('div'), './blog/' + post.slug + '.html')
+			}
+		}
+	}
+</script>

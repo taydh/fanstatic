@@ -1,0 +1,21 @@
+<section>
+	<div class="x-post-list">
+		{{#posts}}
+		<div class="x-post-item">
+			<div class="x-wrapper">
+				<div><a href="{{link}}">{{title}}</a></div>
+				<div>{{brief}}</div>
+			</div>
+		</div>
+		{{/posts}}
+	</div>
+</section>
+
+<script>
+	return async function(roof, data) {
+		const pm = data.postManager
+		const html = Mustache.render(roof.innerHTML, { posts: pm.entries() })
+
+		roof.innerHTML = html
+	}
+</script>

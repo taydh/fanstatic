@@ -1,0 +1,23 @@
+/* .x-component[data-x-component=section-image-labelled-row] div {
+	border: .5px dotted gray;
+} */
+
+.x-component[data-x-component=section-image-labelled-row] > .x-row {
+	display: flex;
+	flex-direction: row;
+}
+
+.x-component[data-x-component=section-image-labelled-row] > .x-row > .x-column > .x-header {
+	display: flex;
+	align-items: center;
+	gap: .25rem;
+}
+
+.x-component[data-x-component=section-image-labelled-row] > .x-row > .x-column > .x-header img {
+	height: 1.5rem;
+}
+
+.x-component[data-x-component=section-image-labelled-row] > .x-row > .x-column > .x-header .x-label {
+	font-size: 1.5rem;
+	font-weight: 300;
+}

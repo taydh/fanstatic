@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<base href="/website/">
+
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+		<link rel="icon" type="image/x-icon" href="https://park.annexdesk.com/resources/favicon_io/emoji_heart_decoration/favicon.ico">
+		
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+		<link rel="stylesheet" href="./assets/css/stbs-5-3.css">
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Merriweather:ital,opsz,wght@0,18..144,300..900;1,18..144,300..900&display=swap">
+		
+		<script defer src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
+		<script defer src="https://cdn.jsdelivr.net/npm/mustache@4.2.0/mustache.min.js"></script>
+		<script defer src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+		<script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css">
+		<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
+
+		<script defer src="/v1b/script/fanstatic.js?_=28"></script>
+		<script defer src="/v1b/script/fanstatic_visual.js?_=28"></script>
+		<script>
+			var fanstatic_engine_dir = '/v1b';
+			window.addEventListener('DOMContentLoaded', async function(){
+				Object.assign(fanstatic.settings, {
+					base_url: document.baseURI,
+					tail_span: '5s',
+					log_render: false,
+				})
+
+				fanstatic.append(
+					document.body, fanstatic_engine_dir + '/component/buttons/back-to-top/back-to-top.html',
+					{ tail_key: null }
+				)
+
+				Object.assign(fanstatic.visual.settings, {
+					log_render: true,
+					turn_delay: 300
+				})
+
+				await fanstatic.insert(
+					document.querySelector('#container'), // target element 
+					'./assets/component/layout_page.html'
+				)
+			})
+		</script>
+	</head>
+
+	<body>
+		<div id="container"></div>
+
+		<div id="fanstatic-area">
+
+<template data-url="./assets/component/layout_page.html">
+	<section id="headbar" class="fixed-top border-bottom">
+		<div class="container"></div>
+	</section>
+	
+	<main id="homepage">
+		<section id="hero" class="d-flex align-items-center">
+			<div class="container"></div>
+		</section>
+		<section id="intro" class="container"></section>
+		<section id="products" class="container"></section>
+		<section id="stats" class="container"></section>
+		<section id="services" class="container"></section>
+	</main>
+
+	<main id="page"></main>
+	
+	<script>
+		return async function(roof) {
+			const homepageBox = roof.querySelector('#homepage')
+			const pageBox = roof.querySelector('#page')
+
+			await fanstatic.insert(roof.querySelector('#headbar > .container'), './assets/component/section_header.html')
+
+			if (window.location.href == st.settings.base_url) {	
+				pageBox.parentElement.removeChild(pageBox)
+				await fanstatic.insert(homepageBox.querySelector('#hero > .container'), './content/hero.html');
+				await fanstatic.insert(homepageBox.querySelector('#intro'), './content/intro.html');
+				await fanstatic.insert(homepageBox.querySelector('#products'), './content/products.html', { renderer:'markdown' });
+				await fanstatic.insert(homepageBox.querySelector('#stats'), './content/stats.html', { renderer:'markdown' });
+				await fanstatic.insert(homepageBox.querySelector('#services'), './content/services3.html');		
+			}
+			else {
+				homepageBox.parentElement.removeChild(homepageBox)
+
+				if (window.location.pathname.includes('/designs')){	
+					await fanstatic.insert(pageBox, './content/page_designs.html')
+				}
+				else if (window.location.pathname.includes('/showcases')){
+					await fanstatic.insert(pageBox, './content/page_showcases.html')
+				}
+				else if (window.location.pathname.includes('/docs')){
+					await fanstatic.insert(pageBox, './content/page_docs.html')
+				}
+				else if (window.location.pathname.includes('/blog')){
+					await fanstatic.insert(pageBox, './content/page_blog.html')
+				}
+			}
+
+			fanstatic.append(roof, './assets/component/section_footer.html')
+		}
+	</script>
+</template>
+
+<template data-url="./assets/component/section_header.html">
+	<header class="d-flex flex-wrap align-items-start justify-content-center justify-content-md-between py-3">
+		<div class="col-12 col-md-4 mb-2 mb-md-0 text-center text-md-start">
+			<a href="/" class="d-inline-flex link-body-emphasis text-decoration-none">
+				<span style="font-weight:bold; font-size:2em;">FANSTATIC</span>
+			</a>
+		</div>
+
+		<ul class="nav col-12 col-md-8 mb-2 justify-content-center justify-content-md-end mb-md-0">
+			<li><a href="./" class="nav-link text-dark px-2" data-url="/">Home</a></li>
+			<li><a href="./designs/" class="nav-link text-dark  px-2" data-url="/designs/">Designs</a></li>
+			<li><a href="./showcases/" class="nav-link text-dark  px-2" data-url="/showcases/">Showcases</a></li>
+			<li><a href="./docs/" class="nav-link text-dark  px-2" data-url="/docs/">Docs</a></li>
+			<li><a href="./blog/" class="nav-link text-dark  px-2" data-url="/blog/">Blog</a></li>
+		</ul>
+
+		<div class="col-md-3 text-end"></div>
+	</header>
+
+	<script>
+		return function(roof) {
+			roof.querySelector(`.nav-link[data-url="${st.getLandingPath(true)}"]`).classList.add('fw-bold')
+		}
+	</script>
+</template>
+
+<template data-url="./content/hero.html">
+	<ul class="list-unstyled text-center" style="font-family:var(--font-family-header)">
+		<li class="mb-1 display-5">Your Next Website Is</li>
+		<li class="mb-1 display-3 mb-5">STATIC &plus; DYNAMIC &plus; FANTASTIC!</li>
+		<li class="mb-1"><a href="./designs/" class="btn btn-primary btn-lg">Check Designs</a></li>
+	</ul>
+</template>
+
+<template data-url="./content/intro.html">
+	<figure class="text-center py-5 mb-4">
+		<blockquote class="blockquote fs-italic" style="font-size:.9rem;">
+			<em>Explore our approach to build a dynamic web page with easy templating and scripting.
+			Leveraging the basic stacks of the web (HTML, CSS, Javascript), we try to tackle problems raised in the development process of static frontend.
+			The difference with other static website tool is on the absence of a build tool, regardless of its limitations, just include and go.</em>
+		</blockquote>
+		
+		<figcaption class="blockquote-footer">
+			Someone
+		</figcaption>
+		
+		<div class="text-center pt-3 px-lg-5">
+			<div class="text-bg-dark p-4">
+				<code>
+					&lt;script &quot;https://fanstatic.annexdesk.com/engine/v1/core/fanstatic.js&quot;&gt;&lt;/script&gt;
+				</code>
+			</div>
+		</div>
+	</figure>
+
+</template>
+
+<template data-url="./content/services3.html">
+- h2 data-command-onrender="viewport-enter-animate" data-visual-hidden data-visual-animation="slideInUp": OUR SERVICES
+- div class="row":
+{{#items}}
+  - div class="col-md-4":
+    - div class="card card-body mb-3" data-command-onrender="viewport-enter-animate" data-visual-hidden data-visual-animation="slideInUp":
+      - div class="text-center":
+        - img style="width:60px" class="mb-3" src="https://park.annexdesk.com/resources/svgrepo/{{img}}": 
+        - h3 class="mb-3": {{title}}
+      - p: {{body}}
+{{/items}}
+<script>
+	return {
+		renderer: 'mustache,yhtm',
+		model: {
+			items: [
+				{
+					img: 'seo-online-marketing-8/monitor-support.svg',
+					title: 'Instant Design Support',
+					body: 'Professional editing, proofreading, and manuscript development to ensure your book meets the highest quality standards. Our expert editors work closely with authors to refine their work while maintaining their unique voice.'
+				},
+				{
+					img: 'seo-online-marketing-8/monitor-gear.svg',
+					title: 'Web Based Frontend Development',
+					body: 'Professional editing, proofreading, and manuscript development to ensure your book meets the highest quality standards. Our expert editors work closely with authors to refine their work while maintaining their unique voice.'
+				},
+				{
+					img: 'seo-online-marketing-8/monitor-gear.svg',
+					title: 'Web Based System Planning',
+					body: 'Professional editing, proofreading, and manuscript development to ensure your book meets the highest quality standards. Our expert editors work closely with authors to refine their work while maintaining their unique voice.'
+				},
+			]
+		}
+	}
+</script>
+</template>
+
+<template data-url="./content/stats.html">
+## POINTS OF INTEREST
+
+![easy icon](https://park.annexdesk.com/resources/svgrepo/origami-filled-line-vector/hat-origami.svg)
+**Easy**
+We use basic techniques of HTML, CSS, and Javascript with few specific implementation to run script in template
+
+![optimum icon](https://park.annexdesk.com/resources/svgrepo/origami-filled-line-vector/sword-origami.svg)
+**Optimum**
+We do not focus to be the fastest client-side rendering engine, but to be optimum with resource and cache
+
+![personal icon](https://park.annexdesk.com/resources/svgrepo/origami-filled-line-vector/heart-origami.svg)
+**Personal**
+Codes executed by browser are everything that you wrote, no build tool required
+
+![scalable icon](https://park.annexdesk.com/resources/svgrepo/origami-filled-line-vector/windmill-origami.svg)
+**Scalable**
+We try to make this engine scalable for typical frontend use cases like cms website, components, and apps
+
+<script>
+	return async function (roof, nodes, data, url) {
+		roof.querySelector('h2').setAttribute('data-command', 'viewport-enter-animate')
+		roof.querySelector('h2').setAttribute('data-visual-animation', 'slideInUp')
+		roof.querySelector('h2').setAttribute('data-visual-hidden', '')
+		roof.querySelectorAll('img').forEach(n => n.style.width = '30px')
+		var newHomes = fanstatic.adoptSiblings(
+			roof.querySelectorAll('p'),
+			function(){ return st.parseHTML('<div class="card p-3 mb-3" data-command-onrender="viewport-enter-animate" data-visual-hidden data-visual-animation="fadeInRightBig"></div>') },
+			function(){ return st.parseHTML('<div class=""></div>') })	
+		roof.append(newHomes)
+		roof.querySelectorAll('p').forEach(e => st.replaceWithChildren(e, document.createElement('div')))
+
+		// roof.querySelectorAll('ul').forEach(n => n.classList.add('list-unstyled'))
+		
+		// roof.querySelectorAll('li').forEach(li => {
+		// 	li.className = 'card card-body mb-3'
+		// 	let parts = {
+		// 		img: li.querySelector('img'),
+		// 		strong: li.querySelector('strong'),
+		// 		span: li.querySelector('span')
+		// 	}
+			
+			// let row = st.parseHTML('<div class="row"><div class="col" style="width:70px;"></div><div class="col"><div></div><div></div></div></div>').firstChild
+			// console.log(row.firstChild)
+			// row.firstChild.appendChild(parts.img)
+			// row.lastChild.firstChild.appendChild(parts.strong)
+			// row.lastChild.lastChild.appendChild(parts.span)
+			// li.appendChild(row)
+		// })
+	}
+</script>
+</template>
+
+<template data-url="./content/products.html">
+## OUR LIBRARY
+Use our fanstatic library to build any web pages yourself.
+
+### **Core Library** 
+A collection of javascript helper methods to enable our approach.  
+  
+Note: While irrelevant for single page, to correctly return 404 response status for invalid URL in multi pages setup, we need to have a server configuration file (.htaccess).
+
+### **CMS Extension**
+This extension for the core library allow you to create a conventional CMS-like website with blog posts, tags, and author pages.
+A suitable scenario for single admin to manage the posts by hand and keep pages and data in static manner.  
+  
+Note: However, to correctly return 404 response status for invalid URL, we need to have a web configuration file (.htaccess) and a couple of server-side scripting (i.e., PHP).  
+
+### **Components** 
+Quick and ready to use templates for your page, such as adding back-to-top button.
+			
+<script>
+	return async function (roof, nodes) {
+		roof.querySelector('h2').setAttribute('data-command-onrender', 'viewport-enter-animate')
+		roof.querySelector('h2').setAttribute('data-visual-animation', 'slideInUp')
+		roof.querySelector('h2').setAttribute('data-visual-hidden', '')
+		var newHomes = fanstatic.adoptSiblings(
+			roof.querySelectorAll('h3'),
+			function(){ return st.parseHTML('<div class="card card-body mb-3" data-command-onrender="viewport-enter-animate" data-visual-hidden data-visual-animation="fadeInRightBig"></div>') },
+			function(){ return st.parseHTML('<div class=""></div>') })
+		roof.append(newHomes)
+		roof.querySelector('p').classList.add('text-center')
+	}
+</script>
+</template>
+
+<template data-url="./assets/component/section_footer.html">
+	<footer id="footer" class="container">
+		<div class="py-4 py-md-5 px-4 px-md-3 text-body-secondary">
+			<div class="text-center">
+				<ul class="list-unstyled small">
+					<li class="mb-2 fs-4" style="letter-spacing:var(--letter-spacing-4);">
+						<a href="https://www.instagram.com/fanstatic.web" class="link-dark" target="_blank"><i class="bi-instagram"></i></a>
+						<a href="https:/.x.com/annexdesk" class="link-dark" target="_blank"><i class="bi-twitter-x"></i></a>
+						<a href="mailto:contact@annexdesk.com" class="link-dark"><i class="bi-envelope-at"></i></a>
+						<a href="https://wa.me/6282189318163" class="link-dark" target="_blank"><i class="bi-whatsapp"></i></a>
+					</li>
+					<li class="mb-2">Dynamic web engine by <a href="https://www.annexdesk.com">Annexdesk</a>.</li>
+					<li class="mb-2">&copy;Copyright 2025</li>
+				</ul>
+			</div>
+		</div>
+	</footer>
+</template>
+		
+		</div>
+		<!-- end of #fanstatic-area-->
+
+
+
+
+		<!-- Bootstrap style override -->
+		<style>
+			#container {
+				--gutter: 0;
+				--gutter-sm: 3rem;
+				--gutter-md: 5rem;
+			}
+		</style>
+
+		<!-- Own custom style -->
+		 <style>
+			:root {
+				--font-family--header: "Merriweather", serif;
+				--fixed-padding-top: 130px;
+				--hero-height: 50vh;
+
+				--letter-spacing-1: -.250em;
+				--letter-spacing-2: -.125em;
+				--letter-spacing-3: 0em;
+				--letter-spacing-4: .125em;
+				--letter-spacing-5: .250em;
+			}
+
+			/* -- Element -- */
+			html {
+				scroll-padding-top: var(--fixed-padding-top);
+				font-size: 18px;
+				letter-spacing: .5px;
+			}
+
+			body {
+				background-color: var(--bs-gray-100);
+			}
+
+			h2 {
+				font-family: var(--font-family--header);
+				font-size: var(--stbs-font-size--display-5);
+				font-weight: var(--stbs-font-weight--display-5);
+				margin-top: 1.5rem;
+				margin-bottom: 1.5rem;
+				text-align: center;
+			}
+			
+			main {
+				margin-top: var(--fixed-padding-top);
+			}
+
+			main > section:not(:last-child) {
+				margin-bottom: 1rem;
+				border-bottom: var(--bs-border-width) var(--bs-border-style) var(--bs-border-color) !important;
+			}
+
+			/* -- ID -- */
+
+			#headbar {
+				background-color: white;
+				height: var(--fixed-padding-top);
+			}
+
+			#hero {
+				background: linear-gradient(rgba(0,0,0,.5), rgba(0,0,0,.5)), url('https://park.annexdesk.com/resources/pexels/pexels-kamo11235-667838--land-sm.jpg');
+				background-repeat: no-repeat;
+				background-size: cover;
+				background-position: center;
+
+				color: white;
+				height: var(--hero-height);
+				margin-bottom: 1rem;
+			}
+
+			/* -- Class -- */
+
+			/* -- Other Attributes -- */
+
+			*[data-fanstatic-visual-animation] {
+				visibility: hidden;
+			}
+
+			/* -- Media Query -- */
+			@media (min-width: 768px) {
+				:root {
+					--fixed-padding-top: 80px;
+				}
+			}
+
+			@media (min-width: 992px) {
+				#hero {
+					background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://park.annexdesk.com/resources/pexels/pexels-kamo11235-667838--land-md.jpg');
+				}
+			}
+
+			@media (min-width: 1200px) {
+				#hero {
+					background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://park.annexdesk.com/resources/pexels/pexels-kamo11235-667838--land-lg.jpg');
+				}
+			}
+		 </style>
+	</body>
+</html>

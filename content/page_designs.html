@@ -1,0 +1,118 @@
+<div id="page_template" class="container pt-3">
+	<h2 class="text-center">Instant<br>DESIGN<br><small class="text-secondary">(BETA version)</small></h2>
+
+	<div class="card card-body mb-3 text-md-center">
+		<p>
+			Since this website is about client-side templating engine for developer, our designs are more than the usual HTML+CSS templates.
+		</p>
+		<p>
+			We provide basic web design for several business need and filled with sections that we hope you will find usefull to start with.
+			Then, or you may already knew, that many web design elements built as typical components and that it easier to have separate data model from the template itself.
+			That is when these designs shine.
+		</p>
+		<p>
+			In some of the design, you will also find how to have blog-like system for your new static website.
+		</p>
+		<p>
+			You can download and customized them for your need. 
+			See <a href="./docs/">documentation</a> page for technical reference.
+		</p>
+	</div>
+	<div class="mb-3 text-center">
+		<a href="mailto:contact@annexdesk.com" class="btn btn-primary btn-lg my-5">Contact for Service</a>
+	</div>
+
+	<div id="designGrid" class="card-grid row justify-content-start"></div>
+
+	<div id="webframe-modal-area">
+		<button type="button" class="btn btn-primary d-none" data-bs-toggle="modal" data-bs-target="#Webframe_Modal">
+			Launch demo modal
+		</button>
+	</div>
+</div>
+
+<script>
+	//# sourceURL=page_templates.js`;
+	var stp = `
+<div class="col-12 col-lg-6 mb-3">
+<div class="card flex-row" 
+	data-command-onrender="viewport-enter-animate" 
+	data-visual-hidden data-visual-animation="slideInUp">
+
+	<div 
+		class="card-img-left bg-light border-end"
+		style="border-radius:var(--bs-card-border-radius) 0 0 var(--bs-card-border-radius); flex: 2; background: url(./assets/img/diy-thumbnails/{{id}}.jpg) top left / cover">
+	</div>
+	
+	<div class="card-body d-flex flex-column" style="flex: 3; min-height: 300px;">
+		<div class="flex-fill">
+			<h4>{{name}}</strong></h4>
+			<p>
+				{{#tags}}
+				<a class="btn btn-sm btn-link ps-0" href="?tag={{.}}">{{.}}</a>
+				{{/tags}}
+			</p>
+		</div>
+		<div>
+			<button class="x-live-demo-button btn btn-primary" 
+				data-id="{{id}}" data-gesture="{{gesture}}" data-name="{{name}}" data-url="{{url}}" 
+				data-bs-toggle="modal" data-bs-target="#Webframe_Modal">🎨 Live Demo</button>
+			<a href="{{download}}" class="x-download-button btn btn-primary">{{gesture}} download</a>
+		</div>
+	</div>
+</div>
+</div>
+`;
+
+	return function (roof, nodes, data, url) {
+		var cardGrid = roof.querySelector('.card-grid');
+
+		// setup modal asynchronosly
+		const webframeModalArea = roof.querySelector('#webframe-modal-area')
+		fanstatic.append(webframeModalArea, './assets/component/modal.html', {
+			data: {
+				fullscreen: true,
+				idPreffix: 'Webframe',
+				loadContent: async function(modalElem) {
+					await fanstatic.insert(modalElem.querySelector('.modal-body'), './assets/component/dialog_webframe.html', {
+						data: {
+							modalElem: modalElem
+						}
+					})
+
+					modalElem.addEventListener('hidden.bs.modal', function(ev) {
+						modalElem.querySelector('iframe').src = 'about:blank'
+						modalElem.querySelector('.modal-title').innerText = '...'
+					})
+
+					modalElem.addEventListener('show.bs.modal', function(ev) {
+						const dataset = ev.relatedTarget.dataset
+
+						modalElem.querySelector('iframe').src = dataset.url
+						modalElem.querySelector('.modal-title').innerText = dataset.name
+						modalElem.querySelector('.modal-footer').style.justifyContent = 'center'
+						modalElem.querySelector('.modal-footer').innerHTML = `<small>${dataset.gesture} <a title="download design" href="https://fanstatic.annexdesk.com/designs/${dataset.id}.zip">https://fanstatic.annexdesk.com/designs/${dataset.id}.zip</a><small>`
+					})
+				}
+			}
+		})
+
+		fanstatic.insertScripts(['https://cdn.jsdelivr.net/npm/papaparse@5.5.2/papaparse.min.js']).then(function(){
+			Papa.parse(fanstatic.settings.base_url + 'data/instant-templates.csv?' + st.tail(), {
+				download: true,
+				header: true,
+				complete: function(results) {
+					console.log('[templates data]', results.data)
+
+					for (let o of results.data) {
+						o.tags = o.tags.split('|')
+						cardGrid.append(fanstatic.parseHTML(Mustache.render(stp, o)))
+					}
+
+					console.log(cardGrid)
+					fanstatic.searchOnRenderAndRun(cardGrid)
+				}
+			});
+		})
+	}
+</script>

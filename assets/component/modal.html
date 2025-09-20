@@ -1,0 +1,41 @@
+<div class="modal fade" id="_Modal" tabindex="-1" aria-labelledby="_ModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-xl">
+		<div class="modal-content">
+		<div class="modal-header row">
+			<div class="col-9 col-lg-4 order-1">
+				<h1 class="modal-title fs-5" id="_ModalLabel">Modal title</h1>
+			</div>
+			<div class="modal-header-actions mt-3 mt-lg-0 col-lg-4 col-12 order-3 order-lg-2">
+
+			</div>
+			<div class="col-3 col-lg-4 text-end order-2 order-lg-3">
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+		</div>
+		<div class="modal-body">
+			...
+		</div>
+		<div class="modal-footer">
+			<!--
+			<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+			-->
+		</div>
+		</div>
+	</div>
+</div>
+
+<script>
+	return function(roof, data) {
+		const modalElem = roof.querySelector('#_Modal')
+		const modalTitle = roof.querySelector('.modal-title')
+		const modalDialog = roof.querySelector('.modal-dialog')
+
+		modalElem.id = data.idPreffix + modalElem.id
+		modalTitle.id = data.idPreffix + modalTitle.id
+		modalElem.setAttribute('aria-labelledby', data.idPreffix + modalElem.getAttribute('aria-labelledby'))
+
+		if (data.fullscreen) modalDialog.classList.add('modal-fullscreen')
+
+		data.loadContent(modalElem)
+	}
+</script>

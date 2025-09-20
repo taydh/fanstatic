@@ -1,0 +1,37 @@
+<div class="x-webframe-box h-100">
+	<div class="x-webframe-header d-none">
+		<ul class="mb-0 list-unstyled d-flex gap-3 justify-content-center">
+			<li><button id="phone-view" data-max-width="360px" class="btn btn-none"><i class="bi-phone"></i></button></li>
+			<li><button id="tablet-view" data-max-width="800px" class="btn btn-none"><i class="bi-tablet"></i></button></li>
+			<li><button id="desktop-view" data-max-width="100%" class="btn btn-none"><i class="bi-display"></i></button></li>
+		</ul>
+	</div>
+	<div class="d-flex justify-content-center h-100">
+		<iframe src="about:blank" class="w-100 h-100 shadow-lg" style="height: 50vh; max-width: 1400px;">
+			iframe not supported
+		</iframe>
+	</div>
+</div>
+
+<script>
+	return {
+		onload: function(roof, data) {
+			const buttons = roof.querySelectorAll('button')
+			const iframe = roof.querySelector('iframe')
+
+			for (let button of buttons) {
+				button.addEventListener('click', function(){
+					iframe.style.maxWidth = this.dataset.maxWidth
+				})
+			}
+		},
+		onrender: function(nodes, data) {
+			const modalElem = data.modalElem
+			const webframeHeader = nodes[0].querySelector('.x-webframe-header')
+
+			modalElem.querySelector('.modal-header-actions').append(webframeHeader)
+
+			webframeHeader.classList.remove('d-none')
+		}
+	}
+</script>

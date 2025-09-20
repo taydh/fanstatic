@@ -1,0 +1,48 @@
+<script type="text/mustache">
+<div {{#id}}id="{{id}}"{{/id}} class="x-component" data-x-component="side-by-side">
+	{{#items}}
+	<div class="x-w-full">
+		<div class="x-wrapper x-container">
+			<div class="x-row">
+				<div class="x-col s-start">
+					<div class="x-image">
+						<img src="{{image_src}}" alt="{{image_alt}}">
+					</div>
+				</div>
+				<div class="x-col s-end">
+					{{#title.length}}
+					<div class="x-title">
+						{{title}}
+					</div>
+					{{/title.length}}
+
+					{{#html.length}}
+					<div class="x-content">
+						{{html}}
+					</div>
+					{{/html.length}}
+
+					{{#actions.length}}
+					<div class="x-actionbar">
+						{{#actions}}
+						<a href="{{link_url}}" title="{{link_title}}" class="x-link">{{label}}</a>
+						{{/actions}}
+					</div>
+					{{/actions.length}}
+				</div>
+			</div>
+		</div>
+	</div>
+	{{/items}}
+</div>
+</script>
+
+<script>
+	return {
+		renderer: 'mustache',
+		onload: function(roof, data) {
+			const template = roof.querySelector("script").innerText
+			roof.innerHTML = Mustache.render(template, data)
+		}
+	}
+</script>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>First Example</title>
+	<base href="/website/assets/docs/01-starter/">
+    <script src="/engine/v1/core/fanstatic.js"></script>
+	<script>
+		// To ensure the fanstatic library has been loaded properly when we run
+		// our custom codes, put our codes inside window "DOMContentLoaded" event handler.
+		window.addEventListener('DOMContentLoaded', async function() {
+			// Apply or replace additional settings.
+			// There are multiple properties we can include, but let's use base_url and log_render for now
+			fanstatic.assign({
+				base_url: document.baseURI, // to resolve relative URL
+				log_render: true, // to display process
+			});
+
+			const usp = new URLSearchParams(window.location.search);
+			const page = usp.has('p') ? usp.get('p') : 'home';
+			const main = document.querySelector('main');
+
+			// Let's use simple switch case structure to pick the template file.
+			// You are free to modify this flow to whatever you see fit.
+			switch (page) {
+			case 'home':
+				await fanstatic.insert(main, './templates/home.html');
+				break;
+			case 'about':
+				await fanstatic.insert(main, './templates/about.html');
+				break;
+			case 'contact':
+				await fanstatic.insert(main, './templates/contact.html');
+				break;
+			default:
+				main.innerHTML = 'Invalid page!';
+				break;
+			}
+		});
+	</script>
+  </head>
+  <body>
+    <nav>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="index.html?p=about">About</a></li>
+        <li><a href="index.html?p=contact">Contact</a></li>
+      </ul>
+    </nav>
+    <main></main>
+    <footer>
+      &copy;2025 - fanstatic.annexdesk.com
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,58 @@
+<section class="x-section-post-filter">
+	<div class="x-wrapper x-tags">
+		<div class="x-title">Tags</div>
+		{{#tags.length}}
+		<ul class="x-list">
+			{{#tags}}
+			<li class="x-list-item"><a href="#">{{.}}</a></li>
+			{{/tags}}
+		</ul>
+		{{/tags.length}}
+		{{^tags.length}}
+		<div>
+			No Tags
+		</div>
+		{{/tags.length}}
+	</div>
+	<div class="x-wrapper x-pub-dates">
+		<div class="x-title">Publish Time</div>
+		{{#months.length}}
+		<ul class="x-group">
+			{{#months}}
+			<li class="x-group-item">
+				<div class="x-title">{{year}}</div>
+				<ul class="x-list">
+					{{#months}}
+					<li class="x-list-item"><a href="#">{{.}}</a></li>
+					{{/months}}
+				</ul>
+			</li>
+			{{/months}}
+		</ul>
+		{{/months.length}}
+		{{^months.length}}
+		<div>
+			No Months
+		</div>
+		{{/months.length}}
+	</div>
+</section>
+
+<script>
+	return async function(roof, data) {
+		const pm = data.postManager
+		const model = { 
+			tags: pm.tags(),
+			months: pm.months(),	 
+		}
+
+		model.months.forEach(y => {
+			y.months = y.months.map(m => {
+				let date = new Date(1990,m,1)
+				return date.toLocaleString('default', { month: 'long' })
+			})
+		})
+		console.log(model)
+		roof.innerHTML = Mustache.render(roof.innerHTML, model)
+	}
+</script>

@@ -1,0 +1,82 @@
+<script type="text/mustache">
+<div {{#id}}id="{{id}}"{{/id}} class="x-component" data-component="grid-gallery">
+	<div class="x-row py-3 rounded bg-body-secondary">
+		{{#items}}
+		<div class="x-col">
+			<a href="#" class="btn d-block" data-bs-toggle="modal" data-bs-target="#gridGalleryModal" data-index="{{index}}">
+				<div class="x-box">
+					<img loading="lazy" src="{{thumb_src}}" alt="{{thumb_alt}}">
+
+					{{#caption}}
+					<div class="x-caption">
+						{{caption}}
+					</div>
+					{{/caption}}
+				</div>
+			</a>
+		</div>
+		{{/items}}
+	</div>
+
+	<!-- Modal -->
+	<div class="modal fade" id="gridGalleryModal" tabindex="-1" aria-labelledby="gridGalleryModal" aria-hidden="true">
+		<div class="modal-dialog modal-fullscreen">
+			<div class="modal-content h-100 bg-transparent">
+				  <div class="modal-body justify-content-center align-items-center">
+					
+					<div class="h-100 w-100 d-flex flex-column rounded text-bg-dark">
+						<div class="text-end">
+							<button type="button" class="btn-close" style="filter:invert()" data-bs-dismiss="modal" aria-label="Close"></button>
+						</div>
+						{{#items}}
+						<div class="x-item-box h-100 p-3 d-none flex-column" data-index="{{index}}">
+							<div class="x-image-container-w flex-fill text-center">
+								<img loading="lazy" src="{{image_src}}" class="x-image-fit rounded" style="max-width:100%; max-height:100%;">
+							</div>
+
+							<div class="x-caption p-3 text-center w-100">
+								{{caption}}
+							</div>
+						</div>
+						{{/items}}
+					</div>
+				
+				  </div>
+			</div>
+		</div>
+	</div>
+
+</div>
+</script>
+
+<script>
+	return {
+		renderer: 'mustache',
+		onload: function(roof, data) {
+			const template = roof.querySelector("script").innerText
+
+			roof.innerHTML = Mustache.render(template, data)
+
+			const myModalEl = roof.querySelector('.modal')
+			myModalEl.addEventListener('show.bs.modal', event => {
+				const index = event.relatedTarget.dataset.index
+				myModalEl.querySelectorAll('.x-item-box').forEach(elem => elem.classList.add('d-none'))
+				myModalEl.querySelector(`.x-item-box[data-index="${index}"]`).classList.add('d-flex')
+				myModalEl.querySelector(`.x-item-box[data-index="${index}"]`).classList.remove('d-none')
+			})
+
+			/*
+				image preview:
+				- position image at the center on the container
+				- keep image ratio fix at anytime (square, landscape, portrait)
+				- if image resolution larger than container, make image dynamically fill the width or height of the container
+			*/
+			roof.querySelectorAll('.x-item-box img').forEach(elem => {
+				elem.addEventListener('load', function(){
+					let type = elem.naturalWidth == elem.naturalHeight ? 's' : (elem.naturalWidth > elem.naturalHeight ? 'l' : 'p');
+					// elem.classList.add('s-image-orientation-' + type)
+				})
+			})
+		}
+	}
+</script>

@@ -1,0 +1,18 @@
+TODO AFTER UPLOAD
+- Change Base path in all index.html
+- Change Path in all .htaccess
+
+What offered:
+- ✅ Static web files
+- ✅ Dynamic templating
+- ✅ Post/Article Management
+- ✅ Multipage website (with server configuration file/htaccess)
+- ✅ 404 Response (with server configuration file/htaccess)
+
+What not included:
+- ⛔ Server Side Scripting
+- ⛔ CLI Build tool
+- ⛔ Online editor
+
+
+If above conditions suit your current need, let's get connected!
