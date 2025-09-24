@@ -7,44 +7,6 @@
 }`
 	document.head.appendChild(style)
 
-	fanstatic.visual = {
-		settings: {
-			turn_delay: 100,
-			log_render: false,
-		},
-		isOnScreen: function(elem, allowElemBehind = false, allowElemAhead = false) {
-			const scrollDist = document.documentElement.scrollTop;
-			const elemOffset = window.scrollY + elem.getBoundingClientRect().top; 
-		
-			if (!allowElemBehind && !(elemOffset + elem.offsetHeight > scrollDist))
-				return false;
-			
-			if (!allowElemAhead && !(scrollDist + window.innerHeight > elemOffset))
-				return false;
-		
-			return true;
-		},
-		onEnterViewport: function(elem, handler, runOnce = true) {
-			let me = this
-			if (this.isOnScreen(elem)) {
-				if (this.settings.log_render) console.log('[Visual]', 'already in viewport', elem)
-				handler()
-				return;
-			}
-			
-			let evh = function() {
-				if (me.isOnScreen(elem)) {
-					if (me.settings.log_render) console.log('[Visual]', 'entering viewport', elem)
-					handler()
-
-					if (runOnce) window.removeEventListener('scroll', evh)
-				}
-			}
-
-			window.addEventListener('scroll', evh)
-		},
-	}
-
 	window.addEventListener('fanstatic.load', function(){
 		fanstatic.registerCommand('viewport-enter-animate', function(fanstatic, elem) {
 			let animation = elem.dataset.visualAnimation
@@ -70,9 +32,47 @@
 				console.error('data-visual-animation attribute not found')
 			}
 		})
+		
+		fanstatic.visual = {
+			settings: {
+				turn_delay: 100,
+				log_render: false,
+			},
+			isOnScreen: function(elem, allowElemBehind = false, allowElemAhead = false) {
+				const scrollDist = document.documentElement.scrollTop;
+				const elemOffset = window.scrollY + elem.getBoundingClientRect().top; 
+
+				if (!allowElemBehind && !(elemOffset + elem.offsetHeight > scrollDist))
+					return false;
+
+				if (!allowElemAhead && !(scrollDist + window.innerHeight > elemOffset))
+					return false;
+
+				return true;
+			},
+			onEnterViewport: function(elem, handler, runOnce = true) {
+				let me = this
+				if (this.isOnScreen(elem)) {
+					if (this.settings.log_render) console.log('[Visual]', 'already in viewport', elem)
+					handler()
+					return;
+				}
+
+				let evh = function() {
+					if (me.isOnScreen(elem)) {
+						if (me.settings.log_render) console.log('[Visual]', 'entering viewport', elem)
+						handler()
+
+						if (runOnce) window.removeEventListener('scroll', evh)
+					}
+				}
+
+				window.addEventListener('scroll', evh)
+			},
+		}
+		
+		window.dispatchEvent(new CustomEvent('fanstatic.visual.load', {
+			detail: fanstatic.visual
+		}))
 	})
-	
-	window.dispatchEvent(new CustomEvent('fanstatic.visual.load', {
-		detail: fanstatic.visual
-	}))
 }

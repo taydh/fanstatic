@@ -55,11 +55,11 @@
 
 				headjack.insertStyles(['assets/css/stbs-5-3.css']);
 				const prom = headjack.insertScripts([fanstatic_base_dir + '/script/fanstatic.js?_=28', fanstatic_base_dir + '/script/fanstatic_visual.js?_=28']);
-				prom.then(() => window.dispatchEvent(new Event('dynamicScriptsLoaded')));
+				// prom.then(() => window.dispatchEvent(new Event('dynamicScriptsLoaded')));
 			} //\\//\\
 			
 			// window.addEventListener('DOMContentLoaded', async function(){
-			window.addEventListener('dynamicScriptsLoaded', async function(){
+			window.addEventListener('fanstatic.load', async function(){
 				Object.assign(fanstatic.settings, {
 					base_url: document.baseURI,
 					tail_span: '5s',
@@ -71,15 +71,17 @@
 					{ tail_key: null }
 				)
 
-				Object.assign(fanstatic.visual.settings, {
-					log_render: true,
-					turn_delay: 300
+				window.addEventListener('fanstatic.visual.load', async function(){
+					Object.assign(fanstatic.visual.settings, {
+						log_render: true,
+						turn_delay: 300
+					})
+					
+					await fanstatic.insert(
+						document.querySelector('#container'), // target element 
+						'./assets/component/layout_page.html'
+					)
 				})
-
-				await fanstatic.insert(
-					document.querySelector('#container'), // target element 
-					'./assets/component/layout_page.html'
-				)
 			})
 		</script>
 	</head>
