@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 	<head>
-		<base href="/">
-
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+		<base href=""> <!-- relative -->
+		<title></title>
+		
 		<link rel="icon" type="image/x-icon" href="https://park.annexdesk.com/resources/favicon_io/emoji_heart_decoration/favicon.ico">
 		
-		<link rel="stylesheet" href="https://fanstatic.annexdesk.com/assets/css/stbs-5-3.css">
 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
@@ -24,27 +24,42 @@
 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css">
 		<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
 
-		<script defer src="https://fanstatic.annexdesk.com/v1b/script/fanstatic.js?_=28"></script>
-		<script defer src="https://fanstatic.annexdesk.com/v1b/script/fanstatic_visual.js?_=28"></script>
+		<!-- link rel="stylesheet" href="./assets/css/stbs-5-3.css">
+		<script defer src="./v1b/script/fanstatic.js?_=28"></script>
+		<script defer src="./v1b/script/fanstatic_visual.js?_=28"></script -->
+		
+		<script src="https://taydh.github.io/librarium/headjack.js"></script>
 		<script>
+			var fanstatic_engine_dir = '';
+			var fanstatic_base_dir = '';
+			var host_env = {};
+
 			{ //\\//\\
 				/* retargeting base URI */
-				const host_base_dirs = [
-					'https://fanstatic.annexdesk.com', '/',
-					'https://taydh.github.io/qpanel', '/qpanel/',
-					'http://localhost/fanstatic3', '/fanstatic3/',
-				];
-				
-				for (let i = 0; i < host_base_dirs.length; i = i + 2) {
-					if (window.location.href.startsWith(host_base_dirs[i])) {
-						document.head.querySelector('base').href = host_base_dirs[i+1];
+				const host_env_list = {
+					'https://fanstatic.annexdesk.com': { base_uri:'/', designs_base_uri:'https://park.annexdesk.com/resources/fanstatic-designs/' },
+					'https://taydh.github.io/qpanel': { base_uri:'/qpanel/', design_base_uri:'https://park.annexdesk.com/resources/fanstatic-designs/' },
+					'http://localhost/fanstatic3': { base_uri:'/fanstatic3/', design_base_uri:'http://localhost/fanstatic-designs/' },
+				};
+				const hosts = Object.keys(host_env_list);
+
+				for (let i = 0; i < hosts.length; i++) {
+					if (window.location.href.startsWith(hosts[i])) {
+						host_env = host_env_list[hosts[i]]
 						break;
 					}
 				}
-			} //\\//\\
 
-			var fanstatic_engine_dir = '/v1b';
-			window.addEventListener('DOMContentLoaded', async function(){
+				document.head.querySelector('base').href = host_env.base_uri; // make base URI absolute
+				fanstatic_base_dir = fanstatic_engine_dir = document.baseURI + 'v1b'
+
+				headjack.insertStyles(['assets/css/stbs-5-3.css']);
+				const prom = headjack.insertScripts([fanstatic_base_dir + '/script/fanstatic.js?_=28', fanstatic_base_dir + '/script/fanstatic_visual.js?_=28']);
+				prom.then(() => window.dispatchEvent(new Event('dynamicScriptsLoaded')));
+			} //\\//\\
+			
+			// window.addEventListener('DOMContentLoaded', async function(){
+			window.addEventListener('dynamicScriptsLoaded', async function(){
 				Object.assign(fanstatic.settings, {
 					base_url: document.baseURI,
 					tail_span: '5s',
@@ -52,7 +67,7 @@
 				})
 
 				fanstatic.append(
-					document.body, fanstatic_engine_dir + '/component/buttons/back-to-top/back-to-top.html',
+					document.body, fanstatic_base_dir + '/component/buttons/back-to-top/back-to-top.html',
 					{ tail_key: null }
 				)
 
@@ -71,7 +86,6 @@
 
 	<body>
 		<div id="container"></div>
-
 		<div id="fanstatic-area">
 
 <template data-url="./assets/component/layout_page.html">
@@ -98,7 +112,7 @@
 
 			await fanstatic.insert(roof.querySelector('#headbar > .container'), './assets/component/section_header.html')
 
-			if (window.location.href == st.settings.base_url) {	
+			if (window.location.href == fanstatic.settings.base_url || window.location.href == fanstatic.settings.base_url + 'index.html') {	
 				pageBox.parentElement.removeChild(pageBox)
 				await fanstatic.insert(homepageBox.querySelector('#hero > .container'), './content/hero.html');
 				await fanstatic.insert(homepageBox.querySelector('#intro'), './content/intro.html');
@@ -110,16 +124,16 @@
 				homepageBox.parentElement.removeChild(homepageBox)
 
 				if (window.location.pathname.includes('/designs')){	
-					await fanstatic.insert(pageBox, './content/page_designs.html')
+					await fanstatic.insert(pageBox, './assets/component/page_designs.html')
 				}
 				else if (window.location.pathname.includes('/showcases')){
-					await fanstatic.insert(pageBox, './content/page_showcases.html')
+					await fanstatic.insert(pageBox, './assets/component/page_showcases.html')
 				}
 				else if (window.location.pathname.includes('/docs')){
-					await fanstatic.insert(pageBox, './content/page_docs.html')
+					await fanstatic.insert(pageBox, './assets/component/page_docs.html')
 				}
 				else if (window.location.pathname.includes('/blog')){
-					await fanstatic.insert(pageBox, './content/page_blog.html')
+					await fanstatic.insert(pageBox, './assets/component/page_blog.html')
 				}
 			}
 
@@ -149,7 +163,7 @@
 
 	<script>
 		return function(roof) {
-			roof.querySelector(`.nav-link[data-url="${st.getLandingPath(true)}"]`).classList.add('fw-bold')
+			roof.querySelector(`.nav-link[data-url="${fanstatic.getLandingPath(true)}"]`)?.classList.add('fw-bold')
 		}
 	</script>
 </template>

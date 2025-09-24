@@ -7,31 +7,6 @@
 }`
 	document.head.appendChild(style)
 
-	fanstatic.registerCommand('viewport-enter-animate', function(fanstatic, elem) {
-		let animation = elem.dataset.visualAnimation
-		let turn = 0;
-
-		if (animation) {
-			fanstatic.visual.onEnterViewport(elem, function(){
-				_turnCount++;
-				window.setTimeout(function(){
-					_turnCount--;
-					let classes = [
-						'animate__animated',
-						'animate__' + animation,
-					]
-	
-					elem.classList.add(...classes)
-					elem.removeAttribute('data-visual-hidden')
-					elem.removeAttribute('data-visual-animation')
-				}, (_turnCount - 1) * fanstatic.visual.settings.turn_delay)
-			})
-		}
-		else {
-			console.error('data-visual-animation attribute not found')
-		}
-	})
-
 	fanstatic.visual = {
 		settings: {
 			turn_delay: 100,
@@ -70,6 +45,33 @@
 		},
 	}
 
+	window.addEventListener('fanstatic.load', function(){
+		fanstatic.registerCommand('viewport-enter-animate', function(fanstatic, elem) {
+			let animation = elem.dataset.visualAnimation
+			let turn = 0;
+
+			if (animation) {
+				fanstatic.visual.onEnterViewport(elem, function(){
+					_turnCount++;
+					window.setTimeout(function(){
+						_turnCount--;
+						let classes = [
+							'animate__animated',
+							'animate__' + animation,
+						]
+
+						elem.classList.add(...classes)
+						elem.removeAttribute('data-visual-hidden')
+						elem.removeAttribute('data-visual-animation')
+					}, (_turnCount - 1) * fanstatic.visual.settings.turn_delay)
+				})
+			}
+			else {
+				console.error('data-visual-animation attribute not found')
+			}
+		})
+	})
+	
 	window.dispatchEvent(new CustomEvent('fanstatic.visual.load', {
 		detail: fanstatic.visual
 	}))
