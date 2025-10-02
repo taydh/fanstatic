@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+		<base href=""> <!-- relative -->
+		<title>Sandbox / Component-Cluster</title>
+			
+		<script src="https://taydh.github.io/librarium/headjack.js"></script>
+		<script>
+			var fanstatic_engine_dir = '';
+			var fanstatic_base_dir = '';
+			var host_env = {};
+
+			{ //\\//\\
+				/* retargeting base URI */
+				const host_env_list = {
+					'https://fanstatic.annexdesk.com': { base_uri:'/', designs_base_uri:'https://park.annexdesk.com/resources/fanstatic-designs/' },
+					'https://taydh.github.io/qpanel': { base_uri:'/qpanel/', design_base_uri:'https://park.annexdesk.com/resources/fanstatic-designs/' },
+					'http://localhost/fanstatic3': { base_uri:'/fanstatic3/', design_base_uri:'http://localhost/fanstatic-designs/' },
+				};
+				const hosts = Object.keys(host_env_list);
+
+				for (let i = 0; i < hosts.length; i++) {
+					if (window.location.href.startsWith(hosts[i])) {
+						host_env = host_env_list[hosts[i]]
+						break;
+					}
+				}
+
+				document.head.querySelector('base').href = host_env.base_uri; // make base URI absolute
+				fanstatic_base_dir = fanstatic_engine_dir = document.baseURI + 'v1b'
+
+				const prom = headjack.insertScripts([
+					fanstatic_base_dir + '/script/fanstatic.js?_=1',
+				]);
+			} //\\//\\
+			
+			// window.addEventListener('DOMContentLoaded', async function(){
+			window.addEventListener('fanstatic.load', async function(){
+				Object.assign(fanstatic.settings, {
+					base_url: document.baseURI,
+					tail_span: '5s',
+					log_render: false,
+				})
+
+				var res = await fanstatic.insert(
+					document.querySelector('main'), // target element 
+					fanstatic_base_dir + './component/clusters/clustershifter-basic@1.html'
+				)
+				
+				var cluster = res.scriptOpt.controller
+				
+				{
+					let axisElem = cluster.addAxis('hello', 'Hello')
+					axisElem.insertAdjacentHTML('beforeend', '<div>Hello</div>')
+				}
+				
+				cluster.render('TABS');
+				cluster.render('COLUMNS');
+				cluster.render('SLIDES');
+			})
+		</script>
+	</head>
+
+	<body>
+		<main></main>
+	</body>
+</html>
