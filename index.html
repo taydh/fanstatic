@@ -40,6 +40,7 @@
 					'https://fanstatic.annexdesk.com': { base_uri:'/', designs_base_uri:'https://park.annexdesk.com/resources/fanstatic-designs/' },
 					'https://taydh.github.io/qpanel': { base_uri:'/qpanel/', design_base_uri:'https://park.annexdesk.com/resources/fanstatic-designs/' },
 					'http://localhost/fanstatic3': { base_uri:'/fanstatic3/', design_base_uri:'http://localhost/fanstatic-designs/' },
+					'https://fanstatic3.test': { base_uri:'/', design_base_uri:'http://fanstatic3.test/fanstatic-designs/' },
 				};
 				const hosts = Object.keys(host_env_list);
 
@@ -49,12 +50,11 @@
 						break;
 					}
 				}
-
 				document.head.querySelector('base').href = host_env.base_uri; // make base URI absolute
 				fanstatic_base_dir = fanstatic_engine_dir = document.baseURI + 'v1b'
 
 				headjack.insertStyles(['assets/css/stbs-5-3.css']);
-				const prom = headjack.insertScripts([fanstatic_base_dir + '/fanstatic.js?_=28', fanstatic_base_dir + '/fanstatic_visual.js?_=28']);
+				const prom = headjack.insertScripts([fanstatic_base_dir + '/fanstatic_visual.js?_=28', fanstatic_base_dir + '/fanstatic.js?_=28']);
 				// prom.then(() => window.dispatchEvent(new Event('dynamicScriptsLoaded')));
 			} //\\//\\
 			
@@ -70,18 +70,18 @@
 					document.body, fanstatic_base_dir + '/component/buttons/back-to-top/back-to-top.html',
 					{ tail_key: null }
 				)
+			})
 
-				window.addEventListener('fanstatic.visual.load', async function(){
-					Object.assign(fanstatic.visual.settings, {
-						log_render: true,
-						turn_delay: 300
-					})
-					
-					await fanstatic.insert(
-						document.querySelector('#container'), // target element 
-						'./assets/component/layout_page.html'
-					)
+			window.addEventListener('fanstatic.visual.load', async function(){
+				Object.assign(fanstatic.visual.settings, {
+					log_render: true,
+					turn_delay: 300
 				})
+				
+				await fanstatic.insert(
+					document.querySelector('#container'), // target element 
+					'./assets/component/layout_page.html'
+				)
 			})
 		</script>
 	</head>
