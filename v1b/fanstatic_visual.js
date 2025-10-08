@@ -1,15 +1,16 @@
 {
-	let _turnCount = 0
-	let style = document.createElement('style')
+	let _turnCount = 0;
+	let style = document.createElement('style');
+	
 	style.innerHTML = `
 *[data-visual-hidden] {
 	visibility: hidden;
-}`
-	document.head.appendChild(style)
+}`;
+	document.head.appendChild(style);
 
-	window.addEventListener('fanstatic.load', function(){
+	const init = function(){
 		fanstatic.registerCommand('viewport-enter-animate', function(fanstatic, elem) {
-			let animation = elem.dataset.visualAnimation
+			let animation = elem.dataset.visualAnimation;
 			let turn = 0;
 
 			if (animation) {
@@ -73,6 +74,9 @@
 		
 		window.dispatchEvent(new CustomEvent('fanstatic.visual.load', {
 			detail: fanstatic.visual
-		}))
-	})
+		}));
+	}
+	
+	if (fanstatic) init();
+	else window.addEventListener('fanstatic.load', init);
 }

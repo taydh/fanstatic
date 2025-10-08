@@ -37,7 +37,7 @@
 		return null;
 	}
 
-	var st = fanstatic = {
+	var fanstatic = {
 		settings: {
 			base_url: '/',
 			local_area_id: 'fanstatic-area',
