@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta charset="UTF-8">
-		<base href="http://fanstatic2.test/fanstatic.annexdesk.com/">
+		<base href="">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
 		<link rel="icon" type="image/x-icon" href="https://park.annexdesk.com/resources/favicon_io/emoji_heart_decoration/favicon.ico">
@@ -18,18 +18,49 @@
 		<script async src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 		<script async src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
-		<script src="./engine/fanstatic@v1.js"></script>
+		<script src="https://taydh.github.io/librarium/headjack.js"></script>
+		
 		<script>
-			Object.assign(fanstatic_settings, {
-				base_url: document.baseURI,
-				tail_span: '1S',
-				init: async function(){
-					await fanstatic.insertTo(
-						document.querySelector('#container'), // target element 
-						'./assets/component/layout_404.html',
-						{ type: st.type.DIRECT },
-					)
-				},
+			var fanstatic_engine_dir = '';
+			var fanstatic_base_dir = '';
+			var host_env = {};
+
+			{ //\\//\\
+				/* retargeting base URI */
+				const host_env_list = {
+					'https://fanstatic.annexdesk.com': { base_uri:'/', designs_base_uri:'https://park.annexdesk.com/resources/fanstatic-designs/' },
+					'http://localhost/fanstatic3': { base_uri:'/fanstatic3/', design_base_uri:'http://localhost/fanstatic-designs/' },
+					'https://fanstatic3.test': { base_uri:'/', design_base_uri:'http://fanstatic3.test/fanstatic-designs/' },
+				};
+				const hosts = Object.keys(host_env_list);
+
+				for (let i = 0; i < hosts.length; i++) {
+					if (window.location.href.startsWith(hosts[i])) {
+						host_env = host_env_list[hosts[i]]
+						break;
+					}
+				}
+				document.head.querySelector('base').href = host_env.base_uri; // make base URI absolute
+				fanstatic_base_dir = fanstatic_engine_dir = document.baseURI + 'v1b'
+
+				headjack.insertStyles(['assets/css/stbs-5-3.css']);
+				const prom = headjack.insertScripts([fanstatic_base_dir + '/fanstatic.js?_=28']);
+				// prom.then(() => window.dispatchEvent(new Event('dynamicScriptsLoaded')));
+			} //\\//\\
+			
+			// window.addEventListener('DOMContentLoaded', async function(){
+			window.addEventListener('fanstatic.load', async function(){
+				Object.assign(fanstatic.settings, {
+					base_url: document.baseURI,
+					tail_span: '5s',
+					log_render: false,
+				})
+				
+				await fanstatic.insert(
+					document.querySelector('#container'), // target element 
+					'./assets/templates/layout_404.html',
+					{} // { type: st.type.DIRECT },
+				)
 			})
 		</script>
 	</head>
