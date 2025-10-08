@@ -1,10 +1,10 @@
 <script>
 	return async function(roof, data) {
-		var settings = await fanstatic.fetchJson('./content-blog/settings.json')
+		var settings = await fanstatic.fetchJson('./contents/blog/settings.json')
 		var usp = new URLSearchParams(window.location.search)
 
 		if (!usp.has('post')) {
-			await fanstatic.append(roof, './content-blog/' + settings.postsIndexPage, {
+			await fanstatic.append(roof, './contents/blog/' + settings.index, {
 				data: {
 					settings: settings,
 				}
@@ -17,10 +17,10 @@
 			if (post = settings.posts.find(o => o.slug == slug)) {
 				await fanstatic.loadTemplates([
 					'./assets/component/layout_blog.html',
-					'./content-blog/' + post.slug + '.md'])
+					'./contents/blog/' + post.slug + '.md'])
 				
 				await fanstatic.append(roof, './assets/component/layout_blog.html')
-				await fanstatic.append(roof.querySelector('div'), './content-blog/' + post.slug + '.md')
+				await fanstatic.append(roof.querySelector('div'), './contents/blog/' + post.slug + '.md')
 			}
 		}
 	}

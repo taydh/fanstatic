@@ -1,0 +1,23 @@
+<div class="container">
+	<h1>Posts</h1>
+
+	<div data-command-insert-model>
+	<template>
+		{{#posts}}
+		<div>
+			<a href="./blog/?post={{slug}}">{{title}}</a>
+		</div>
+		{{/posts}}
+
+		<script>
+			return { renderer: 'mustache' }
+		</script>
+	</template>
+	</div>
+</div>
+
+<script>
+	return async function(roof, data) {
+		roof.querySelector('div[data-command-insert-model]')._model = data.settings
+	}
+</script>

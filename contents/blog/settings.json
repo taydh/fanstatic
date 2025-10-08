@@ -1,5 +1,5 @@
 {
-	"postsIndexPage": "index-posts.html",
+	"index": "index-posts.html",
 	"posts": [
 		{
 			"slug": "20250101-static-website",
