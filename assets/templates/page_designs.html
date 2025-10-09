@@ -35,46 +35,47 @@
 	//# sourceURL=page_templates.js`;
 	var stp = `
 <div class="col-12 col-lg-6 mb-3">
-<div class="card flex-row" 
-	data-command-onrender="viewport-enter-animate" 
-	data-visual-hidden data-visual-animation="slideInUp">
+	<div class="card flex-row" 
+		data-command-onrender="viewport-enter-animate" 
+		data-visual-hidden data-visual-animation="slideInUp">
 
-	<div 
-		class="card-img-left bg-light border-end"
-		style="border-radius:var(--bs-card-border-radius) 0 0 var(--bs-card-border-radius); flex: 2; background: url(./assets/img/diy-thumbnails/{{id}}.jpg) top left / cover">
-	</div>
-	
-	<div class="card-body d-flex flex-column" style="flex: 3; min-height: 300px;">
-		<div class="flex-fill">
-			<h4>{{name}}</strong></h4>
-			<p>
-				{{#tags}}
-				<a class="btn btn-sm btn-link ps-0" href="?tag={{.}}">{{.}}</a>
-				{{/tags}}
-			</p>
+		<div 
+			class="card-img-left bg-light border-end"
+			style="border-radius:var(--bs-card-border-radius) 0 0 var(--bs-card-border-radius); flex: 2; background: url('{{designBaseUri}}(assets)/diy-thumbnails/{{id}}.jpg') top left / cover">
 		</div>
-		<div>
-			<button class="x-live-demo-button btn btn-primary" 
-				data-id="{{id}}" data-gesture="{{gesture}}" data-name="{{name}}" data-url="{{url}}" 
-				data-bs-toggle="modal" data-bs-target="#Webframe_Modal">🎨 Live Demo</button>
-			<a href="{{download}}" class="x-download-button btn btn-primary">{{gesture}} download</a>
+
+		<div class="card-body d-flex flex-column" style="flex: 3; min-height: 300px;">
+			<div class="flex-fill">
+				<h4>{{name}}</strong></h4>
+				<p>
+					{{#tags}}
+					<a class="btn btn-sm btn-link ps-0" href="?tag={{.}}">{{.}}</a>
+					{{/tags}}
+				</p>
+			</div>
+			<div>
+				<button class="x-live-demo-button btn btn-primary" 
+					data-id="{{id}}" data-gesture="{{gesture}}" data-name="{{name}}" data-url="{{url}}" 
+					data-bs-toggle="modal" data-bs-target="#Webframe_Modal">🎨 Live Demo</button>
+				<a href="{{download}}" class="x-download-button btn btn-primary">{{gesture}} download</a>
+			</div>
 		</div>
 	</div>
-</div>
 </div>
 `;
-
-	return function (roof, nodes, data, url) {
+		
+	return function (roof, data, url) {
 		var cardGrid = roof.querySelector('.card-grid');
+		var designBaseUri = data.design_base_uri;
 
 		// setup modal asynchronosly
 		const webframeModalArea = roof.querySelector('#webframe-modal-area')
-		fanstatic.append(webframeModalArea, './assets/component/modal.html', {
+		fanstatic.append(webframeModalArea, './assets/templates/modal.html', {
 			data: {
 				fullscreen: true,
 				idPreffix: 'Webframe',
 				loadContent: async function(modalElem) {
-					await fanstatic.insert(modalElem.querySelector('.modal-body'), './assets/component/dialog_webframe.html', {
+					await fanstatic.insert(modalElem.querySelector('.modal-body'), './assets/templates/dialog_webframe.html', {
 						data: {
 							modalElem: modalElem
 						}
@@ -88,7 +89,7 @@
 					modalElem.addEventListener('show.bs.modal', function(ev) {
 						const dataset = ev.relatedTarget.dataset
 
-						modalElem.querySelector('iframe').src = dataset.url
+						modalElem.querySelector('iframe').src = designBaseUri + dataset.url
 						modalElem.querySelector('.modal-title').innerText = dataset.name
 						modalElem.querySelector('.modal-footer').style.justifyContent = 'center'
 						modalElem.querySelector('.modal-footer').innerHTML = `<small>${dataset.gesture} <a title="download design" href="https://fanstatic.annexdesk.com/designs/${dataset.id}.zip">https://fanstatic.annexdesk.com/designs/${dataset.id}.zip</a><small>`
@@ -98,21 +99,22 @@
 		})
 
 		fanstatic.insertScripts(['https://cdn.jsdelivr.net/npm/papaparse@5.5.2/papaparse.min.js']).then(function(){
-			Papa.parse(fanstatic.settings.base_url + 'data/instant-templates.csv?' + st.tail(), {
+			Papa.parse(designBaseUri + '(data)/instant-templates.csv?' + fanstatic.tail(), {
 				download: true,
 				header: true,
 				complete: function(results) {
 					console.log('[templates data]', results.data)
 
 					for (let o of results.data) {
-						o.tags = o.tags.split('|')
-						cardGrid.append(fanstatic.parseHTML(Mustache.render(stp, o)))
+						o.tags = o.tags.split('|');
+						o.designBaseUri = designBaseUri;
+						cardGrid.append(fanstatic.parseHTML(Mustache.render(stp, o)));
 					}
 
-					console.log(cardGrid)
-					fanstatic.searchOnRenderAndRun(cardGrid)
+					console.log(cardGrid);
+					fanstatic.searchOnRenderAndRun(cardGrid);
 				}
 			});
-		})
+		});
 	}
 </script>
