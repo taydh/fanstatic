@@ -28,58 +28,66 @@
 		<script src="https://taydh.github.io/librarium/headjack.js"></script>
 		
 		<script>
-			var fanstatic_engine_dir = '';
-			var fanstatic_base_dir = '';
-			var host_env = {};
+			//document.addEventListener("DOMContentLoaded", function(){
+				var fanstatic_engine_dir = '';
+				var fanstatic_base_dir = '';
+				var host_env = {};
 
-			{ //\\//\\
-				/* retargeting base URI */
-				const host_env_list = {
-					'https://fanstatic.annexdesk.com': { base_uri:'/', designs_base_uri:'https://park.annexdesk.com/resources/fanstatic-designs/' },
-					'http://localhost/fanstatic3': { base_uri:'/fanstatic3/', design_base_uri:'http://localhost/fanstatic-designs/' },
-					'https://fanstatic3.test': { base_uri:'/', design_base_uri:'http://fanstatic3.test/fanstatic-designs/' },
-				};
-				const hosts = Object.keys(host_env_list);
+				{ //\\//\\
+					/* retargeting base URI */
+					const host_env_list = {
+						'https://fanstatic.annexdesk.com': { base_uri:'/', designs_base_uri:'https://park.annexdesk.com/resources/fanstatic-designs/' },
+						'http://localhost/fanstatic3': { base_uri:'/fanstatic3/', design_base_uri:'http://localhost/fanstatic-companion/designs/' },
+						'https://fanstatic3.test': { base_uri:'/', design_base_uri:'http://fanstatic3.test/fanstatic-companion/designs/' },
+					};
+					const hosts = Object.keys(host_env_list);
 
-				for (let i = 0; i < hosts.length; i++) {
-					if (window.location.href.startsWith(hosts[i])) {
-						host_env = host_env_list[hosts[i]]
-						break;
+					for (let i = 0; i < hosts.length; i++) {
+						if (window.location.href.startsWith(hosts[i])) {
+							host_env = host_env_list[hosts[i]]
+							break;
+						}
 					}
-				}
-				document.head.querySelector('base').href = host_env.base_uri; // make base URI absolute
-				fanstatic_base_dir = fanstatic_engine_dir = document.baseURI + 'v1b'
+					document.head.querySelector('base').href = host_env.base_uri; // make base URI absolute
+					fanstatic_base_dir = fanstatic_engine_dir = document.baseURI + 'v1b'
 
-				headjack.insertStyles(['assets/css/stbs-5-3.css']);
-				const prom = headjack.insertScripts([fanstatic_base_dir + '/fanstatic_visual.js?_=28']);
-				// prom.then(() => window.dispatchEvent(new Event('dynamicScriptsLoaded')));
-			} //\\//\\
-			
-			// window.addEventListener('DOMContentLoaded', async function(){
-			window.addEventListener('fanstatic.load', async function(){
-				Object.assign(fanstatic.settings, {
-					base_url: document.baseURI,
-					tail_span: '5s',
-					log_render: false,
-				})
+					headjack.insertStyles(['assets/css/stbs-5-3.css']);
+				} //\\//\\
 
-				fanstatic.append(
-					document.body, fanstatic_base_dir + '/component/buttons/back-to-top/back-to-top.html',
-					{ tail_key: null }
-				)
-			})
+				// window.addEventListener('DOMContentLoaded', async function(){
+				window.addEventListener('fanstatic.load', async function(){
+					Object.assign(fanstatic.settings, {
+						base_url: document.baseURI,
+						tail_span: '5s',
+						log_render: false,
+					})
 
-			window.addEventListener('fanstatic.visual.load', async function(){
-				Object.assign(fanstatic.visual.settings, {
-					log_render: true,
-					turn_delay: 300
-				})
-				
-				await fanstatic.insert(
-					document.querySelector('#container'), // target element 
-					'./assets/templates/layout_page.html'
-				)
-			})
+					fanstatic.append(
+						document.body, fanstatic_base_dir + '/component/buttons/back-to-top/back-to-top.html',
+						{ tail_key: null }
+					)
+
+					const prom = headjack.insertScripts([fanstatic_base_dir + '/fanstatic_visual.js?_=28']);
+					// prom.then(() => window.dispatchEvent(new Event('dynamicScriptsLoaded')));
+				});
+
+				window.addEventListener('fanstatic.visual.load', async function(){
+					Object.assign(fanstatic.visual.settings, {
+						log_render: true,
+						turn_delay: 300
+					})
+
+					await fanstatic.insert(
+						document.querySelector('#container'), // target element 
+						'./assets/templates/layout_page.html',
+						{
+							data: {
+								host_env: host_env,
+							}
+						}
+					)
+				});
+			//});
 		</script>
 	</head>
 
@@ -105,7 +113,7 @@
 	<main id="page"></main>
 	
 	<script>
-		return async function(roof) {
+		return async function(roof, data) {
 			const homepageBox = roof.querySelector('#homepage')
 			const pageBox = roof.querySelector('#page')
 
@@ -123,7 +131,11 @@
 				homepageBox.parentElement.removeChild(homepageBox)
 
 				if (window.location.pathname.includes('/designs')){	
-					await fanstatic.insert(pageBox, './assets/templates/page_designs.html')
+					await fanstatic.insert(pageBox, './assets/templates/page_designs.html', {
+						data: {
+							design_base_uri: data.host_env.design_base_uri,
+						}
+					})
 				}
 				else if (window.location.pathname.includes('/showcases')){
 					await fanstatic.insert(pageBox, './assets/templates/page_showcases.html')
@@ -262,10 +274,10 @@ We try to make this engine scalable for typical frontend use cases like cms webs
 		roof.querySelectorAll('img').forEach(n => n.style.width = '30px')
 		var newHomes = fanstatic.adoptSiblings(
 			roof.querySelectorAll('p'),
-			function(){ return st.parseHTML('<div class="card p-3 mb-3" data-command-onrender="viewport-enter-animate" data-visual-hidden data-visual-animation="fadeInRightBig"></div>') },
-			function(){ return st.parseHTML('<div class=""></div>') })	
+			function(){ return fanstatic.parseHTML('<div class="card p-3 mb-3" data-command-onrender="viewport-enter-animate" data-visual-hidden data-visual-animation="fadeInRightBig"></div>') },
+			function(){ return fanstatic.parseHTML('<div class=""></div>') })	
 		roof.append(newHomes)
-		roof.querySelectorAll('p').forEach(e => st.replaceWithChildren(e, document.createElement('div')))
+		roof.querySelectorAll('p').forEach(e => fanstatic.replaceWithChildren(e, document.createElement('div')))
 
 		// roof.querySelectorAll('ul').forEach(n => n.classList.add('list-unstyled'))
 		
@@ -277,7 +289,7 @@ We try to make this engine scalable for typical frontend use cases like cms webs
 		// 		span: li.querySelector('span')
 		// 	}
 			
-			// let row = st.parseHTML('<div class="row"><div class="col" style="width:70px;"></div><div class="col"><div></div><div></div></div></div>').firstChild
+			// let row = fanstatic.parseHTML('<div class="row"><div class="col" style="width:70px;"></div><div class="col"><div></div><div></div></div></div>').firstChild
 			// console.log(row.firstChild)
 			// row.firstChild.appendChild(parts.img)
 			// row.lastChild.firstChild.appendChild(parts.strong)
@@ -313,8 +325,8 @@ Quick and ready to use templates for your page, such as adding back-to-top butto
 		roof.querySelector('h2').setAttribute('data-visual-hidden', '')
 		var newHomes = fanstatic.adoptSiblings(
 			roof.querySelectorAll('h3'),
-			function(){ return st.parseHTML('<div class="card card-body mb-3" data-command-onrender="viewport-enter-animate" data-visual-hidden data-visual-animation="fadeInRightBig"></div>') },
-			function(){ return st.parseHTML('<div class=""></div>') })
+			function(){ return fanstatic.parseHTML('<div class="card card-body mb-3" data-command-onrender="viewport-enter-animate" data-visual-hidden data-visual-animation="fadeInRightBig"></div>') },
+			function(){ return fanstatic.parseHTML('<div class=""></div>') })
 		roof.append(newHomes)
 		roof.querySelector('p').classList.add('text-center')
 	}
