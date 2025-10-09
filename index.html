@@ -77,7 +77,7 @@
 				
 				await fanstatic.insert(
 					document.querySelector('#container'), // target element 
-					'./assets/component/layout_page.html'
+					'./assets/templates/layout_page.html'
 				)
 			})
 		</script>
@@ -87,7 +87,7 @@
 		<div id="container"></div>
 		<div id="fanstatic-area">
 
-<template data-url="./assets/component/layout_page.html">
+<template data-url="./assets/templates/layout_page.html">
 	<section id="headbar" class="fixed-top border-bottom">
 		<div class="container"></div>
 	</section>
@@ -109,7 +109,7 @@
 			const homepageBox = roof.querySelector('#homepage')
 			const pageBox = roof.querySelector('#page')
 
-			await fanstatic.insert(roof.querySelector('#headbar > .container'), './assets/component/section_header.html')
+			await fanstatic.insert(roof.querySelector('#headbar > .container'), './assets/templates/section_header.html')
 
 			if (window.location.href == fanstatic.settings.base_url || window.location.href == fanstatic.settings.base_url + 'index.html') {	
 				pageBox.parentElement.removeChild(pageBox)
@@ -123,25 +123,25 @@
 				homepageBox.parentElement.removeChild(homepageBox)
 
 				if (window.location.pathname.includes('/designs')){	
-					await fanstatic.insert(pageBox, './assets/component/page_designs.html')
+					await fanstatic.insert(pageBox, './assets/templates/page_designs.html')
 				}
 				else if (window.location.pathname.includes('/showcases')){
-					await fanstatic.insert(pageBox, './assets/component/page_showcases.html')
+					await fanstatic.insert(pageBox, './assets/templates/page_showcases.html')
 				}
 				else if (window.location.pathname.includes('/docs')){
-					await fanstatic.insert(pageBox, './assets/component/page_docs.html')
+					await fanstatic.insert(pageBox, './assets/templates/page_docs.html')
 				}
 				else if (window.location.pathname.includes('/blog')){
-					await fanstatic.insert(pageBox, './assets/component/page_blog.html')
+					await fanstatic.insert(pageBox, './assets/templates/page_blog.html')
 				}
 			}
 
-			fanstatic.append(roof, './assets/component/section_footer.html')
+			fanstatic.append(roof, './assets/templates/section_footer.html')
 		}
 	</script>
 </template>
 
-<template data-url="./assets/component/section_header.html">
+<template data-url="./assets/templates/section_header.html">
 	<header class="d-flex flex-wrap align-items-start justify-content-center justify-content-md-between py-3">
 		<div class="col-12 col-md-4 mb-2 mb-md-0 text-center text-md-start">
 			<a href="/" class="d-inline-flex link-body-emphasis text-decoration-none">
@@ -321,7 +321,7 @@ Quick and ready to use templates for your page, such as adding back-to-top butto
 </script>
 </template>
 
-<template data-url="./assets/component/section_footer.html">
+<template data-url="./assets/templates/section_footer.html">
 	<footer id="footer" class="container">
 		<div class="py-4 py-md-5 px-4 px-md-3 text-body-secondary">
 			<div class="text-center">
