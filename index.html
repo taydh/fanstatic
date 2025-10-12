@@ -94,11 +94,12 @@
 				fanstatic.insertStyles(['assets/css/stbs-5-3.css']);
 				window.addEventListener('fanstatic.load', init);
 				window.addEventListener('fanstatic.visual.load', applyVisual);
-			
-				const prom = fanstatic.insertScripts([
-					fanstatic_base_dir + '/fanstatic_visual.js?_=2',
-					fanstatic_base_dir + '/fanstatic.js?_=1',
-				]);
+				document.addEventListener('DOMContentLoaded', function(){
+					fanstatic.insertScripts([
+						fanstatic_base_dir + '/fanstatic_visual.js?_=2',
+						fanstatic_base_dir + '/fanstatic.js?_=1',
+					]);	
+				});
 			}
 		</script>
 	</head>
