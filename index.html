@@ -28,7 +28,7 @@
 		
 		<script>
 			/*
-			 * this page is part of fanstatic development, hence fanstatic loaded dynamically
+			 * this page is part of fanstatic development, hence fanstatic loaded dynamically and the slowest way
 			 * for usual use where fanstatic loaded normally in <head>, see https://fanstatic.annexdesk.com/docs
 			 * */
 			{
@@ -71,9 +71,9 @@
 				 * */
 				
 				const host_env_list = {
-					'https://fanstatic.annexdesk.com': { base_uri:'/', designs_base_uri:'https://park.annexdesk.com/resources/fanstatic-designs/' },
+					'https://fanstatic.annexdesk.com': { base_uri:'/', designs_base_uri:'https://park.annexdesk.com/fanstatic-designs/designs/' },
 					'http://localhost/fanstatic3': { base_uri:'/fanstatic3/', design_base_uri:'http://localhost/fanstatic-companion/designs/' },
-					'https://fanstatic3.test': { base_uri:'/', design_base_uri:'http://fanstatic3.test/fanstatic-companion/designs/' },
+					'https://fanstatic3.test': { base_uri:'/', design_base_uri:'https://park.annexdesk.com/fanstatic-designs/designs/' },
 				};
 				const hosts = Object.keys(host_env_list);
 
