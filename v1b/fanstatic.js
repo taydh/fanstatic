@@ -26,7 +26,7 @@
 		vs = (vn - diff) < vs ? vs: vn
 
 		return {key: tail_key, value: String(vs)}
-	}
+	};
 
 	const _parseData = function(text, type) {
 		switch (type) {
@@ -35,9 +35,13 @@
 		}
 		
 		return null;
-	}
+	};
 
-	var fanstatic = {
+	if (!window.fanstatic) {
+		var fanstatic = null; // fanstatic might be already defined in fanstatic_headjack.js
+	}
+	
+	fanstatic = {
 		settings: {
 			base_url: '/',
 			local_area_id: 'fanstatic-area',

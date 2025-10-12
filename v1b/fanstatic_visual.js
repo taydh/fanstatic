@@ -77,6 +77,6 @@
 		}));
 	}
 	
-	if (fanstatic) init();
+	if (fanstatic && fanstatic.settings) init();
 	else window.addEventListener('fanstatic.load', init);
 }
