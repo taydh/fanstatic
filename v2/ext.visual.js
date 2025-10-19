@@ -15,17 +15,26 @@
 		if (animation) {
 			fanstatic.visual.onEnterViewport(elem, function(){
 				_turnCount++;
-				window.setTimeout(function(){
-					_turnCount--;
+				
+				let animate = function(){
 					let classes = [
 						'animate__animated',
 						'animate__' + animation,
-					]
+					];
+					
+					_turnCount--;
 
-					elem.classList.add(...classes)
-					elem.removeAttribute('data-visual-hidden')
-					elem.removeAttribute('data-visual-animation')
-				}, (_turnCount - 1) * fanstatic.visual.settings.turn_delay)
+					elem.classList.add(...classes);
+					elem.removeAttribute('data-visual-hidden');
+					elem.removeAttribute('data-visual-animation');
+				};
+				
+				if (fanstatic.visual.settings.turn_delay > 0) {
+					window.setTimeout(animate, (_turnCount - 1) * fanstatic.visual.settings.turn_delay);
+				}
+				else {
+					animate();
+				}
 			})
 		}
 		else {

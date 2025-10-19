@@ -1,0 +1,16 @@
+<button data-component="button.basic"></button>
+
+<script>
+	const controller = {};
+
+	return {
+		onload: function(root, data) {
+			let component = root.children[0];
+
+			component.innerHTML = data.label
+
+			controller.element = component;
+		},
+		controller: controller
+	}
+</script>

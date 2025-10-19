@@ -24,6 +24,32 @@
 			return html; // not parsed
 		},
 
+		/* classfix */
+
+		applyClassFix: function(roof) {
+			let elems = []
+
+			Object.entries(this.settings.class_fix).forEach(entry => {
+				roof.querySelectorAll(entry[0]).forEach(elem => {
+					if (!elem.dataset.classFixed) {
+						elems.push(elem)
+
+						let cls = !Array.isArray(entry[1]) ? entry[1] : entry[1][0];
+						let stl = !Array.isArray(entry[1]) ? null : entry[1][1];
+
+						if (cls) elem.classList.add(...cls.split(' '));
+						if (stl) elem.setAttribute('style', (elem.getAttribute('style') || '') + ';' + stl);
+					}
+				})
+			})
+
+			for (let elem of elems) {
+				elem.dataset.classFixed = "1"
+			}
+
+			if (this.settings.log_render) console.log(`🎨 class fix applied:`, elems.length)
+		},
+
 		/* adoption */
 
 		replaceWithChildren: function(oldParent, wrapper) {

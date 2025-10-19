@@ -1,0 +1,31 @@
+<section data-component="section.simple-unit"></section>
+
+<script>
+	const design = fanstatic.design;
+	let controller = {}
+
+	return {
+		onload: function (roof, data) {
+			const section = roof.children[0];
+
+			section.innerHTML = fanstatic.renderJhtm([
+				design.container({
+					items: [
+						design.wrapper({
+							items: [
+								design.unit({
+									head: data.head,
+									body: data.body,
+									foot: data.foot
+								})
+							]
+						})
+					]
+				})
+			]);
+
+			controller.element = section;
+		},
+		controller: controller
+	};
+</script>

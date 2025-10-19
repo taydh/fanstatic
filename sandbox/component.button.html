@@ -64,21 +64,20 @@
 					fanstatic.insertScripts([
 						fanstatic_base_dir + '/themes/sandbox/sandbox.js?' + fanstatic.tail(),
 						document.baseURI + '/sandbox/component.classfix.js?' + fanstatic.tail(),
-						document.baseURI + '/sandbox/component.section.classfix.js?' + fanstatic.tail(),
-						document.baseURI + '/sandbox/component.section.simple-unit.classfix.js?' + fanstatic.tail(),
+						document.baseURI + '/sandbox/component.button.classfix.js?' + fanstatic.tail(),
+						document.baseURI + '/sandbox/component.button.basic.classfix.js?' + fanstatic.tail(),
 					]);
 
 					const main = document.querySelector('main');
 					const design = fanstatic.design;
-					await fanstatic.insert(main, fanstatic_base_dir + '/component-themeable/section/simple-unit.html', {
+					
+					const r = await fanstatic.insert(main, fanstatic_base_dir + '/component-themeable/button/basic.html', {
 						data: {
-							head: {h1: 'Hello'},
-							body: design.unit({body:'World'}),
-							foot: 'Again!'
+							label: 'Hello',
 						}
 					});
 					
-					console.log(main.querySelector('section'));
+					r.controller.element.id = 'btn1'
 				}
 			}
 		</script>

@@ -31,9 +31,7 @@
 	</div>
 </div>
 
-<script>
-	//# sourceURL=page_templates.js`;
-	var stp = `
+<script type="text/plain">
 <div class="col-12 col-lg-6 mb-3">
 	<div class="card flex-row" 
 		data-template-onrender="viewport-enter-animate" 
@@ -62,11 +60,14 @@
 		</div>
 	</div>
 </div>
-`;
-		
+</script>
+
+<script>
+	//# sourceURL=page_templates.js`;
 	return function (roof, data, url) {
 		var cardGrid = roof.querySelector('.card-grid');
 		var designBaseUri = data.design_base_uri;
+		var stp = roof.querySelector('script').innerText;
 
 		// setup modal asynchronosly
 		const webframeModalArea = roof.querySelector('#webframe-modal-area')

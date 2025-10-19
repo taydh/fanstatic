@@ -1,15 +1,11 @@
 {
+	const _toAttributesString = function(attributes) {
+		return Object.entries(attributes).map(([k,v]) => `${k}="${v}"`).join();
+	}
+
 	fanstatic.design = {
-		wrapper: function(model, attributes = {}) {
-			let tagFill = ('div ' + Object.entries(attributes).map(([k,v]) => `${k}="${v}"`).join()) + ' data-design="wrapper"';
-			let result = {};
-
-			result[tagFill] = Array.isArray(model) ? model : model.items;
-
-			return result;
-		},
 		unit: function(model, attributes = {}) {
-			let tagFill = ('div ' + Object.entries(attributes).map(([k,v]) => `${k}="${v}"`).join()) + ' data-design="unit"';
+			let tagFill = ('div data-design="unit" ' + _toAttributesString(attributes));
 			let result = {};
 
 			result[tagFill] = [];
@@ -21,7 +17,23 @@
 			return result;
 		},
 		axis: function(model, attributes = {}) {
-			let tagFill = ('div ' + Object.entries(attributes).map(([k,v]) => `${k}="${v}"`).join()) + ' data-design="axis"';
+			let tagFill = ('div data-design="axis" ' +  _toAttributesString(attributes));
+			let result = {};
+
+			result[tagFill] = Array.isArray(model) ? model : model.items;
+
+			return result;
+		},
+		wrapper: function(model, attributes = {}) {
+			let tagFill = ('div data-design="wrapper" ' +  _toAttributesString(attributes));
+			let result = {};
+
+			result[tagFill] = Array.isArray(model) ? model : model.items;
+
+			return result;
+		},
+		container: function(model, attributes = {}) {
+			let tagFill = ('div data-design="container" ' +  _toAttributesString(attributes));
 			let result = {};
 
 			result[tagFill] = Array.isArray(model) ? model : model.items;
