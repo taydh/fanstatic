@@ -2,6 +2,13 @@
 	const _elementStorage = new WeakMap();
 
 	Object.assign(fanstatic, {
+		/* general functions */
+		
+		copyValue: function(inputElem) {
+			inputElem.select();
+			document.execCommand('copy');
+		},
+
 		getFirstElement: function(elementOrFragment) {
 			return elementOrFragment.firstChild ? elementOrFragment.querySelector('*:not(:has(*))') : elementOrFragment;
 		},
@@ -77,11 +84,6 @@
 			return tpl.content
 		},
 
-		copyValue: function(inputElem) {
-			inputElem.select();
-			document.execCommand('copy');
-		},
-
 		/* element storage */
 
 		elementStorage: {
@@ -102,6 +104,6 @@
 	});
 	
 	window.dispatchEvent(new CustomEvent('fanstatic.tools.load', {
-		detail: fanstatic.design
+		detail: fanstatic
 	}));
 }
