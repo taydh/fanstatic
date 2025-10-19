@@ -1,15 +1,16 @@
 <section data-component="section.simple-unit"></section>
 
 <script>
+	const design = fanstatic.design;
 	return function (roof, data) {
 		let section = roof.children[0];
 
 		if (data.id) section.id = data.id;
 
 		section.innerHTML = fanstatic.renderJhtm([
-			fanstatic.axis({
+			design.wrapper({
 				items: [
-					fanstatic.unit({
+					design.unit({
 						head: data.head,
 						body: data.body,
 						foot: data.foot

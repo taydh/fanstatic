@@ -59,14 +59,18 @@
 						log_render: false,
 					})
 
-					fanstatic.insert(document.querySelector('main'), fanstatic_base_dir + '/component/sections/simple-unit.html', {
+					const main = document.querySelector('main');
+					const design = fanstatic.design;
+					await fanstatic.insert(main, fanstatic_base_dir + '/component/sections/simple-unit.html', {
 						data: {
 							id: 'section-1',
 							head: {h1: 'Hello'},
-							body: fanstatic.unit({body:'World'}),
+							body: design.unit({body:'World'}),
 							foot: 'Again!'
 						}
-					})
+					});
+					
+					console.log(main.querySelector('section'));
 				}
 			}
 		</script>
