@@ -11,26 +11,27 @@
 		<script>
 			var fanstatic_engine_dir = '';
 			var fanstatic_base_dir = '';
-			var host_env = {};
+			let origin = window.location.origin;
+			let host_env = null;
 
-			{ //\\//\\
-				/* retargeting base URI */
-				const host_env_list = {
-					'https://fanstatic.annexdesk.com': { base_uri:'/', designs_base_uri:'https://park.annexdesk.com/resources/fanstatic-designs/' },
-					'https://taydh.github.io/qpanel': { base_uri:'/qpanel/', design_base_uri:'https://park.annexdesk.com/resources/fanstatic-designs/' },
-					'http://localhost/fanstatic3': { base_uri:'/fanstatic3/', design_base_uri:'http://localhost/fanstatic-designs/' },
-				};
-				const hosts = Object.keys(host_env_list);
+			/* 
+			 * environment selection 
+			 * */
 
-				for (let i = 0; i < hosts.length; i++) {
-					if (window.location.href.startsWith(hosts[i])) {
-						host_env = host_env_list[hosts[i]]
-						break;
-					}
-				}
+			// relative origin
+			[
+				'http://localhost/fanstatic3'
+			].forEach(path => {
+				if (window.location.href.startsWith(path)) origin = path;
+			});
 
-				document.head.querySelector('base').href = host_env.base_uri; // make base URI absolute
-				fanstatic_base_dir = fanstatic_engine_dir = document.baseURI + 'v1b'
+			// absolute origin
+			if (!host_env) {
+				host_env = await fanstatic.fetchJson(origin + '/env.' + origin.replace(/[:/]/g, "_") + '.json');
+			}
+
+			document.head.querySelector('base').href = host_env.base_uri; // make base URI absolute
+			fanstatic_base_dir = fanstatic_engine_dir = document.baseURI + 'v2'
 
 				const prom = headjack.insertScripts([
 					fanstatic_base_dir + '/fanstatic.js?_=1',

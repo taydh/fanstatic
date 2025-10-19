@@ -1,7 +1,7 @@
 <div class="container">
 	<h1>Posts</h1>
 
-	<div data-command-insert-model>
+	<div data-template-insert-model>
 	<template>
 		{{#posts}}
 		<div>
@@ -18,6 +18,11 @@
 
 <script>
 	return async function(roof, data) {
-		roof.querySelector('div[data-command-insert-model]')._model = data.settings
+		fanstatic.store(
+			roof.querySelector('div[data-template-insert-model]'),
+			{
+				model: data.settings
+			}
+		);
 	}
 </script>

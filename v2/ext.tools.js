@@ -1,4 +1,6 @@
 {
+	const _elementStorage = new WeakMap();
+
 	Object.assign(fanstatic, {
 		/* TOOLS */
 		/* collect html tags */
@@ -76,6 +78,18 @@
 		copyValue: function(inputElem) {
 			inputElem.select();
 			document.execCommand('copy');
+		},
+
+		/* element storage */
+
+		store: function(target, object) {
+			let store = this.gather(target);
+			Object.assign(store, object);
+			_elementStorage.set(target, store);
+		},
+
+		gather: function(target) {
+			return _elementStorage.get(target) || {};
 		},
 	});
 	
