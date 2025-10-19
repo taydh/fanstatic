@@ -31,75 +31,72 @@
 			 * this page is part of fanstatic development, hence fanstatic loaded dynamically and the slowest way
 			 * for usual use where fanstatic loaded normally in <head>, see https://fanstatic.annexdesk.com/docs
 			 * */
-
 			{
 				let fanstatic_engine_dir = '';
 				let fanstatic_base_dir = '';
-				let host_env = {};
-			
-				/* 
-				 * environment selection 
-				 * */
+				let origin = window.location.origin;
+				let host_env = null;
 				
-				const host_env_list = {
-					'https://fanstatic.annexdesk.com': { base_uri:'/', design_base_uri:'https://park.annexdesk.com/fanstatic-designs/designs/' },
-					'http://localhost/fanstatic3': { base_uri:'/fanstatic3/', design_base_uri:'http://localhost/fanstatic-companion/designs/' },
-					'https://fanstatic3.test': { base_uri:'/', design_base_uri:'https://park.annexdesk.com/fanstatic-designs/designs/' },
-				};
-				const hosts = Object.keys(host_env_list);
+				document.addEventListener('DOMContentLoaded', async function () {
+					// relative origin
+					[
+						'http://localhost/fanstatic3'
+					].forEach(path => {
+						if (window.location.href.startsWith(path)) origin = path;
+					});
 
-				for (let i = 0; i < hosts.length; i++) {
-					if (window.location.href.startsWith(hosts[i])) {
-						host_env = host_env_list[hosts[i]]
-						break;
+					// absolute origin
+					if (!host_env) {
+						host_env = await fanstatic.fetchJson(origin + '/env.' + origin.replace(/[:/]/g, "_") + '.json');
 					}
-				}
 
-				document.head.querySelector('base').href = host_env.base_uri; // make base URI absolute
-				fanstatic_base_dir = fanstatic_engine_dir = document.baseURI + 'v2'
-				
-				/* listener */
-				
-				const asyncCounter = fanstatic.asyncCounter(6, () => init());
-				const init = async function(){
-					Object.assign(fanstatic.settings, {
-						base_url: document.baseURI,
-						tail_span: '5s',
-						log_render: false,
-					})
-
-					fanstatic.append(
-						document.body, fanstatic_base_dir + '/component/buttons/back-to-top/back-to-top.html',
-						{ tail_key: null }
-					)
+					document.head.querySelector('base').href = host_env.base_uri; // make base URI absolute
+					fanstatic_base_dir = fanstatic_engine_dir = document.baseURI + 'v2'
 					
-					Object.assign(fanstatic.visual.settings, {
-						log_render: true,
-						turn_delay: 300
-					})
+					/* let's go! */
+					start();
+				});
+				
+				let start = function(){
+					const asyncCounter = fanstatic.asyncCounter(6, () => init());
+					const init = async function(){
+						Object.assign(fanstatic.settings, {
+							base_url: document.baseURI,
+							tail_span: '5s',
+							log_render: false,
+						})
 
-					await fanstatic.insert(
-						document.querySelector('#container'), // target element 
-						'./assets/templates/layout_page.html',
-						{
-							data: {
-								host_env: host_env,
+						fanstatic.append(
+							document.body, fanstatic_base_dir + '/component/buttons/back-to-top/back-to-top.html',
+							{ tail_key: null }
+						)
+
+						Object.assign(fanstatic.visual.settings, {
+							log_render: true,
+							turn_delay: 300
+						})
+
+						await fanstatic.insert(
+							document.querySelector('#container'), // target element 
+							'./assets/templates/layout_page.html',
+							{
+								data: {
+									host_env: host_env,
+								}
 							}
-						}
-					)
-				}
-				
-				/* 
-				 * load dynamic libraries and assets
-				 * */
-				
-				window.addEventListener('fanstatic.visual.load', () => asyncCounter.done());
-				window.addEventListener('fanstatic.design.load', () => asyncCounter.done());
-				window.addEventListener('fanstatic.structured_html.load', () => asyncCounter.done());
-				window.addEventListener('fanstatic.template.load', () => asyncCounter.done());
-				window.addEventListener('fanstatic.tools.load', () => asyncCounter.done());
-				
-				document.addEventListener('DOMContentLoaded', function(){
+						)
+					}
+
+					/* 
+					 * load dynamic libraries and assets
+					 * */
+
+					window.addEventListener('fanstatic.visual.load', () => asyncCounter.done());
+					window.addEventListener('fanstatic.design.load', () => asyncCounter.done());
+					window.addEventListener('fanstatic.structured_html.load', () => asyncCounter.done());
+					window.addEventListener('fanstatic.template.load', () => asyncCounter.done());
+					window.addEventListener('fanstatic.tools.load', () => asyncCounter.done());
+
 					fanstatic.insertScripts([
 						fanstatic_base_dir + '/ext.visual.js?_=2',
 						fanstatic_base_dir + '/ext.design.js?_=1',
@@ -107,7 +104,7 @@
 						fanstatic_base_dir + '/ext.tools.js?_=1',
 						fanstatic_base_dir + '/ext.template.js?_=1',
 					]).then(() => asyncCounter.done());	
-				});
+				}
 			}
 		</script>
 	</head>
