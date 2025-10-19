@@ -18,7 +18,7 @@
 
 <script>
 	return async function(roof, data) {
-		fanstatic.store(
+		fanstatic.elementStorage.set(
 			roof.querySelector('div[data-template-insert-model]'),
 			{
 				model: data.settings

@@ -288,10 +288,11 @@ We try to make this engine scalable for typical frontend use cases like cms webs
 		roof.querySelectorAll('img').forEach(n => n.style.width = '30px')
 		var newHomes = fanstatic.adoptSiblings(
 			roof.querySelectorAll('p'),
-			function(){ return fanstatic.parseHTML('<div class="card p-3 mb-3" data-template-onrender="viewport-enter-animate" data-visual-hidden data-visual-animation="fadeInRightBig"></div>') },
-			function(){ return fanstatic.parseHTML('<div class=""></div>') })	
+			function(){ return fanstatic.parseHTML('<div data-adoption="parent" class="card p-3 mb-3" data-template-onrender="viewport-enter-animate" data-visual-hidden data-visual-animation="fadeInRightBig"></div>', true) },
+			function(){ return fanstatic.parseHTML('<div data-adoption="grandparent"></div>', true) })
 		roof.append(newHomes)
-		roof.querySelectorAll('p').forEach(e => fanstatic.replaceWithChildren(e, document.createElement('div')))
+		console.log(roof.innerHTML)
+		roof.querySelectorAll('p').forEach(e => fanstatic.replaceWithChildren(e, fanstatic.parseHTML('<div data-adoption="wrapper"></div>', true)))
 
 		// roof.querySelectorAll('ul').forEach(n => n.classList.add('list-unstyled'))
 		
@@ -339,8 +340,8 @@ Quick and ready to use templates for your page, such as adding back-to-top butto
 		roof.querySelector('h2').setAttribute('data-visual-hidden', '')
 		var newHomes = fanstatic.adoptSiblings(
 			roof.querySelectorAll('h3'),
-			function(){ return fanstatic.parseHTML('<div class="card card-body mb-3" data-template-onrender="viewport-enter-animate" data-visual-hidden data-visual-animation="fadeInRightBig"></div>') },
-			function(){ return fanstatic.parseHTML('<div class=""></div>') })
+			function(){ return fanstatic.parseHTML('<div class="card card-body mb-3" data-template-onrender="viewport-enter-animate" data-visual-hidden data-visual-animation="fadeInRightBig"></div>', true) },
+			function(){ return fanstatic.parseHTML('<div class=""></div>', true) })
 		roof.append(newHomes)
 		roof.querySelector('p').classList.add('text-center')
 	}

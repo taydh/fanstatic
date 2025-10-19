@@ -2,26 +2,30 @@
 	const _elementStorage = new WeakMap();
 
 	Object.assign(fanstatic, {
-		/* TOOLS */
-		/* collect html tags */
+		getFirstElement: function(elementOrFragment) {
+			return elementOrFragment.firstChild ? elementOrFragment.querySelector('*:not(:has(*))') : elementOrFragment;
+		},
 
-		parseHTML: function (html) {
+		parseHTML: function (html, extractFirstElement = false) {
 			if (typeof html == 'string') {
 				var t = document.createElement('template');
 				t.innerHTML = html;
-				return t.content;
+
+				return extractFirstElement ? this.getFirstElement(t.content) : t.content;
 			}
 
-			return html; // is element
+			return html; // not parsed
 		},
 
-		replaceWithChildren: function(oldParent, newParent) {
-			if (!newParent) {
+		/* adoption */
+
+		replaceWithChildren: function(oldParent, wrapper) {
+			if (!wrapper) {
 				oldParent.after(...oldParent.childNodes)
 			}
 			else {
-				newParent.append(...oldParent.childNodes)
-				oldParent.after(newParent)
+				wrapper.append(...oldParent.childNodes)
+				oldParent.after(wrapper)
 			}
 			
 			oldParent.remove()
@@ -49,28 +53,26 @@
 		},
 
 		adoptSiblings: function(siblingGroupsOrFirstChilds, fnParent = function(){ return document.createElement('div') }, fnGrandParent) {
-			var grandParentSurround, grandParentElement
+			var grandParentElement
 			var tpl = document.createElement('template')
 			var siblingGroups = Array.isArray(siblingGroupsOrFirstChilds)
 				? siblingGroupsOrFirstChilds 
 				: this.getSiblingGroups(siblingGroupsOrFirstChilds);
 
 			if (fnGrandParent) {
-				grandParentSurround = fnGrandParent();
-				grandParentElement = grandParentSurround.firstChild ? grandParentSurround.querySelector('*:not(:has(*))') : grandParentSurround
+				grandParentElement = fnGrandParent();
 			}
 
 			for (let siblings of siblingGroups) {
-				let parentSurround = fnParent();
-				let parentElement = parentSurround.firstChild ? parentSurround.querySelector('*:not(:has(*))') : parentSurround
+				let parentElement = fnParent();
 				for (let c of siblings) { parentElement.append(c); }
-				if (grandParentSurround) {
-					grandParentElement.append(parentSurround);
+				if (grandParentElement) {
+					grandParentElement.append(parentElement);
 				}
-				else tpl.content.append(parentSurround);
+				else tpl.content.append(parentElement);
 			}
 
-			if (grandParentSurround) tpl.content.append(grandParentSurround)
+			if (grandParentElement) tpl.content.append(grandParentElement)
 
 			return tpl.content
 		},
@@ -82,14 +84,20 @@
 
 		/* element storage */
 
-		store: function(target, object) {
-			let store = this.gather(target);
-			Object.assign(store, object);
-			_elementStorage.set(target, store);
-		},
+		elementStorage: {
+			set: function(target, object) {
+				let store = this.get(target);
+				Object.assign(store, object);
+				_elementStorage.set(target, store);
+			},
 
-		gather: function(target) {
-			return _elementStorage.get(target) || {};
+			get: function(target) {
+				return _elementStorage.get(target) || {};
+			},
+
+			reset: function(target) {
+				_elementStorage.delete(target);
+			}
 		},
 	});
 	

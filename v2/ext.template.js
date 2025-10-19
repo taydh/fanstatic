@@ -335,13 +335,13 @@
 			'data-template-insert-model': async function(fanstatic, target, query) {
 				await fanstatic.runCommand(target, 'insert-model', {
 					template: query || target.querySelector('template'),
-					data: fanstatic.gather(target).model || null,
+					data: fanstatic.elementStorage.get(target).model || null,
 				})
 			},
 			'data-template-replace-model': async function(fanstatic, target, query) {
 				await fanstatic.runCommand(target, 'replace-model', {
 					template: query || target.querySelector('template'),
-					data:  fanstatic.gather(target).model || null,
+					data:  fanstatic.elementStorage.get(target).model || null,
 				})
 			},
 			'data-template-insert-markdown': async function(fanstatic, target, query) {
