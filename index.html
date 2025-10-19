@@ -24,48 +24,19 @@
 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css">
 		<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
 		
-		<script src="https://fanstatic.annexdesk.com/v1b/fanstatic_headjack.js"></script>
+		<script src="https://fanstatic.annexdesk.com/v2/fanstatic.js"></script>
 		
 		<script>
 			/*
 			 * this page is part of fanstatic development, hence fanstatic loaded dynamically and the slowest way
 			 * for usual use where fanstatic loaded normally in <head>, see https://fanstatic.annexdesk.com/docs
 			 * */
+
 			{
 				let fanstatic_engine_dir = '';
 				let fanstatic_base_dir = '';
 				let host_env = {};
-
-				const init = async function(){
-					Object.assign(fanstatic.settings, {
-						base_url: document.baseURI,
-						tail_span: '5s',
-						log_render: false,
-					})
-
-					fanstatic.append(
-						document.body, fanstatic_base_dir + '/component/buttons/back-to-top/back-to-top.html',
-						{ tail_key: null }
-					)
-				}
-				
-				const applyVisual = async function(){
-					Object.assign(fanstatic.visual.settings, {
-						log_render: true,
-						turn_delay: 300
-					})
-
-					await fanstatic.insert(
-						document.querySelector('#container'), // target element 
-						'./assets/templates/layout_page.html',
-						{
-							data: {
-								host_env: host_env,
-							}
-						}
-					)
-				}
-				
+			
 				/* 
 				 * environment selection 
 				 * */
@@ -85,20 +56,57 @@
 				}
 
 				document.head.querySelector('base').href = host_env.base_uri; // make base URI absolute
-				fanstatic_base_dir = fanstatic_engine_dir = document.baseURI + 'v1b'
+				fanstatic_base_dir = fanstatic_engine_dir = document.baseURI + 'v2'
+				
+				/* listener */
+				
+				const asyncCounter = fanstatic.asyncCounter(6, () => init());
+				const init = async function(){
+					Object.assign(fanstatic.settings, {
+						base_url: document.baseURI,
+						tail_span: '5s',
+						log_render: false,
+					})
+
+					fanstatic.append(
+						document.body, fanstatic_base_dir + '/component/buttons/back-to-top/back-to-top.html',
+						{ tail_key: null }
+					)
+					
+					Object.assign(fanstatic.visual.settings, {
+						log_render: true,
+						turn_delay: 300
+					})
+
+					await fanstatic.insert(
+						document.querySelector('#container'), // target element 
+						'./assets/templates/layout_page.html',
+						{
+							data: {
+								host_env: host_env,
+							}
+						}
+					)
+				}
 				
 				/* 
 				 * load dynamic libraries and assets
 				 * */
 				
-				fanstatic.insertStyles(['assets/css/stbs-5-3.css']);
-				window.addEventListener('fanstatic.load', init);
-				window.addEventListener('fanstatic.visual.load', applyVisual);
+				window.addEventListener('fanstatic.visual.load', () => asyncCounter.done());
+				window.addEventListener('fanstatic.design.load', () => asyncCounter.done());
+				window.addEventListener('fanstatic.structured_html.load', () => asyncCounter.done());
+				window.addEventListener('fanstatic.template.load', () => asyncCounter.done());
+				window.addEventListener('fanstatic.tools.load', () => asyncCounter.done());
+				
 				document.addEventListener('DOMContentLoaded', function(){
 					fanstatic.insertScripts([
-						fanstatic_base_dir + '/fanstatic_visual.js?_=2',
-						fanstatic_base_dir + '/fanstatic.js?_=1',
-					]);	
+						fanstatic_base_dir + '/ext.visual.js?_=2',
+						fanstatic_base_dir + '/ext.design.js?_=1',
+						fanstatic_base_dir + '/ext.structured_html.js?_=1',
+						fanstatic_base_dir + '/ext.tools.js?_=1',
+						fanstatic_base_dir + '/ext.template.js?_=1',
+					]).then(() => asyncCounter.done());	
 				});
 			}
 		</script>
@@ -224,11 +232,11 @@
 </template>
 
 <template data-url="./content/services3.html">
-- h2 data-command-onrender="viewport-enter-animate" data-visual-hidden data-visual-animation="slideInUp": OUR SERVICES
+- h2 data-template-onrender="viewport-enter-animate" data-visual-hidden data-visual-animation="slideInUp": OUR SERVICES
 - div class="row":
 {{#items}}
   - div class="col-md-4":
-    - div class="card card-body mb-3" data-command-onrender="viewport-enter-animate" data-visual-hidden data-visual-animation="slideInUp":
+    - div class="card card-body mb-3" data-template-onrender="viewport-enter-animate" data-visual-hidden data-visual-animation="slideInUp":
       - div class="text-center":
         - img style="width:60px" class="mb-3" src="https://park.annexdesk.com/resources/svgrepo/{{img}}": 
         - h3 class="mb-3": {{title}}
@@ -281,13 +289,13 @@ We try to make this engine scalable for typical frontend use cases like cms webs
 
 <script>
 	return async function (roof, nodes, data, url) {
-		roof.querySelector('h2').setAttribute('data-command', 'viewport-enter-animate')
+		roof.querySelector('h2').setAttribute('data-template', 'viewport-enter-animate')
 		roof.querySelector('h2').setAttribute('data-visual-animation', 'slideInUp')
 		roof.querySelector('h2').setAttribute('data-visual-hidden', '')
 		roof.querySelectorAll('img').forEach(n => n.style.width = '30px')
 		var newHomes = fanstatic.adoptSiblings(
 			roof.querySelectorAll('p'),
-			function(){ return fanstatic.parseHTML('<div class="card p-3 mb-3" data-command-onrender="viewport-enter-animate" data-visual-hidden data-visual-animation="fadeInRightBig"></div>') },
+			function(){ return fanstatic.parseHTML('<div class="card p-3 mb-3" data-template-onrender="viewport-enter-animate" data-visual-hidden data-visual-animation="fadeInRightBig"></div>') },
 			function(){ return fanstatic.parseHTML('<div class=""></div>') })	
 		roof.append(newHomes)
 		roof.querySelectorAll('p').forEach(e => fanstatic.replaceWithChildren(e, document.createElement('div')))
@@ -333,12 +341,12 @@ Quick and ready to use templates for your page, such as adding back-to-top butto
 			
 <script>
 	return async function (roof, nodes) {
-		roof.querySelector('h2').setAttribute('data-command-onrender', 'viewport-enter-animate')
+		roof.querySelector('h2').setAttribute('data-template-onrender', 'viewport-enter-animate')
 		roof.querySelector('h2').setAttribute('data-visual-animation', 'slideInUp')
 		roof.querySelector('h2').setAttribute('data-visual-hidden', '')
 		var newHomes = fanstatic.adoptSiblings(
 			roof.querySelectorAll('h3'),
-			function(){ return fanstatic.parseHTML('<div class="card card-body mb-3" data-command-onrender="viewport-enter-animate" data-visual-hidden data-visual-animation="fadeInRightBig"></div>') },
+			function(){ return fanstatic.parseHTML('<div class="card card-body mb-3" data-template-onrender="viewport-enter-animate" data-visual-hidden data-visual-animation="fadeInRightBig"></div>') },
 			function(){ return fanstatic.parseHTML('<div class=""></div>') })
 		roof.append(newHomes)
 		roof.querySelector('p').classList.add('text-center')

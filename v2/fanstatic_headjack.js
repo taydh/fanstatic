@@ -1,4 +1,4 @@
-// fanstatic variable only consist of headjack functions
+// fanstatic variable but only consist of headjack functions
 var fanstatic = {
     asHeadjack: true,
 	insertScripts: function (urls, defaultProperties = { defer: 1 }) {
@@ -56,6 +56,15 @@ var fanstatic = {
 			el.as = item.as
 
 			document.head.appendChild(el)
+		}
+	},
+
+	asyncCounter : function(count, onComplete) {
+		return {
+			counter: count,
+			done: function() {
+				if (0 == --this.counter) onComplete();
+			}
 		}
 	},
 };

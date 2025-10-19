@@ -1,0 +1,80 @@
+<div data-component="cluster.shifter-basic">
+    <div class="fanstatic---units" style="display:none"></div>
+    <div class="fanstatic---columns"></div>
+    <div class="fanstatic---tabs"></div>
+    <div class="fanstatic---slides"></div>
+</div>
+
+<script>
+    var _container;
+    var _types = ['COLUMNS', 'TABS', 'SLIDES'];
+    var _props = {
+        currentType: '', 
+    };
+
+    var _modeColumns = {
+        render: function() {
+            _container.querySelector('.fanstatic---columns').append(..._container.querySelectorAll('.fanstatic---tabs .fanstatic---axis'))
+        },
+        returnUnits: function() {
+            _container.querySelector('.fanstatic---units').append(..._container.querySelectorAll('.fanstatic---tabs .fanstatic---axis'));
+        },
+    }
+
+    var _modeTabs = {
+        render: function() {
+            _container.querySelector('.fanstatic---tabs').append(..._container.querySelector('.fanstatic---units').childNodes)
+        },
+        returnUnits: function() {
+            _container.querySelector('.fanstatic---units').append(..._container.querySelectorAll('.fanstatic---tabs .fanstatic---axis'));
+        },
+    }
+
+    var _modeSlides = {
+        render: function() {
+            _container.querySelector('.fanstatic---slides').append(..._container.querySelector('.fanstatic---units').childNodes)
+        },
+        returnUnits: function() {
+            _container.querySelector('.fanstatic---units').append(..._container.querySelectorAll('.fanstatic---slides .fanstatic---axis'));
+        },
+    }
+
+    return {
+        onload: function(roof, data, url) {
+            _props = Object.assign(_props, data);
+            _container = roof.firstChild;
+        },
+        controller: {
+            prop: function(name, newValue){
+                if (undefined != typeof(newValue)) {
+                    _props[name] = newValue;
+                } 
+
+                return _props[name]; 
+            },
+            addAxis: function(name, label) {
+                _container.querySelector('.fanstatic---units').insertAdjacentHTML('beforeend',`<div class="fanstatic---axis" data-name="${name}" data-label="${label}"></div>`)
+
+                return this.getAxisElem(name);
+            },
+            getAxisElem: function(name){
+                return _container.querySelector(`.fanstatic---units > .fanstatic---axis[data-name=${name}]`)
+            },
+            render: function(type){
+                var mode = {
+                    COLUMNS: _modeColumns,
+                    TABS: _modeTabs,
+                    SLIDES: _modeSlides,
+                }
+
+                if (_props.type) {
+                    // fn move back to units
+                    mode[_props.type].returnUnits();
+                }
+
+                mode[type].render();
+                _props.type = type;
+            }
+        },
+    }
+</script>

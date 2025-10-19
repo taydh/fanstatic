@@ -1,0 +1,21 @@
+<section data-component="section.simple-unit"></section>
+
+<script>
+	return function (roof, data) {
+		let section = roof.children[0];
+
+		if (data.id) section.id = data.id;
+
+		section.innerHTML = fanstatic.renderJhtm([
+			fanstatic.axis({
+				items: [
+					fanstatic.unit({
+						head: data.head,
+						body: data.body,
+						foot: data.foot
+					})
+				]
+			})
+		]);
+	};
+</script>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+		<base href=""> <!-- relative -->
+		<title>Sandbox / Component / Section / Simple Unit</title>
+			
+		<script src="../v2/fanstatic.js"></script>
+		<script>
+			{
+				let fanstatic_engine_dir = '';
+				let fanstatic_base_dir = '';
+				let host_env = {};
+				
+				/* 
+				 * environment selection 
+				 * */
+				
+				const host_env_list = {
+					'https://fanstatic.annexdesk.com': { base_uri:'/', design_base_uri:'https://park.annexdesk.com/fanstatic-designs/designs/' },
+					'https://fanstatic3.test': { base_uri:'/', design_base_uri:'https://park.annexdesk.com/fanstatic-designs/designs/' },
+					'http://localhost/fanstatic3': { base_uri:'/fanstatic3/', design_base_uri:'http://localhost/fanstatic-companion/designs/' },
+				};
+				const hosts = Object.keys(host_env_list);
+
+				for (let i = 0; i < hosts.length; i++) {
+					if (window.location.href.startsWith(hosts[i])) {
+						host_env = host_env_list[hosts[i]]
+						break;
+					}
+				}
+
+				document.head.querySelector('base').href = host_env.base_uri; // make base URI absolute
+				fanstatic_base_dir = fanstatic_engine_dir = document.baseURI + 'v2'
+				
+				/*
+				 * Listener
+				 * */
+				
+				const asyncCounter = fanstatic.asyncCounter(6, () => init());
+				const init = function(){
+					Object.assign(fanstatic.settings, {
+						base_url: document.baseURI,
+						tail_span: '5s',
+						log_render: false,
+					})
+					
+					fanstatic.insert(document.querySelector('main'), fanstatic_base_dir + '/component/sections/simple-unit.html', {
+						data: {
+							id: 'section-1',
+							head: {h1: 'Hello'},
+							body: fanstatic.unit({body:'World'}),
+							foot: 'Again!'
+						}
+					})
+				}
+				
+				/* 
+				 * load dynamic libraries and assets
+				 * */
+				
+				window.addEventListener('fanstatic.visual.load', () => asyncCounter.done());
+				window.addEventListener('fanstatic.design.load', () => asyncCounter.done());
+				window.addEventListener('fanstatic.structured_html.load', () => asyncCounter.done());
+				window.addEventListener('fanstatic.template.load', () => asyncCounter.done());
+				window.addEventListener('fanstatic.tools.load', () => asyncCounter.done());
+				
+				document.addEventListener('DOMContentLoaded', function(){
+					fanstatic.insertScripts([
+						fanstatic_base_dir + '/ext.visual.js?_=2',
+						fanstatic_base_dir + '/ext.design.js?_=1',
+						fanstatic_base_dir + '/ext.structured_html.js?_=1',
+						fanstatic_base_dir + '/ext.tools.js?_=1',
+						fanstatic_base_dir + '/ext.template.js?_=1',
+					]).then(() => asyncCounter.done());	
+				});
+			}
+		</script>
+	</head>
+
+	<body>
+		<main></main>
+	</body>
+</html>

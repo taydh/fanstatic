@@ -14,12 +14,12 @@
 		return secMap[p] * n * 1000
 	}
 
-	const _resolveCustomTail = function(opt) {
+	const _resolveCustomTail = function(opt, settings) {
 		if (opt.hasOwnProperty('tail_key') && !opt.tail_key) return { key: null, value: null };
 		else if (!opt.hasOwnProperty('tail_key')) return false;
 
-		let tail_key = opt.hasOwnProperty('tail_key') ? opt.tail_key : this.settings.tail_key
-		let tail_span = opt.hasOwnProperty('tail_span') ? opt.tail_span : this.settings.tail_span
+		let tail_key = opt.hasOwnProperty('tail_key') ? opt.tail_key : settings.tail_key
+		let tail_span = opt.hasOwnProperty('tail_span') ? opt.tail_span : settings.tail_span
 		let vs = vn = Date.now()
 		let diff = _resolveSpan(tail_span)
 
@@ -37,16 +37,17 @@
 		return null;
 	};
 
-	if (!window.fanstatic) {
-		var fanstatic = null; // fanstatic might be already defined in fanstatic_headjack.js
+	if (!window.fanstatic) { // fanstatic might be already defined in fanstatic_headjack.js
+		var fanstatic = null;
 	}
 	
 	fanstatic = {
 		settings: {
-			base_url: '/',
-			local_area_id: 'fanstatic-area',
 			tail_key: '_',
 			tail_span: '1d', //dhms
+
+			base_url: '/',
+			local_area_id: 'fanstatic-area',
 			log_render: false,
 		},
 
@@ -113,6 +114,39 @@
 				document.head.appendChild(el)
 			}
 		},
+
+		asyncCounter : function(count, onComplete) {
+			return {
+				counter: count,
+				done: function() {
+					if (0 == --this.counter) onComplete();
+				}
+			}
+		},
+
+		/* tail */
+
+		tail: function(asObjet = false) {
+			if (!this.settings.tail_key || !this.settings.tail_span) return { key:null, value:null};
+
+			let vn = vs = Date.now()
+			let diff = _resolveSpan(this.settings.tail_span)
+
+			if (localStorage.hasOwnProperty('fanstatic_tail_value')) {
+				vs = localStorage.getItem('fanstatic_tail_value')
+				vs = (vn - diff) < vs ? vs: vn
+			}
+
+			if (vs == vn) {
+				localStorage.setItem('fanstatic_tail_value', vs)
+			}
+
+			let tail = {key: this.settings.tail_key, value: String(vs)}
+
+			return asObjet
+				? tail
+				: `${tail.key}=${tail.value}`
+		},
 		
 		/* Fetch */
 
@@ -132,7 +166,7 @@
 				}
 
 				/* resolve tail */
-				let tail = _resolveCustomTail(opt || {}) || this.tail(true)
+				let tail = _resolveCustomTail(opt || {}, settings) || this.tail(true)
 				if (url[0] == '/') url = window.location.origin + url;
 				url = new URL(url)
 				if (tail.key) url.searchParams.append(...Object.values(tail))
@@ -212,23 +246,25 @@
 		/* STRUCTURED TO HTML */
 
 		renderJhtm: function(arr) {
-			var html = ''
+			var html = '';
+			
+			if (!Array.isArray(arr) && typeof arr === 'object') arr = [arr];
 			
 			for(let entry of arr) {
-				entry = Object.entries(entry)[0]
-				let tagFill = entry[0]
-				let content = entry[1]
-				let tagName = tagFill.split(' ')[0]
-				let innerHTML = ''
+				entry = Object.entries(entry)[0];
+				let tagFill = entry[0];
+				let content = entry[1];
+				let tagName = tagFill.split(' ')[0];
+				let innerHTML = '';
 
-				if (typeof content === 'string') {
-					innerHTML = content
+				if (Array.isArray(content) || typeof content === 'object') {
+					innerHTML = this.renderJhtm(content);
 				}
-				else if (Array.isArray(content)) {
-					innerHTML = this.renderJhtm(content)
+				else if (typeof content === 'string') {
+					innerHTML = content;
 				}
 
-				html += `<${tagFill}>${innerHTML}</${tagName}>`
+				html += `<${tagFill}>${innerHTML}</${tagName}>`;
 			}
 
 			return html
@@ -263,30 +299,6 @@
 			let entry = Object.entries(route).find(a => a[1].includes(lp))
 
 			return entry ? entry[0] : null;
-		},
-
-		/* tail */
-
-		tail: function(asObjet = false) {
-			if (!this.settings.tail_key || !this.settings.tail_span) return { key:null, value:null};
-
-			let vn = vs = Date.now()
-			let diff = _resolveSpan(this.settings.tail_span)
-
-			if (localStorage.hasOwnProperty('fanstatic_tail_value')) {
-				vs = localStorage.getItem('fanstatic_tail_value')
-				vs = (vn - diff) < vs ? vs: vn
-			}
-
-			if (vs == vn) {
-				localStorage.setItem('fanstatic_tail_value', vs)
-			}
-
-			let tail = {key: this.settings.tail_key, value: String(vs)}
-
-			return asObjet
-				? tail
-				: `${tail.key}=${tail.value}`
 		},
 
 		/* theme */
