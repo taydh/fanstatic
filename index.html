@@ -38,58 +38,9 @@
 				let host_env = null;
 				
 				document.addEventListener('DOMContentLoaded', async function () {
-					// relative origin
-					[
-						'http://localhost/fanstatic3'
-					].forEach(path => {
-						if (window.location.href.startsWith(path)) origin = path;
-					});
+					await resolveOrigin();
 
-					// absolute origin
-					if (!host_env) {
-						host_env = await fanstatic.fetchJson(origin + '/env.' + origin.replace(/[:/]/g, "_") + '.json');
-					}
-
-					document.head.querySelector('base').href = host_env.base_uri; // make base URI absolute
-					fanstatic_base_dir = fanstatic_engine_dir = document.baseURI + 'v2'
-					
-					/* let's go! */
-					start();
-				});
-				
-				let start = function(){
 					const asyncCounter = fanstatic.asyncCounter(6, () => init());
-					const init = async function(){
-						Object.assign(fanstatic.settings, {
-							base_url: document.baseURI,
-							tail_span: '5s',
-							log_render: false,
-						})
-
-						fanstatic.append(
-							document.body, fanstatic_base_dir + '/component/buttons/back-to-top/back-to-top.html',
-							{ tail_key: null }
-						)
-
-						Object.assign(fanstatic.visual.settings, {
-							log_render: true,
-							turn_delay: 300
-						})
-
-						await fanstatic.insert(
-							document.querySelector('#container'), // target element 
-							'./assets/templates/layout_page.html',
-							{
-								data: {
-									host_env: host_env,
-								}
-							}
-						)
-					}
-
-					/* 
-					 * load dynamic libraries and assets
-					 * */
 
 					window.addEventListener('fanstatic.visual.load', () => asyncCounter.done());
 					window.addEventListener('fanstatic.design.load', () => asyncCounter.done());
@@ -104,6 +55,51 @@
 						fanstatic_base_dir + '/ext.tools.js?_=1',
 						fanstatic_base_dir + '/ext.template.js?_=1',
 					]).then(() => asyncCounter.done());	
+				});
+				
+				const resolveOrigin = async function(){
+					// relative origin
+					[
+						'http://localhost/fanstatic3'
+					].forEach(path => {
+						if (window.location.href.startsWith(path)) origin = path;
+					});
+
+					// absolute origin
+					if (!host_env) {
+						host_env = await fanstatic.fetchJson(origin + '/env.' + origin.replace(/[:/]/g, "_") + '.json');
+					}
+
+					document.head.querySelector('base').href = host_env.base_uri; // make base URI absolute
+					fanstatic_base_dir = fanstatic_engine_dir = document.baseURI + 'v2'
+				}
+				
+				const init = async function(){
+					Object.assign(fanstatic.settings, {
+						base_url: document.baseURI,
+						tail_span: '5s',
+						log_render: false,
+					})
+
+					fanstatic.append(
+						document.body, fanstatic_base_dir + '/component/buttons/back-to-top/back-to-top.html',
+						{ tail_key: null }
+					)
+
+					Object.assign(fanstatic.visual.settings, {
+						log_render: true,
+						turn_delay: 300
+					})
+
+					await fanstatic.insert(
+						document.querySelector('#container'), // target element 
+						'./assets/templates/layout_page.html',
+						{
+							data: {
+								host_env: host_env,
+							}
+						}
+					)
 				}
 			}
 		</script>
