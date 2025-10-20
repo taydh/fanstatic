@@ -1,0 +1,2 @@
+[data-scope="header.simple"][data-design="unit"] { display: flex; }
+[data-scope="header.simple"][data-design="unit"] > [data-design="unit-body"] { flex:1; }

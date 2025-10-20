@@ -1,0 +1,7 @@
+.fnst-d-flex[data-design="unit"] {
+	display: flex;
+}
+
+.fnst-d-flex[data-design="unit"] > [data-design="unit-body"] {
+	flex: 1;
+}

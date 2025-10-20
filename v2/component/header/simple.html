@@ -1,0 +1,37 @@
+<section data-component="header.simple"></section>
+
+<script>
+	const design = fanstatic.design;
+	const controller = {};
+	const scope = 'header.simple';
+
+	return {
+		onload: function (roof, data) {
+			const section = roof.children[0];
+
+			section.innerHTML = fanstatic.renderJhtm([
+				design.container({
+					items: [
+						design.wrapper({
+							items: [
+                                design.axis({
+                                    items: [
+                                        design.unit({
+											head: data.identity,
+                                            body: data.navigation,
+                                        },{ 'data-scope': scope }),
+                                    ]
+                                })
+							]
+						})
+					]
+				})
+			]);
+
+			controller.componentElement = section;
+			controller.identityElement = section.querySelector(`[data-design="unit"][data-scope="${scope}"] > [data-design="unit-head"]`)
+			controller.navigationElement = section.querySelector(`[data-design="unit"][data-scope="${scope}"] > [data-design="unit-body"]`)
+		},
+		controller: controller
+	};
+</script>

@@ -40,6 +40,14 @@
 
 			return result;
 		},
+		placeholder: function(name) {
+			let tagFill = `i data-design-placeholder="${name}"`;
+			let result = {}
+
+			result[tagFill] = true;
+
+			return result;
+		},
 	};
 	
 	window.dispatchEvent(new CustomEvent('fanstatic.design.load', {

@@ -62,28 +62,64 @@
 					})
 					
 					fanstatic.insertScripts([
-						fanstatic_base_dir + '/themes/sandbox/sandbox.js?' + fanstatic.tail(),
-						document.baseURI + '/sandbox/component.classfix.js?' + fanstatic.tail(),
-						document.baseURI + '/sandbox/component.button.classfix.js?' + fanstatic.tail(),
-						document.baseURI + '/sandbox/component.button.basic.classfix.js?' + fanstatic.tail(),
+						document.baseURI + 'sandbox/component.classfix.js?' + fanstatic.tail(),
+						document.baseURI + 'sandbox/component.header.classfix.js?' + fanstatic.tail(),
 					]);
+					
+					fanstatic.switchTheme('sandbox', false).then(() => window.setTimeout(delayedRun, 200))
+					
+					const delayedRun = async function(){
+						const main = document.querySelector('main');
+						const design = fanstatic.design;
+						const r = await fanstatic.insert(main, fanstatic_base_dir + '/component/header/simple.html', {
+							data: {
+								identity: design.placeholder('identity'),
+								navigation: design.unit({ 
+									body: design.placeholder('navMenu'), 
+									foot: design.placeholder('btnContact') }, { class: "fnst-d-flex"}),
+							}
+						});
+						
+						await fanstatic.replace(
+							r.controller.componentElement.querySelector('[data-design-placeholder="identity"]'), 
+							fanstatic_base_dir + '/component/block/identity-basic.html',
+							{
+								data: {
+									label: 'My Company'
+								}
+							}
+						);
 
-					const main = document.querySelector('main');
-					const design = fanstatic.design;
-					
-					const r = await fanstatic.insert(main, fanstatic_base_dir + '/component/button/basic.html', {
-						data: {
-							label: 'Hello',
-						}
-					});
-					
-					r.controller.element.id = 'btn1'
+						await fanstatic.replace(
+							r.controller.componentElement.querySelector('[data-design-placeholder="navMenu"]'), 
+							fanstatic_base_dir + '/component/navigation/simple.html',
+							{
+								data: {
+									menus: [
+										{ label: 'Home' },
+										{ label: 'Services' },
+										{ label: 'About Us' },
+									]
+								}
+							}
+						);
+
+						await fanstatic.replace(
+							r.controller.componentElement.querySelector('[data-design-placeholder="btnContact"]'), 
+							fanstatic_base_dir + '/component/button/basic.html',
+							{
+								data: {
+									label: 'Contact'
+								}
+							}
+						);
+					}
 				}
 			}
 		</script>
 	</head>
 
-	<body data-theme="sandbox">
+	<body>
 		<main></main>
 	</body>
 </html>

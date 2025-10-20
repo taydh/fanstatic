@@ -1,0 +1,31 @@
+<div data-component="block.identity-basic">
+	<div data-design-role="logo" data-scope="block.identity-basic" style="display:none">
+		<img />
+	</div>
+	<div data-design-role="label" data-scope="block.identity-basic" style="display:none"></div>
+</div>
+
+<script>
+	const controller = {};
+
+	return {
+		onload: function(root, data) {
+			let component = root.children[0];
+
+			controller.componentElement = component;
+			controller.logoElement = component.querySelector('[data-design-role=logo]')
+			controller.labelElement = component.querySelector('[data-design-role=label]')
+
+			if (data.logoSource) {
+				controller.logoElement.querySelector('img').setAttribute('src', data.logoSource)
+				controller.logoElement.style.display = 'block';
+			}
+
+			if (data.label) {
+				controller.labelElement.innerHTML = data.label
+				controller.labelElement.style.display = 'block';
+			}
+		},
+		controller: controller
+	}
+</script>

@@ -232,6 +232,30 @@
 		run: function(target, command, args) {
 			return this.runCommand(target, command, args);
 		},
+
+		/* theme */
+
+		switchTheme: function(theme, prioritize=true) {
+			var storedTheme = window.localStorage.getItem('fanstatic.switch_theme');
+
+			if ((theme && prioritize) || (theme && !storedTheme)) { // store theme and reload
+				storedTheme = theme;
+				window.localStorage.setItem('fanstatic.switch_theme', storedTheme);
+				window.location.reload();
+			}
+
+			if (!storedTheme) return; // no theme
+
+			const themeScriptPrefix = `${fanstatic.settings.base_url}${fanstatic.settings.version}/themes/`;
+			const themeScriptUrl = `${themeScriptPrefix}${storedTheme}/theme.js`;
+
+			return fanstatic.insertScripts([themeScriptUrl + '?' + fanstatic.tail()]);
+		},
+
+		clearTheme: function() {
+			window.localStorage.removeItem('fanstatic.switch_theme');
+			window.location.reload();
+		},
 	}
 
 	window.dispatchEvent(new CustomEvent('fanstatic.load'), { detail: fanstatic })

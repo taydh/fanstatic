@@ -1,0 +1,6 @@
+[data-scope="header.simple"][data-design="unit"] { width: 100%; }
+
+@media screen and (min-width: 768px) {
+	[data-scope="header.simple"][data-design="unit"] { display: flex; }	
+	[data-scope="header.simple"][data-design="unit"] > [data-design="unit-body"] { flex:1; }
+}

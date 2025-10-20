@@ -1,0 +1,3 @@
+/* navigation.simple */
+
+[data-scope="navigation.simple"][data-design="axis"] { display: flex; justify-content: end; }

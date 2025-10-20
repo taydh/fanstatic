@@ -1,0 +1,4 @@
+/* navigation.simple */
+
+[data-scope="navigation.simple"][data-design="axis"] { display: flex; justify-content: end; }
+[data-scope="navigation.simple"][data-design="axis"] > [data-design="unit"] { padding: .5rem; }

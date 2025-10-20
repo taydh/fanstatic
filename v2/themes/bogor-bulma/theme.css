@@ -1,0 +1,16 @@
+@import url('https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css');
+@import url(../fnst.css);
+@import url(component.header.css);
+@import url(component.navigation.css);
+@import url(component.button.css);
+@import url(component.section.css);
+
+/* class */
+
+/* design */
+
+*[data-design="unit-head"],
+*[data-design="unit-body"],
+*[data-design="unit-foot"] {
+	padding: 1rem;
+}
