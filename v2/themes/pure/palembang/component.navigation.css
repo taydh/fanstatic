@@ -1,0 +1,13 @@
+/* navigation.simple */
+
+[data-scope="navigation.simple"][data-role="menu-list"] { 
+	display: flex;
+	justify-content: center;
+}
+
+@media screen and (min-width: 768px) {
+	[data-scope="navigation.simple"][data-role="menu-list"] { 
+		display: flex; 
+		justify-content: end; 
+	}
+}
