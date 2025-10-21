@@ -1,0 +1,26 @@
+@import url('https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/pure-min.css');
+@import url(../../fnst.css);
+@import url(../theme.css);
+@import url(component.block.css);
+@import url(component.navigation.css?_=2);
+@import url(component.section.css);
+
+/* variables */
+
+:root {
+	--theme-spacing: 1em;
+	--theme-margin: 1em;
+	--theme-padding: 1em;
+}
+
+/* element */
+
+.fnst-container {
+	margin: 0 auto;
+	max-width: 1000px;
+}
+
+/* class */
+
+/* design */
+
