@@ -235,12 +235,15 @@
 
 		/* theme */
 
-		switchTheme: function(theme, prioritize=true) {
+		switchTheme: function(theme, themeEdition, prioritize=true) {
 			var storedTheme = window.localStorage.getItem('fanstatic.switch_theme');
-
-			if ((theme && prioritize) || (theme && !storedTheme)) { // store theme and reload
+			var storedThemeEdition = window.localStorage.getItem('fanstatic.switch_theme_edition');
+			
+			if (theme && prioritize && (theme != !storedTheme) && (themeEdition != storedThemeEdition)) { // store theme and reload
 				storedTheme = theme;
+				storedThemeEdition = themeEdition;
 				window.localStorage.setItem('fanstatic.switch_theme', storedTheme);
+				window.localStorage.setItem('fanstatic.switch_theme_edition', storedThemeEdition);
 				window.location.reload();
 			}
 
@@ -249,12 +252,20 @@
 			const themeScriptPrefix = `${fanstatic.settings.base_url}${fanstatic.settings.version}/themes/`;
 			const themeScriptUrl = `${themeScriptPrefix}${storedTheme}/theme.js`;
 
+			fanstatic.insertStyles([
+				`${themeScriptPrefix}${storedTheme}/${storedThemeEdition}/edition.css?${fanstatic.tail()}`,
+			]);
+			
 			return fanstatic.insertScripts([themeScriptUrl + '?' + fanstatic.tail()]);
 		},
 
 		clearTheme: function() {
 			window.localStorage.removeItem('fanstatic.switch_theme');
 			window.location.reload();
+		},
+
+		applyTheme: function() {
+			return this.switchTheme(fanstatic.settings.theme, fanstatic.settings.theme_edition);
 		},
 	}
 
