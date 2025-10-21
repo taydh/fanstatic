@@ -1,20 +1,26 @@
-<div data-component="block.identity-basic">
-	<div data-design-role="logo" data-scope="block.identity-basic" style="display:none">
-		<img />
-	</div>
-	<div data-design-role="label" data-scope="block.identity-basic" style="display:none"></div>
-</div>
+<div></div>
 
 <script>
 	const controller = {};
+	const design = fanstatic.design;
+	const scope = 'block.identity-basic';
 
 	return {
 		onload: function(root, data) {
-			let component = root.children[0];
+			let componentElement = root.children[0];
 
-			controller.componentElement = component;
-			controller.logoElement = component.querySelector('[data-design-role=logo]')
-			controller.labelElement = component.querySelector('[data-design-role=label]')
+			componentElement.setAttribute('data-component', scope);
+			componentElement.innerHTML = fanstatic.renderJhtm(design.wrap(
+					design.unit({
+						head: design.element('div', {'img': true}, {style:'display:none', data:{ role:'logo', scope:scope}}),
+						body: design.element('div', true, {style:'display:none', data:{ role:'label', scope:scope}}),
+					}
+				)
+			));
+
+			controller.componentElement = componentElement;
+			controller.logoElement = componentElement.querySelector('[data-role=logo]')
+			controller.labelElement = componentElement.querySelector('[data-role=label]')
 
 			if (data.logoSource) {
 				controller.logoElement.querySelector('img').setAttribute('src', data.logoSource)

@@ -1,31 +1,27 @@
-<section data-component="header.simple"></section>
+<section data-component="section.header-simple"></section>
 
 <script>
 	const design = fanstatic.design;
 	const controller = {};
-	const scope = 'header.simple';
+	const scope = 'section.header-simple';
 
 	return {
 		onload: function (roof, data) {
 			const section = roof.children[0];
 
 			section.innerHTML = fanstatic.renderJhtm([
-				design.container({
-					items: [
-						design.wrapper({
+				design.wrap(
+					design.wrap(
+						design.axis({
 							items: [
-                                design.axis({
-                                    items: [
-                                        design.unit({
-											head: data.identity,
-                                            body: data.navigation,
-                                        },{ 'data-scope': scope }),
-                                    ]
-                                })
+								design.unit({
+									head: data.identity,
+									body: data.navigation,
+								},{ 'data-scope': scope }),
 							]
 						})
-					]
-				})
+					), {data: {role: 'container', scope: scope}}
+				)
 			]);
 
 			controller.componentElement = section;

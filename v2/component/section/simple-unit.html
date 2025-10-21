@@ -9,19 +9,15 @@
 			const section = roof.children[0];
 
 			section.innerHTML = fanstatic.renderJhtm([
-				design.container({
-					items: [
-						design.wrapper({
-							items: [
-								design.unit({
-									head: data.head,
-									body: data.body,
-									foot: data.foot
-								})
-							]
+				design.wrap(
+					design.wrap(
+						design.unit({
+							head: data.head,
+							body: data.body,
+							foot: data.foot
 						})
-					]
-				})
+					), {'data-role': 'container'}
+				)
 			]);
 
 			controller.componentElement = section;

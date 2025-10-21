@@ -1,21 +1,24 @@
 <nav data-component="navigation.simple"></nav>
 
 <script>
-	const controller = {};
 	const design = fanstatic.design;
+	const scope = 'navigation.simple';
+	const controller = {};
 
 	return {
 		controller: controller,
 		onload: function(roof, data) {
 			const component = roof.children[0];
 
-			component.innerHTML = fanstatic.renderJhtm(design.wrapper({
-				items: [
-					design.axis({
-						items: data.menus.map(menu => design.unit({ body: menu.label }, { 'data-scope': 'navigation.simple' })),
-					}, { 'data-scope': 'navigation.simple' })
-				]
-			}))
+			component.innerHTML = fanstatic.renderJhtm(design.wrap(
+				design.list({
+					items: data.menus.map(menu => {
+						return { 'a href="#" data-role="menu-link"' : menu.label }
+					}),
+				}, { 'data-scope': scope, 'data-role': 'menu-list' }, { 'data-role': 'menu-item' })
+			));
+
+			controller.componentElement = component;
 		},	
 	}
 </script>
