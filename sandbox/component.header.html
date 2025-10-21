@@ -53,10 +53,25 @@
 					fanstatic_base_dir = fanstatic_engine_dir = document.baseURI + fanstatic_version;
 				}
 				
+				const contentData = {
+					identity: {
+						label: 'My Company'
+					},
+					navigation: {
+						menus: [
+							{ label: 'Home' },
+							{ label: 'Services' },
+							{ label: 'About Us' },
+						]
+					}
+				}
+				
 				const init = async function(){
 					Object.assign(fanstatic.settings, {
 						base_url: document.baseURI,
 						version: fanstatic_version,
+						theme: 'pure',
+						theme_edition: 'palembang',
 						tail_span: '5s',
 						log_render: false,
 					})
@@ -66,53 +81,44 @@
 						document.baseURI + 'sandbox/component.header.classfix.js?' + fanstatic.tail(),
 					]);
 					
-					fanstatic.switchTheme('sandbox', false).then(() => window.setTimeout(delayedRun, 200))
+					fanstatic.applyTheme().then(() => window.setTimeout(delayedRun, 100))
 					
 					const delayedRun = async function(){
 						const main = document.querySelector('main');
 						const design = fanstatic.design;
-						const r = await fanstatic.insert(main, fanstatic_base_dir + '/component/header/simple.html', {
+						
+						const section = await fanstatic.insert(main, fanstatic_base_dir + '/component/section/header-simple.html', {
 							data: {
 								identity: design.placeholder('identity'),
-								navigation: design.unit({ 
-									body: design.placeholder('navMenu'), 
-									foot: design.placeholder('btnContact') }, { class: "fnst-d-flex"}),
+								navigation: design.placeholder('navMenu'),
 							}
 						});
 						
-						await fanstatic.replace(
-							r.controller.componentElement.querySelector('[data-design-placeholder="identity"]'), 
+						section.controller.componentElement
+							.querySelector('[data-role="container"]')
+							.classList.add('fnst-container');
+						
+						const identity = await fanstatic.replace(
+							section.controller.componentElement.querySelector('[data-design-placeholder="identity"]'), 
 							fanstatic_base_dir + '/component/block/identity-basic.html',
 							{
-								data: {
-									label: 'My Company'
-								}
+								data: contentData.identity,
 							}
 						);
-
-						await fanstatic.replace(
-							r.controller.componentElement.querySelector('[data-design-placeholder="navMenu"]'), 
+						
+						const nav = await fanstatic.replace(
+							section.controller.componentElement.querySelector('[data-design-placeholder="navMenu"]'), 
 							fanstatic_base_dir + '/component/navigation/simple.html',
 							{
-								data: {
-									menus: [
-										{ label: 'Home' },
-										{ label: 'Services' },
-										{ label: 'About Us' },
-									]
-								}
+								data: contentData.navigation,
 							}
 						);
-
-						await fanstatic.replace(
-							r.controller.componentElement.querySelector('[data-design-placeholder="btnContact"]'), 
-							fanstatic_base_dir + '/component/button/basic.html',
-							{
-								data: {
-									label: 'Contact'
-								}
-							}
-						);
+						
+						nav.controller.componentElement.querySelector('[data-scope="navigation.simple"][data-role="menu-list"]').classList.add('pure-menu-list');
+						nav.controller.componentElement.querySelector('[data-scope="navigation.simple"][data-role="menu-list"] li').classList.add('pure-menu-item');
+						nav.controller.componentElement.querySelectorAll('[data-scope="navigation.simple"][data-role="menu-list"] a').forEach(a => a.classList.add('pure-menu-link'));
+						
+						main.style.display = 'block';
 					}
 				}
 			}
@@ -120,6 +126,6 @@
 	</head>
 
 	<body>
-		<main></main>
+		<main style="display:none"></main>
 	</body>
 </html>
