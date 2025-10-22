@@ -7,10 +7,10 @@
 
 	return {
 		onload: function(root, data) {
-			let componentElement = root.children[0];
+			let panelElement = root.children[0];
 
-			componentElement.setAttribute('data-component', scope);
-			componentElement.innerHTML = fanstatic.renderJhtm(design.wrap(
+			panelElement.setAttribute('data-panel', scope);
+			panelElement.innerHTML = fanstatic.renderJhtm(design.wrap(
 					design.unit({
 						head: design.element('div', {'img': true}, {style:'display:none', data:{ role:'logo', scope:scope}}),
 						body: design.element('div', true, {style:'display:none', data:{ role:'label', scope:scope}}),
@@ -18,9 +18,9 @@
 				)
 			));
 
-			controller.componentElement = componentElement;
-			controller.logoElement = componentElement.querySelector('[data-role=logo]')
-			controller.labelElement = componentElement.querySelector('[data-role=label]')
+			controller.panelElement = panelElement;
+			controller.logoElement = panelElement.querySelector('[data-role=logo]')
+			controller.labelElement = panelElement.querySelector('[data-role=label]')
 
 			if (data.logoSource) {
 				controller.logoElement.querySelector('img').setAttribute('src', data.logoSource)

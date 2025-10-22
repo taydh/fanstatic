@@ -1,4 +1,4 @@
-<section data-component="section.simple-unit"></section>
+<section data-panel="section.simple-unit"></section>
 
 <script>
 	const design = fanstatic.design;
@@ -6,9 +6,9 @@
 
 	return {
 		onload: function (roof, data) {
-			const section = roof.children[0];
+			const panel = roof.children[0];
 
-			section.innerHTML = fanstatic.renderJhtm([
+			panel.innerHTML = fanstatic.renderJhtm([
 				design.wrap(
 					design.wrap(
 						design.unit({
@@ -20,7 +20,7 @@
 				)
 			]);
 
-			controller.componentElement = section;
+			controller.panelElement = panel;
 		},
 		controller: controller
 	};

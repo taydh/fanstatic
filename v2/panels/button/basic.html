@@ -1,0 +1,16 @@
+<button data-panel="button.basic"></button>
+
+<script>
+	const controller = {};
+
+	return {
+		onload: function(root, data) {
+			let panel = root.children[0];
+
+			panel.innerHTML = data.label
+
+			controller.panelElement = panel;
+		},
+		controller: controller
+	}
+</script>

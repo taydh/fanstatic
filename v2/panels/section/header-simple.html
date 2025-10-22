@@ -1,4 +1,4 @@
-<section data-component="section.header-simple"></section>
+<section data-panel="section.header-simple"></section>
 
 <script>
 	const design = fanstatic.design;
@@ -7,9 +7,9 @@
 
 	return {
 		onload: function (roof, data) {
-			const section = roof.children[0];
+			const panel = roof.children[0];
 
-			section.innerHTML = fanstatic.renderJhtm([
+			panel.innerHTML = fanstatic.renderJhtm([
 				design.wrap(
 					design.wrap(
 						design.axis({
@@ -24,9 +24,9 @@
 				)
 			]);
 
-			controller.componentElement = section;
-			controller.identityElement = section.querySelector(`[data-design="unit"][data-scope="${scope}"] > [data-design="unit-head"]`)
-			controller.navigationElement = section.querySelector(`[data-design="unit"][data-scope="${scope}"] > [data-design="unit-body"]`)
+			controller.panelElement = panel;
+			controller.identityElement = panel.querySelector(`[data-design="unit"][data-scope="${scope}"] > [data-design="unit-head"]`)
+			controller.navigationElement = panel.querySelector(`[data-design="unit"][data-scope="${scope}"] > [data-design="unit-body"]`)
 		},
 		controller: controller
 	};

@@ -235,25 +235,25 @@
 
 		/* theme */
 
-		switchTheme: function(theme, themeEdition, prioritize=true) {
+		switchTheme: function(theme, themeFramework, prioritize=true) {
 			var storedTheme = window.localStorage.getItem('fanstatic.switch_theme');
-			var storedThemeEdition = window.localStorage.getItem('fanstatic.switch_theme_edition');
+			var storedThemeFramework = window.localStorage.getItem('fanstatic.switch_theme_framework');
 			
-			if (theme && prioritize && (theme != !storedTheme) && (themeEdition != storedThemeEdition)) { // store theme and reload
+			if (theme && prioritize && (theme != !storedTheme) && (themeFramework != storedThemeFramework)) { // store theme and reload
 				storedTheme = theme;
-				storedThemeEdition = themeEdition;
+				storedThemeFramework = themeFramework;
 				window.localStorage.setItem('fanstatic.switch_theme', storedTheme);
-				window.localStorage.setItem('fanstatic.switch_theme_edition', storedThemeEdition);
+				window.localStorage.setItem('fanstatic.switch_theme_framework', storedThemeFramework);
 				window.location.reload();
 			}
 
 			if (!storedTheme) return; // no theme
 
 			const themeScriptPrefix = `${fanstatic.settings.base_url}${fanstatic.settings.version}/themes/`;
-			const themeScriptUrl = `${themeScriptPrefix}${storedTheme}/theme.js`;
+			const themeScriptUrl = `${themeScriptPrefix}${storedThemeFramework}/framework.js`;
 
 			fanstatic.insertStyles([
-				`${themeScriptPrefix}${storedTheme}/${storedThemeEdition}/edition.css?${fanstatic.tail()}`,
+				`${themeScriptPrefix}${storedThemeFramework}/${storedTheme}/theme.css?${fanstatic.tail()}`,
 			]);
 			
 			return fanstatic.insertScripts([themeScriptUrl + '?' + fanstatic.tail()]);
@@ -261,11 +261,12 @@
 
 		clearTheme: function() {
 			window.localStorage.removeItem('fanstatic.switch_theme');
+			window.localStorage.removeItem('fanstatic.switch_theme_framework');
 			window.location.reload();
 		},
 
 		applyTheme: function() {
-			return this.switchTheme(fanstatic.settings.theme, fanstatic.settings.theme_edition);
+			return this.switchTheme(fanstatic.settings.theme, fanstatic.settings.theme_framework);
 		},
 	}
 
