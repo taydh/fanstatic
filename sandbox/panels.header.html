@@ -5,7 +5,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
 		<base href=""> <!-- relative -->
-		<title>Sandbox / Component / Section / Simple Unit</title>
+		<title>Sandbox / Panel / Section / Simple Unit</title>
 			
 		<script src="../v2/fanstatic.js"></script>
 		<script>
@@ -70,15 +70,15 @@
 					Object.assign(fanstatic.settings, {
 						base_url: document.baseURI,
 						version: fanstatic_version,
-						theme: 'pure',
-						theme_edition: 'palembang',
+						theme: 'clean',
+						theme_framework: 'pure',
 						tail_span: '5s',
 						log_render: false,
 					})
 					
 					fanstatic.insertScripts([
-						document.baseURI + 'sandbox/component.classfix.js?' + fanstatic.tail(),
-						document.baseURI + 'sandbox/component.header.classfix.js?' + fanstatic.tail(),
+						document.baseURI + 'sandbox/panels.classfix.js?' + fanstatic.tail(),
+						document.baseURI + 'sandbox/panels.header.classfix.js?' + fanstatic.tail(),
 					]);
 					
 					fanstatic.applyTheme().then(() => window.setTimeout(delayedRun, 100))
@@ -87,36 +87,36 @@
 						const main = document.querySelector('main');
 						const design = fanstatic.design;
 						
-						const section = await fanstatic.insert(main, fanstatic_base_dir + '/component/section/header-simple.html', {
+						const section = await fanstatic.insert(main, fanstatic_base_dir + '/panels/section/header-simple.html', {
 							data: {
 								identity: design.placeholder('identity'),
 								navigation: design.placeholder('navMenu'),
 							}
 						});
 						
-						section.controller.componentElement
+						section.controller.panelElement
 							.querySelector('[data-role="container"]')
 							.classList.add('fnst-container');
 						
 						const identity = await fanstatic.replace(
-							section.controller.componentElement.querySelector('[data-design-placeholder="identity"]'), 
-							fanstatic_base_dir + '/component/block/identity-basic.html',
+							section.controller.panelElement.querySelector('[data-design-placeholder="identity"]'), 
+							fanstatic_base_dir + '/panels/block/identity-basic.html',
 							{
 								data: contentData.identity,
 							}
 						);
 						
 						const nav = await fanstatic.replace(
-							section.controller.componentElement.querySelector('[data-design-placeholder="navMenu"]'), 
-							fanstatic_base_dir + '/component/navigation/simple.html',
+							section.controller.panelElement.querySelector('[data-design-placeholder="navMenu"]'), 
+							fanstatic_base_dir + '/panels/navigation/simple.html',
 							{
 								data: contentData.navigation,
 							}
 						);
 						
-						nav.controller.componentElement.querySelector('[data-scope="navigation.simple"][data-role="menu-list"]').classList.add('pure-menu-list');
-						nav.controller.componentElement.querySelector('[data-scope="navigation.simple"][data-role="menu-list"] li').classList.add('pure-menu-item');
-						nav.controller.componentElement.querySelectorAll('[data-scope="navigation.simple"][data-role="menu-list"] a').forEach(a => a.classList.add('pure-menu-link'));
+						nav.controller.panelElement.querySelector('[data-scope="navigation.simple"][data-role="menu-list"]').classList.add('pure-menu-list');
+						nav.controller.panelElement.querySelector('[data-scope="navigation.simple"][data-role="menu-list"] li').classList.add('pure-menu-item');
+						nav.controller.panelElement.querySelectorAll('[data-scope="navigation.simple"][data-role="menu-list"] a').forEach(a => a.classList.add('pure-menu-link'));
 						
 						main.style.display = 'block';
 					}
