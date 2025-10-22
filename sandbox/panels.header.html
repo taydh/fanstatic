@@ -84,22 +84,25 @@
 					fanstatic.applyTheme().then(() => window.setTimeout(delayedRun, 100))
 					
 					const delayedRun = async function(){
+						const header = document.querySelector('header');
 						const main = document.querySelector('main');
+						
+						//header.classList.add('fnst-sticky-top');
+						//header.style.zIndex = 'calc(var(--fnst-zindex-fixed) + 10)';
+						
 						const design = fanstatic.design;
 						
-						const section = await fanstatic.insert(main, fanstatic_base_dir + '/panels/section/header-simple.html', {
+						const headerSection = await fanstatic.append(header, fanstatic_base_dir + '/panels/section/header-simple.html', {
 							data: {
 								identity: design.placeholder('identity'),
 								navigation: design.placeholder('navMenu'),
 							}
 						});
 						
-						section.controller.panelElement
-							.querySelector('[data-role="container"]')
-							.classList.add('fnst-container');
+						headerSection.controller.panelElement.querySelector('[data-role="container"]').classList.add('fnst-container');
 						
 						const identity = await fanstatic.replace(
-							section.controller.panelElement.querySelector('[data-design-placeholder="identity"]'), 
+							headerSection.controller.panelElement.querySelector('[data-design-placeholder="identity"]'), 
 							fanstatic_base_dir + '/panels/block/identity-basic.html',
 							{
 								data: contentData.identity,
@@ -107,7 +110,7 @@
 						);
 						
 						const nav = await fanstatic.replace(
-							section.controller.panelElement.querySelector('[data-design-placeholder="navMenu"]'), 
+							headerSection.controller.panelElement.querySelector('[data-design-placeholder="navMenu"]'), 
 							fanstatic_base_dir + '/panels/navigation/simple.html',
 							{
 								data: contentData.navigation,
@@ -118,6 +121,15 @@
 						nav.controller.panelElement.querySelector('[data-scope="navigation.simple"][data-role="menu-list"] li').classList.add('pure-menu-item');
 						nav.controller.panelElement.querySelectorAll('[data-scope="navigation.simple"][data-role="menu-list"] a').forEach(a => a.classList.add('pure-menu-link'));
 						
+						const heroTop = await fanstatic.append(main, fanstatic_base_dir + '/panels/section/hero-top-simple.html', {
+							data: {
+								
+							}
+						});
+						
+						heroTop.controller.panelElement.style.backgroundColor = 'var(--theme-bg-color-primary)';
+						
+						header.style.display = 'block';
 						main.style.display = 'block';
 					}
 				}
@@ -126,6 +138,7 @@
 	</head>
 
 	<body>
-		<main style="display:none"></main>
+		<header style="display:none; float:left; width:100%;"></header>
+		<main style="display:none;"></main>
 	</body>
 </html>

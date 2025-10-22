@@ -1,0 +1,21 @@
+<section></section>
+
+<script>
+	const design = fanstatic.design;
+	const controller = {};
+	const scope = 'section.hero-top-simple';
+
+	return {
+		controller: controller,
+		onload: function(roof, data) {
+			const panelElement = roof.children[0];
+			
+			panelElement.innerHTML = fanstatic.renderJhtm(design.wrap(
+				design.wrap(true, {data: {role:'container', scope:scope}})
+			));
+
+			panelElement.dataset.panel = scope;
+			controller.panelElement = panelElement;
+		}
+	}
+</script>

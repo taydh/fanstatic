@@ -253,7 +253,12 @@
 			const themeScriptUrl = `${themeScriptPrefix}${storedThemeFramework}/framework.js`;
 
 			fanstatic.insertStyles([
+				`${themeScriptPrefix}fnst.css?${fanstatic.tail()}`,
+				`${themeScriptPrefix}${storedThemeFramework}/framework.css?${fanstatic.tail()}`,
 				`${themeScriptPrefix}${storedThemeFramework}/${storedTheme}/theme.css?${fanstatic.tail()}`,
+				`${themeScriptPrefix}${storedThemeFramework}/${storedTheme}/panels.block.css?${fanstatic.tail()}`,
+				`${themeScriptPrefix}${storedThemeFramework}/${storedTheme}/panels.navigation.css?${fanstatic.tail()}`,
+				`${themeScriptPrefix}${storedThemeFramework}/${storedTheme}/panels.section.css?${fanstatic.tail()}`,
 			]);
 			
 			return fanstatic.insertScripts([themeScriptUrl + '?' + fanstatic.tail()]);

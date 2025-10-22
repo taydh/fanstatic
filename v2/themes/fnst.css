@@ -1,3 +1,21 @@
+:root {
+	--fnst-zindex-dropdown:                   1000;
+	--fnst-zindex-sticky:                     1020;
+	--fnst-zindex-fixed:                      1030;
+	--fnst-zindex-offcanvas-backdrop:         1040;
+	--fnst-zindex-offcanvas:                  1045;
+	--fnst-zindex-modal-backdrop:             1050;
+	--fnst-zindex-modal:                      1055;
+	--fnst-zindex-popover:                    1070;
+	--fnst-zindex-tooltip:                    1080;
+	--fnst-zindex-toast:                      1090;
+
+}
+
+.fnst-w-full {
+	width: 100%;
+}
+
 .fnst-d-flex {
 	display: flex;
 }
@@ -5,3 +23,6 @@
 .fnst-d-flex > .fnst-flex-fill {
 	flex: 1;
 }
+
+.fnst-sticky-top { position: sticky; top: 0; z-index: var(--fnst-zindex-sticky); }
+.fnst-fixed-top { position: fixed; top: 0; z-index: var(--fnst-zindex-fixed); }

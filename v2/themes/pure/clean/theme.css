@@ -1,9 +1,4 @@
 @import url('https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/pure-min.css');
-@import url(../../fnst.css);
-@import url(../framework.css);
-@import url(panels.block.css);
-@import url(panels.navigation.css?_=2);
-@import url(panels.section.css);
 
 /* variables */
 
@@ -11,16 +6,21 @@
 	--theme-spacing: 1em;
 	--theme-margin: 1em;
 	--theme-padding: 1em;
+
+	--theme-bg-color-primary: rgb(186, 220, 255);
 }
 
 /* element */
+
+section { width: 100%; }
+
+/* class */
 
 .fnst-container {
 	margin: 0 auto;
 	max-width: 1000px;
 }
 
-/* class */
+
 
 /* design */
-
