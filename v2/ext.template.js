@@ -59,6 +59,43 @@
 		},
 	});
 
+	Object.assign(fanstatic._commandAttributes, {
+		// 'data-run': async function(fanstatic, target, query) {
+		// 	await fanstatic.run(target, query)
+		// },
+		'data-template': async function(fanstatic, target, query) {
+			let command = query;
+			await fanstatic.runCommand(target, command)
+		},
+		'data-template-insert': async function(fanstatic, target, query) {
+			await fanstatic.runCommand(target, 'insert', {
+				template: query || target.querySelector('template')
+			})
+		},
+		'data-template-replace': async function(fanstatic, target, query) {
+			await fanstatic.runCommand(target, 'replace', {
+				template: query || target.querySelector('template')
+			})
+		},
+		'data-template-insert-model': async function(fanstatic, target, query) {
+			await fanstatic.runCommand(target, 'insert-model', {
+				template: query || target.querySelector('template'),
+				data: fanstatic.elementStorage.get(target).model || null,
+			})
+		},
+		'data-template-replace-model': async function(fanstatic, target, query) {
+			await fanstatic.runCommand(target, 'replace-model', {
+				template: query || target.querySelector('template'),
+				data:  fanstatic.elementStorage.get(target).model || null,
+			})
+		},
+		'data-template-insert-markdown': async function(fanstatic, target, query) {
+			await fanstatic.runCommand(target, 'insert-markdown', {
+				template: query || target.querySelector('template')
+			})
+		},
+	});
+
 	Object.assign(fanstatic, {
 		_getTemplateElement: function(url) {
 			return document.getElementById(this.settings.local_area_id)?.querySelector(`template[data-url="${url}"]`)
@@ -117,7 +154,7 @@
 
 		_resolveScriptOptions: function(scriptElement, url) {
 			var partScriptError = false
-			var sourceUrl = url ? url.replaceAll('/', '').replaceAll('.', '') : 'template-' + Date.now()
+			var sourceUrl = url ? url : 'template-' + Date.now()
 			var scriptOpt = {
 				renderer: null,
 				model: null,
@@ -289,73 +326,8 @@
 
 		/* commands */
 
-		_commandAttributes: {
-			// 'data-run': async function(fanstatic, target, query) {
-			// 	await fanstatic.run(target, query)
-			// },
-			'data-template': async function(fanstatic, target, query) {
-				let command = query;
-				await fanstatic.runCommand(target, command)
-			},
-			'data-template-insert': async function(fanstatic, target, query) {
-				await fanstatic.runCommand(target, 'insert', {
-					template: query || target.querySelector('template')
-				})
-			},
-			'data-template-replace': async function(fanstatic, target, query) {
-				await fanstatic.runCommand(target, 'replace', {
-					template: query || target.querySelector('template')
-				})
-			},
-			'data-template-insert-model': async function(fanstatic, target, query) {
-				await fanstatic.runCommand(target, 'insert-model', {
-					template: query || target.querySelector('template'),
-					data: fanstatic.elementStorage.get(target).model || null,
-				})
-			},
-			'data-template-replace-model': async function(fanstatic, target, query) {
-				await fanstatic.runCommand(target, 'replace-model', {
-					template: query || target.querySelector('template'),
-					data:  fanstatic.elementStorage.get(target).model || null,
-				})
-			},
-			'data-template-insert-markdown': async function(fanstatic, target, query) {
-				await fanstatic.runCommand(target, 'insert-markdown', {
-					template: query || target.querySelector('template')
-				})
-			},
-		},
-
-		searchAndRun: async function(roof) {
-			return this.searchOnLoadAndRun(roof);
-		},
-
 		searchOnLoadAndRun: async function(roof) {
-			let targets;
-			// let targets = roof.querySelectorAll('[data-command]')
-			
-			// if (targets) {
-			// 	for (let target of targets) {
-			// 		let cmd = target.dataset.fanstaticCommand
-			// 		target.removeAttribute('data-command')
-			// 		await this.run(target, cmd)
-			// 	}
-			// }
-
-			/* with command attributes */
-			for (let cmdSel of Object.entries(this._commandAttributes)) {
-				targets = roof.querySelectorAll(`[${cmdSel[0]}]`)
-
-				if (targets) {
-					for (let target of targets) {
-						const query = target.getAttribute(cmdSel[0])
-						const fn = cmdSel[1]
-
-						target.removeAttribute(cmdSel[0])
-						await fn(this, target, query)
-					}
-				}
-			}
+			return this.searchAndRunCommand(roof);
 		},
 
 		searchOnRenderAndRun: async function(roof) {
@@ -406,7 +378,7 @@
 		append: function(target, url, opt){
 			return this._insertTemplate(target, url, opt, 'append')
 		},
-
+		
 		prepend: function(target, url, opt){
 			return this._insertTemplate(target, url, opt, 'prepend')
 		},
@@ -425,6 +397,42 @@
 
 		replace: function(target, url, opt){
 			return this._insertTemplate(target, url, opt, 'replaceElement')
+		},
+
+		appendTemplate: function(...args){ return append(...args); },
+		prependTemplate: function(...args){ return prepend(...args); },
+		beforeTemplate: function(...args){ return before(...args); },
+		afterTemplate: function(...args){ return after(...args); },
+		insertTemplate: function(...args){ return insert(...args); },
+		replaceTemplate: function(...args){ return replace(...args); },
+
+		/* panel */
+
+		resolvePanelPath: function(panelScope) {
+			return fanstatic.settings.base_url + fanstatic.settings.version + '/panels/'+panelScope.replace('.','/')+'.html'
+		},
+		resolvePanelScope: function(path) {
+			const parts = path.split('/').reverse();
+
+			return parts[1] + '.' + parts[0].substring(0, parts[0].lastIndexOf('.'));
+		},
+		insertPanel: async function(el, panelScope, opt) {
+			return await fanstatic.insert(el, this.resolvePanelPath(panelScope), opt);
+		},
+		replacePanel: async function(el, panelScope, opt) {
+			return await fanstatic.replace(el, this.resolvePanelPath(panelScope), opt);
+		},
+		appendPanel: async function(el, panelScope, opt) {
+			return await fanstatic.append(el, this.resolvePanelPath(panelScope), opt);
+		},
+		prependPanel: async function(el, panelScope, opt) {
+			return await fanstatic.prepend(el, this.resolvePanelPath(panelScope), opt);
+		},
+		beforePanel: async function(el, panelScope, opt) {
+			return await fanstatic.before(el, this.resolvePanelPath(panelScope), opt);
+		},
+		afterPanel: async function(el, panelScope, opt) {
+			return await fanstatic.after(el, this.resolvePanelPath(panelScope), opt);
 		},
 	})
 		

@@ -7,6 +7,11 @@
 			if (1 == arr.length && null == arr[0]) return html;
 			
 			for(let entry of arr) {
+				if (typeof entry === 'string') {
+					html += entry;
+					continue;
+				}
+
 				entry = Object.entries(entry)[0];
 				let tagFill = entry[0];
 				let content = entry[1];

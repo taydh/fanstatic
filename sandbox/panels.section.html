@@ -5,7 +5,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
 		<base href=""> <!-- relative -->
-		<title>Sandbox / Panels / Header</title>
+		<title>Sandbox / Panels / Section</title>
 			
 		<script src="../v2/fanstatic.js"></script>
 		<script>
@@ -55,20 +55,9 @@
 					fanstatic_base_dir = fanstatic_engine_dir = document.baseURI + fanstatic_version;
 				}
 				
-				const contentData = {
-					identity: {
-						label: 'My Company'
-					},
-					navigation: {
-						menus: [
-							{ label: 'Home' },
-							{ label: 'Services' },
-							{ label: 'About Us' },
-						]
-					}
-				}
-				
 				const init = async function(){
+					const design = fanstatic.design;
+					
 					Object.assign(fanstatic.settings, {
 						base_url: document.baseURI,
 						version: fanstatic_version,
@@ -80,67 +69,72 @@
 					
 					fanstatic.insertScripts([
 						document.baseURI + 'sandbox/panels.classfix.js?' + fanstatic.tail(),
-						document.baseURI + 'sandbox/panels.header.classfix.js?' + fanstatic.tail(),
+						document.baseURI + 'sandbox/panels.section.classfix.js?' + fanstatic.tail(),
 					]);
 					
-					fanstatic.applyTheme().then(() => window.setTimeout(delayedRun, 100))
+					fanstatic.applyTheme().then(() => window.setTimeout(delayedRun, 75))
 					
-					const delayedRun = async function(){
-						const header = document.querySelector('header');
-						const main = document.querySelector('main');
-						
-						//header.classList.add('fnst-sticky-top');
-						//header.style.zIndex = 'calc(var(--fnst-zindex-fixed) + 10)';
-						
-						const design = fanstatic.design;
-						
-						const headerSection = await fanstatic.insertPanel(header, 'section.header-simple', {
-							data: {
-								identity: design.placeholder('identity'),
-								navigation: design.placeholder('navMenu'),
-							}
-						});
-						
-						headerSection.controller.panelElement.querySelector('[data-role="container"]').classList.add('theme-container');
-						
-						const identity = await fanstatic.replacePanel(
-							headerSection.controller.panelElement.querySelector('[data-design-placeholder="identity"]'), 
-							'block.identity-basic',
-							{
-								data: contentData.identity,
-							}
-						);
-						
-						const nav = await fanstatic.replacePanel(
-							headerSection.controller.panelElement.querySelector('[data-design-placeholder="navMenu"]'), 
-							'navigation.simple',
-							{
-								data: contentData.navigation,
-							}
-						);
-						
-						nav.controller.panelElement.querySelector('[data-scope="navigation.simple"][data-role="menu-list"]').classList.add('pure-menu-list');
-						nav.controller.panelElement.querySelector('[data-scope="navigation.simple"][data-role="menu-list"] li').classList.add('pure-menu-item');
-						nav.controller.panelElement.querySelectorAll('[data-scope="navigation.simple"][data-role="menu-list"] a').forEach(a => a.classList.add('pure-menu-link'));
-						
-						const heroTop = await fanstatic.appendPanel(main, 'section.hero-top-simple', {
-							data: {
-								
-							}
-						});
-						
-						heroTop.controller.panelElement.style.backgroundColor = 'var(--theme-bg-color-primary)';
-						
-						header.style.display = 'block';
-						main.style.display = 'block';
+					const contentData = {
+						hero1: {
+							titles: ['Company X', 'the best of worlds'],
+							contents: ['Hello', "what's up"],
+							footnotes: ['Cyber City'],
+						},
+						hero2: {
+							titles: ['Company X', 'the best of worlds'],
+							contents: [
+								design.grid([design.div('One'), design.div('Two'), design.div('Three')]
+									, { style: 'grid-template-columns:1fr 2fr 1fr' })
+							],
+							footnotes: ['Cyber City'],
+						},
+						stacks1: {
+							items: [{
+								titles: ['Company X', 'the best of worlds'],
+								contents: ['Hello', "what's up"],
+								footnotes: ['Cyber City'],
+							},{
+								titles: ['Company X', 'the best of worlds'],
+								contents: ['Hello', "what's up"],
+								footnotes: ['Cyber City'],
+							},{
+								titles: ['Company X', 'the best of worlds'],
+								contents: ['Hello', "what's up"],
+								footnotes: ['Cyber City'],
+							}]
+						},
 					}
-				}
+
+					const delayedRun = async function(){
+						const main = document.querySelector('main');
+						var template;
+						
+						/* section 2 */
+						template = await fanstatic.appendPanel(main, 'section.containerized-unit', {
+							data: contentData.hero1,
+						});
+						template.controller.panelElement.id = 'section1';
+						
+						/* section 2 */
+						template = await fanstatic.appendPanel(main, 'section.containerized-unit', {
+							data: contentData.hero2,
+						});
+						template.controller.panelElement.id = 'section2';
+						
+						/* section 3 */
+						template = await fanstatic.appendPanel(main, 'section.containerized-units', {
+							data: contentData.stacks1,
+						});
+						template.controller.panelElement.id = 'section3';
+
+						console.log(main.querySelector('section'));
+					};
+				};
 			}
 		</script>
 	</head>
 
 	<body>
-		<header style="display:none; float:left; width:100%;"></header>
-		<main style="display:none;"></main>
+		<main></main>
 	</body>
 </html>

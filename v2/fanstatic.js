@@ -43,16 +43,13 @@
 		
 		insertScripts: function (urls, defaultProperties = { defer: 1 }) {
 			return new Promise((resolve) => {
-				let el
-				let count = urls.length
+				var el
+				var asyncCounter = this.asyncCounter(urls.length, () => resolve(true))
 
 				for (let url of urls) {
 					el = document.createElement('script')
-					el.onload = function(){
-						if (0 == --count) {
-							resolve(true)
-						}
-					};
+					el.onload = (() => asyncCounter.done());
+					el.onerror = (() => asyncCounter.done());
 
 					for (let entry of Object.entries(defaultProperties)) {
 						el[entry[0]] = entry[1]
@@ -75,15 +72,22 @@
 		},
 
 		insertStyles: function (urls) {
-			var el;
+			return new Promise((resolve) => {
+				var el;
+				var asyncCounter = this.asyncCounter(urls.length, () => resolve(true))
 
-			for (let url of urls) {
-				el = document.createElement('link')
-				el.setAttribute('rel','stylesheet')
-				el.href = url
+				for (let url of urls) {
+					el = document.createElement('link')
+					el.onload = (() => asyncCounter.done());
+					el.onerror = (() => asyncCounter.done());
 
-				document.head.appendChild(el)
-			}
+					el.setAttribute('rel','stylesheet')
+					el.href = url
+
+					document.head.appendChild(el)
+				}
+			})
+			
 		},
 
 		insertPreloads: function (items) {
@@ -210,8 +214,23 @@
 			return entry ? entry[0] : null;
 		},
 
-		/* Commands */
+		/* adjacent html */
 
+		insertHtml: function(el, html) { 
+			el.empty();
+			el.insertAdjacentHTML('beforeend', html);
+		},
+		replaceHtml: function(el, html) { 
+			el.insertAdjacentHTML('afterend', html);
+			el.remove();
+		},
+		beforeHtml: function(el, html) { el.insertAdjacentHTML('beforebegin', html); },
+		prependHtml: function(el, html) { el.insertAdjacentHTML('afterbegin', html); },
+		appendHtml: function(el, html) { el.insertAdjacentHTML('before', html); },
+		afterHtml: function(el, html) { el.insertAdjacentHTML('afterend', html); },
+
+		/* Commands */
+		_commandAttributes: {},
 		_commands: {},
 
 		registerCommand: function(command, fn) {
@@ -222,56 +241,36 @@
 			this._commands[command] = fn
 		},
 
-		runCommand: function(target, command, args) {
-			if (this.settings.log_render) console.log('🤖 command:', command, target)
-
-			let fn = this._commands[command]
-			if (fn) return fn(this, target, args)
-		},
-
 		run: function(target, command, args) {
 			return this.runCommand(target, command, args);
 		},
 
-		/* theme */
+		runCommand: function(target, command, args) {
+			if (this.settings.log_render) console.log('🤖 command:', command, target)
 
-		switchTheme: function(theme, themeFramework, prioritize=true) {
-			var storedTheme = window.localStorage.getItem('fanstatic.switch_theme');
-			var storedThemeFramework = window.localStorage.getItem('fanstatic.switch_theme_framework');
+			let fn = this._commands[command]
 			
-			if (theme && prioritize && (theme != !storedTheme) && (themeFramework != storedThemeFramework)) { // store theme and reload
-				storedTheme = theme;
-				storedThemeFramework = themeFramework;
-				window.localStorage.setItem('fanstatic.switch_theme', storedTheme);
-				window.localStorage.setItem('fanstatic.switch_theme_framework', storedThemeFramework);
-				window.location.reload();
+			if (fn) return fn(this, target, args)
+		},
+
+		searchAndRunCommand: async function(roof, suffix='') {
+			let targets;
+
+			/* with command attributes */
+			for (let cmdSel of Object.entries(this._commandAttributes)) {
+				const attr = cmdSel[0] + suffix;
+				targets = roof.querySelectorAll(`[${attr}]`);
+
+				if (targets) {
+					for (let target of targets) {
+						const query = target.getAttribute(cmdSel[0])
+						const fn = cmdSel[1]
+
+						target.removeAttribute(cmdSel[0])
+						await fn(this, target, query)
+					}
+				}
 			}
-
-			if (!storedTheme) return; // no theme
-
-			const themeScriptPrefix = `${fanstatic.settings.base_url}${fanstatic.settings.version}/themes/`;
-			const themeScriptUrl = `${themeScriptPrefix}${storedThemeFramework}/framework.js`;
-
-			fanstatic.insertStyles([
-				`${themeScriptPrefix}fnst.css?${fanstatic.tail()}`,
-				`${themeScriptPrefix}${storedThemeFramework}/framework.css?${fanstatic.tail()}`,
-				`${themeScriptPrefix}${storedThemeFramework}/${storedTheme}/theme.css?${fanstatic.tail()}`,
-				`${themeScriptPrefix}${storedThemeFramework}/${storedTheme}/panels.block.css?${fanstatic.tail()}`,
-				`${themeScriptPrefix}${storedThemeFramework}/${storedTheme}/panels.navigation.css?${fanstatic.tail()}`,
-				`${themeScriptPrefix}${storedThemeFramework}/${storedTheme}/panels.section.css?${fanstatic.tail()}`,
-			]);
-			
-			return fanstatic.insertScripts([themeScriptUrl + '?' + fanstatic.tail()]);
-		},
-
-		clearTheme: function() {
-			window.localStorage.removeItem('fanstatic.switch_theme');
-			window.localStorage.removeItem('fanstatic.switch_theme_framework');
-			window.location.reload();
-		},
-
-		applyTheme: function() {
-			return this.switchTheme(fanstatic.settings.theme, fanstatic.settings.theme_framework);
 		},
 	}
 

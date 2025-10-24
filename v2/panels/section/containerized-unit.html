@@ -1,0 +1,29 @@
+<section></section>
+
+<script>
+	const design = fanstatic.design;
+	const controller = {};
+
+	return {
+		onload: function (roof, data, url) {
+			const scope = fanstatic.resolvePanelScope(url);
+			const panel = roof.children[0];
+
+			panel.dataset['panel'] = scope;
+			panel.innerHTML = fanstatic.renderJhtm([
+				design.wrap(
+					design.wrap(
+						design.unit({
+							head: design.axis(data.titles.map(jhtm => design.element('div', jhtm)), {data: {scope:scope }}),
+							body: design.axis(data.contents.map(jhtm => design.element('div', jhtm)), {data: {scope:scope }}),
+							foot: design.axis(data.footnotes.map(jhtm => design.element('div', jhtm)), {data: {scope:scope }}),
+						}, {data: {scope:scope }})
+					)
+				, {data: {role:'container', scope:scope }})
+			]);
+
+			controller.panelElement = panel;
+		},
+		controller: controller
+	};
+</script>
