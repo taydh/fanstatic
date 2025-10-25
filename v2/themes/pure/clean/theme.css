@@ -3,13 +3,14 @@
 /* variables */
 
 :root {
-	--theme-spacer: 1em;
-	--theme-size: 1em;
-	--theme-margin: 1em;
-	--theme-padding: 1em;
+	--theme-spacer: 1rem;
+	--theme-size: 1rem;
+	--theme-margin: 1rem;
+	--theme-padding: 1rem;
 
-	--theme-bg-color-primary: rgb(128, 256, 256);
+	--theme-bg-color-primary: rgb(40, 255, 255);
 	--theme-bg-color-primary-darker: rgb(104, 232, 232);
+	--theme-bg-color-primary-lighter: rgb(244, 244, 244);
 	--theme-bg-color-on-hover: var(--bs-light);
 }
 
@@ -17,7 +18,14 @@
 
 /* { box-sizing: border-box; } */
 
-section { width: 100%; background-color: var(--theme-bg-color-primary); }
+section { 
+	width: 100%; 
+	background-color: var(--theme-bg-color-primary);
+}
+
+section:not(:last-child) { 
+	margin-bottom: var(--theme-margin);
+}
 
 /* LAYOUT RULES */
 
@@ -42,6 +50,11 @@ section { width: 100%; background-color: var(--theme-bg-color-primary); }
 	padding-inline: var(--theme-padding);
 }
 
+.theme-layout-3cols {
+	display: grid;
+	grid-template-columns: 1fr 3fr 1fr;
+}
+
 /* THEME RULES */
 
 .theme-container {
@@ -51,3 +64,7 @@ section { width: 100%; background-color: var(--theme-bg-color-primary); }
 .theme-display-1 { font-size: calc(1.5 * var(--theme-size)); }
 .theme-display-2 { font-size: calc(2 * var(--theme-size)); }
 .theme-display-3 { font-size: calc(3 * var(--theme-size)); }
+
+[data-design="unit"] {
+	background-color: var(--theme-bg-color-primary-lighter);
+}

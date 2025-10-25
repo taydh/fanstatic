@@ -87,7 +87,25 @@
 					document.head.appendChild(el)
 				}
 			})
-			
+		},
+
+		insertLess: function (urls) {
+			return new Promise((resolve) => {
+				var el;
+				var asyncCounter = this.asyncCounter(urls.length, () => resolve(true))
+
+				for (let url of urls) {
+					el = document.createElement('link')
+					el.onload = (() => asyncCounter.done());
+					el.onerror = (() => asyncCounter.done());
+
+					el.setAttribute('rel','stylesheet/less');
+					el.setAttribute('type','text/css');
+					el.href = url
+
+					document.head.appendChild(el)
+				}
+			})	
 		},
 
 		insertPreloads: function (items) {

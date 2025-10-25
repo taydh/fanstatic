@@ -1,0 +1,21 @@
+<section></section>
+
+<script>
+	const design = fanstatic.design;
+	const controller = {};
+
+	return {
+		onload: function (roof, data = {}, url) {
+			const scope = data.scope = data.scope || fanstatic.resolvePanelScope(url);
+			const panel = roof.children[0];
+
+			panel.dataset['panel'] = scope;
+			panel.innerHTML = fanstatic.renderJhtm([
+				design.wrap(true, {data: {role:'container', scope:scope }})
+			]);
+
+			controller.panelElement = panel;
+		},
+		controller: controller
+	};
+</script>

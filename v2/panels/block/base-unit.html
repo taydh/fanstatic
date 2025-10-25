@@ -1,0 +1,21 @@
+<script>
+	const design = fanstatic.design;
+	const controller = {};
+
+	return {
+		onload: async function (roof, data = {}, url) {
+			const scope = data.scope || fanstatic.resolvePanelScope(url);
+
+			roof.innerHTML = fanstatic.renderJhtm([
+				design.unit({
+					head: design.axis(data.titles.map(jhtm => design.element('div', jhtm)), {data: {scope:scope }}),
+					body: design.axis(data.contents.map(jhtm => design.element('div', jhtm)), {data: {scope:scope }}),
+					foot: design.axis(data.footnotes.map(jhtm => design.element('div', jhtm)), {data: {scope:scope }}),
+				}, {data: { scope:scope }})
+			]);
+
+			controller.panelElement = roof.children[0];
+		},
+		controller: controller
+	};
+</script>

@@ -5,7 +5,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
 		<base href=""> <!-- relative -->
-		<title>Sandbox / Panels / Section</title>
+		<title>Sandbox / Panels / Layout / 3-Columns</title>
 		
 		<script src="../v2/fanstatic.js"></script>
 		<script>
@@ -71,7 +71,6 @@
 					
 					fanstatic.insertScripts([
 						document.baseURI + 'sandbox/panels.classfix.js?' + fanstatic.tail(),
-						document.baseURI + 'sandbox/panels.section.classfix.js?' + fanstatic.tail(),
 					]);
 					
 					const promTheme = fanstatic.applyTheme()
@@ -79,72 +78,28 @@
 						console.log('ok')
 						window.setTimeout(delayedRun, 75)
 					})
-					
-					const designData = {
-						hero1: {
-							titles: ['Company X', 'the best of worlds'],
-							contents: ['Hello', "what's up"],
-							footnotes: ['Cyber City'],
-						},
-						hero2: {
-							titles: ['Company X', 'the best of worlds'],
-							contents: [
-								design.grid([design.div('One'), design.div('Two'), design.div('Three')]
-									, { style: 'grid-template-columns:1fr 2fr 1fr' })
-							],
-							footnotes: ['Cyber City'],
-						},
-						stacks1: {
-							items: [{
-								titles: ['Company X', 'the best of worlds'],
-								contents: ['Hello', "what's up"],
-								footnotes: ['Cyber City'],
-							},{
-								titles: ['Company X', 'the best of worlds'],
-								contents: ['Hello', "what's up"],
-								footnotes: ['Cyber City'],
-							},{
-								titles: ['Company X', 'the best of worlds'],
-								contents: ['Hello', "what's up"],
-								footnotes: ['Cyber City'],
-							}]
-						},
-					}
 
 					const delayedRun = async function(){
-						const main = document.querySelector('main');
 						var template;
 						
 						/* section 2 */
-						template = await fanstatic.appendPanel(main, 'section.containerized-hero', {
-							data: designData.hero1,
+						template = await fanstatic.prependPanel(document.body, 'layout.3-columns', {
+							data: {
+								top: 'Header',
+								startColumn: '1',
+								mainColumn: '2',
+								endColumn: '3',
+								bottom: 'Bottom',
+							},
 						});
-						template.controller.panelElement.id = 'section1';
-						
-						/* section 2 */
-						template = await fanstatic.appendPanel(main, 'section.containerized-hero', {
-							data: designData.hero2,
-						});
-						template.controller.panelElement.id = 'section2';
-						
-						/* section 3 */
-						template = await fanstatic.appendPanel(main, 'section.containerized-stacked', {
-							data: designData.stacks1,
-						});
-						template.controller.panelElement.id = 'section3';
-						template.controller.panelElement.querySelectorAll('[data-scope="section.containerized-stacked"][data-design=unit]')
-							.forEach(el => {
-								el.classList.add('theme-sidekick-unit')
-							})
-
-						console.log(main.querySelector('section'));
+						//template.controller.topElement.innerHTML = 'Header';
+						//template.controller.columnsElement.children[1].innerHTML = 'Main';
+						//template.controller.bottomElement.innerHTML = 'Footer';
 					};
 				};
 			}
 		</script>
 	</head>
 
-	<body>
-		<main></main>
-	</body>
+	<body></body>
 </html>

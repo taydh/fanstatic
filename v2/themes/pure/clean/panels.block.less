@@ -1,0 +1,38 @@
+/* block.identity-basic */
+[data-scope="block.identity-basic"][data-role="label"] { font-size: xx-large; }
+
+.theme-hero-unit {
+	> [data-design="unit-head"] {
+		.theme-display-3();
+		&:not(:last-child) {
+			margin-bottom: 1rem;
+		}
+	}
+
+	> [data-design="unit-body"] {
+		.theme-display-2();
+		&:not(:last-child) {
+			margin-bottom: 1rem;
+		}
+	}
+
+	> [data-design="unit-foot"] {
+		.theme-display-1();
+	}
+}
+
+.theme-sidekick-unit {
+	> [data-design="unit-head"] {
+		.theme-display-2();
+		&:not(:last-child) {
+			margin-bottom: 1rem;
+		}
+	}
+
+	> [data-design="unit-body"] {
+		.theme-display-1();
+		&:not(:last-child) {
+			margin-bottom: 1rem;
+		}
+	}
+}
