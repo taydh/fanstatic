@@ -127,6 +127,23 @@
 				_elementStorage.delete(target);
 			}
 		},
+
+		/* sanitizer */
+
+		sanitizeHTML: function(text) {
+			const element = document.createElement('div');
+			element.innerText = text; // Escapes HTML tags and special characters
+			return element.innerHTML;
+		},
+
+		sanitizeAttribute: function(value) {
+			return value
+				.replace(/&/g, '&amp;')
+				.replace(/"/g, '&quot;')
+				.replace(/'/g, '&#39;')
+				.replace(/</g, '&lt;')
+				.replace(/>/g, '&gt;');
+		},
 	});
 	
 	window.dispatchEvent(new CustomEvent('fanstatic.tools.load', {

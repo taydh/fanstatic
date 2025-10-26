@@ -16,11 +16,26 @@
 				let origin = window.location.origin;
 				let host_env = null;
 				
-				document.addEventListener('DOMContentLoaded', async function () {
-					await resolveOrigin();
+				const resolveOrigin = async function(){
+					// resolve relative origin
+					[
+						'http://localhost/fanstatic3'
+					].forEach(path => {
+						if (window.location.href.startsWith(path)) origin = path;
+					});
 
-					const asyncCounter = fanstatic.asyncCounter(7, () => init());
+					// resolve absolute origin
+					if (!host_env) {
+						host_env = await fanstatic.fetchJson(origin + '/env.' + origin.replace(/[:/]/g, "_") + '.json');
+					}
 
+					document.head.querySelector('base').href = host_env.base_uri; // make base URI absolute
+					fanstatic_base_dir = document.baseURI + fanstatic_version;
+				}
+				
+				const loadExtensions = async function(asyncCounter) {
+					asyncCounter.counter = 7;
+					
 					window.addEventListener('fanstatic.visual.load', () => asyncCounter.done());
 					window.addEventListener('fanstatic.design.load', () => asyncCounter.done());
 					window.addEventListener('fanstatic.structured_html.load', () => asyncCounter.done());
@@ -36,24 +51,12 @@
 						fanstatic_base_dir + '/ext.template.js?' + fanstatic.tail(),
 						fanstatic_base_dir + '/ext.theme.js?' + fanstatic.tail(),
 					]).then(() => asyncCounter.done());
-				});
-				
-				const resolveOrigin = async function(){
-					// relative origin
-					[
-						'http://localhost/fanstatic3'
-					].forEach(path => {
-						if (window.location.href.startsWith(path)) origin = path;
-					});
-
-					// absolute origin
-					if (!host_env) {
-						host_env = await fanstatic.fetchJson(origin + '/env.' + origin.replace(/[:/]/g, "_") + '.json');
-					}
-
-					document.head.querySelector('base').href = host_env.base_uri; // make base URI absolute
-					fanstatic_base_dir = fanstatic_engine_dir = document.baseURI + fanstatic_version;
 				}
+				
+				document.addEventListener('DOMContentLoaded', async function () {
+					await resolveOrigin();
+					await loadExtensions(fanstatic.asyncCounter(1, () => init()))
+				});
 				
 				const contentData = {
 					identity: {
@@ -74,13 +77,14 @@
 						version: fanstatic_version,
 						theme: 'clean',
 						theme_framework: 'pure',
+						theme_prioritize: false,
+						theme_mode: 'less',
 						tail_span: '5s',
 						log_render: false,
 					})
 					
 					fanstatic.insertScripts([
 						document.baseURI + 'sandbox/panels.classfix.js?' + fanstatic.tail(),
-						document.baseURI + 'sandbox/panels.header.classfix.js?' + fanstatic.tail(),
 					]);
 					
 					fanstatic.applyTheme().then(() => window.setTimeout(delayedRun, 100))
@@ -88,9 +92,6 @@
 					const delayedRun = async function(){
 						const header = document.querySelector('header');
 						const main = document.querySelector('main');
-						
-						//header.classList.add('fnst-sticky-top');
-						//header.style.zIndex = 'calc(var(--fnst-zindex-fixed) + 10)';
 						
 						const design = fanstatic.design;
 						
@@ -101,10 +102,10 @@
 							}
 						});
 						
-						headerSection.controller.panelElement.querySelector('[data-role="container"]').classList.add('theme-container');
+						headerSection.panelElement.querySelector('[data-role="container"]').classList.add('theme-container');
 						
 						const identity = await fanstatic.replacePanel(
-							headerSection.controller.panelElement.querySelector('[data-design-placeholder="identity"]'), 
+							headerSection.panelElement.querySelector('[data-design-placeholder="identity"]'),
 							'block.identity-basic',
 							{
 								data: contentData.identity,
@@ -112,24 +113,26 @@
 						);
 						
 						const nav = await fanstatic.replacePanel(
-							headerSection.controller.panelElement.querySelector('[data-design-placeholder="navMenu"]'), 
+							headerSection.panelElement.querySelector('[data-design-placeholder="navMenu"]'), 
 							'navigation.simple',
 							{
 								data: contentData.navigation,
 							}
 						);
 						
-						nav.controller.panelElement.querySelector('[data-scope="navigation.simple"][data-role="menu-list"]').classList.add('pure-menu-list');
-						nav.controller.panelElement.querySelector('[data-scope="navigation.simple"][data-role="menu-list"] li').classList.add('pure-menu-item');
-						nav.controller.panelElement.querySelectorAll('[data-scope="navigation.simple"][data-role="menu-list"] a').forEach(a => a.classList.add('pure-menu-link'));
+						nav.panelElement.querySelector('[data-scope="navigation.simple"][data-role="menu-list"]').classList.add('pure-menu-list');
+						nav.panelElement.querySelector('[data-scope="navigation.simple"][data-role="menu-list"] > *').classList.add('pure-menu-item');
+						nav.panelElement.querySelectorAll('[data-scope="navigation.simple"][data-role="menu-list"] a').forEach(a => a.classList.add('pure-menu-link'));
 						
 						const heroTop = await fanstatic.appendPanel(main, 'section.hero-top-simple', {
 							data: {
-								
+								items: [
+									design.element('div', 'Hero Top Simple')
+								]
 							}
 						});
 						
-						heroTop.controller.panelElement.style.backgroundColor = 'var(--theme-bg-color-primary)';
+						heroTop.panelElement.style.backgroundColor = 'var(--theme-bg-color-primary)';
 						
 						header.style.display = 'block';
 						main.style.display = 'block';

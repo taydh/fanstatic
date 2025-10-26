@@ -98,6 +98,8 @@
 					el = document.createElement('link')
 					el.onload = (() => asyncCounter.done());
 					el.onerror = (() => asyncCounter.done());
+					
+					asyncCounter.done(); // no onload triggered
 
 					el.setAttribute('rel','stylesheet/less');
 					el.setAttribute('type','text/css');

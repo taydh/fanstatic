@@ -5,12 +5,32 @@
 	return {
 		onload: async function (roof, data = {}, url) {
 			const scope = data.scope || fanstatic.resolvePanelScope(url);
+			const mode = data.mode || 0;
+
+			if (3 == mode) { // head, body, foot
+				if (!data.footnotes) data.footnotes = [];
+				data.figure = false;
+			}
+			else if (4 == mode) { // cap, head, body
+				if (!data.figure) data.figure = [];
+				data.footnotes = false;
+			}
+			else if (1 == mode) { // all
+				if (!data.footnotes) data.footnotes = [];
+				if (!data.figure) data.figure = [];
+			}
+			else if (2 == mode) { // head and body only
+				data.figure = false;
+				data.footnotes = false;
+			}
 
 			roof.innerHTML = fanstatic.renderJhtm([
 				design.unit({
-					head: design.axis(data.titles.map(jhtm => design.element('div', jhtm)), {data: {scope:scope }}),
-					body: design.axis(data.contents.map(jhtm => design.element('div', jhtm)), {data: {scope:scope }}),
-					foot: design.axis(data.footnotes.map(jhtm => design.element('div', jhtm)), {data: {scope:scope }}),
+					mode: mode,
+					cap: data.figure ? design.element('figure', data.figure) : false,
+					head: data.titles ? design.axis(data.titles.map(jhtm => design.element('div', jhtm, {data:{role:'title',scope:scope}}))) : false,
+					body: data.contents ? design.axis(data.contents.map(jhtm => design.element('div', jhtm, {data:{role:'content',scope:scope}}))) : false,
+					foot: data.footnotes ? design.axis(data.footnotes.map(jhtm => design.element('div', jhtm, {data:{role:'footnote',scope:scope}}))) : false,
 				}, {data: { scope:scope }})
 			]);
 

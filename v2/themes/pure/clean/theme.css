@@ -4,13 +4,18 @@
 
 :root {
 	--theme-spacer: 1rem;
-	--theme-size: 1rem;
+	--theme-gutter: .5rem;
 	--theme-margin: 1rem;
 	--theme-padding: 1rem;
 
-	--theme-bg-color-primary: rgb(40, 255, 255);
-	--theme-bg-color-primary-darker: rgb(104, 232, 232);
-	--theme-bg-color-primary-lighter: rgb(244, 244, 244);
+	--theme-color-lighter: #F8FAFC;
+	--theme-color-light: #D9EAFD;
+	--theme-color-dark: #BCCCDC;
+	--theme-color-darker: #9AA6B2;
+
+	--theme-bg-color-body: var(--theme-color-lighter);
+	--theme-bg-color-header: var(--theme-color-light);
+
 	--theme-bg-color-on-hover: var(--bs-light);
 }
 
@@ -18,9 +23,25 @@
 
 /* { box-sizing: border-box; } */
 
+body {
+	background-color: var(--theme-bg-color-body);
+}
+
+header {
+	background-color: var(--theme-bg-color-header);
+}
+
+figure {
+	margin: 0;
+}
+
+img {
+	display: block;
+}
+
 section { 
 	width: 100%; 
-	background-color: var(--theme-bg-color-primary);
+	background-color: var(--theme-bg-color-section);
 }
 
 section:not(:last-child) { 
@@ -55,16 +76,49 @@ section:not(:last-child) {
 	grid-template-columns: 1fr 3fr 1fr;
 }
 
+.theme-clear-float {
+	clear: both;
+}
+
+.theme-left-capped {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	grid-template-rows: auto 1fr auto;
+
+	> [data-design="unit-cap"] {
+		grid-column: 1;
+		grid-row: 1/span 3;
+
+		img {
+			display: block;
+		}
+	}
+}
+
+.theme-right-capped {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	grid-template-rows: auto 1fr auto;
+
+	> [data-design="unit-cap"] {
+		grid-column: 2;
+		grid-row: 1/span 3;
+		grid-row: 1/4;
+	}
+}
+
+
+
 /* THEME RULES */
 
 .theme-container {
-	background-color: var(--theme-bg-color-primary-darker);
+	background-color: var(--theme-bg-color-section-darker);
 }
 
-.theme-display-1 { font-size: calc(1.5 * var(--theme-size)); }
-.theme-display-2 { font-size: calc(2 * var(--theme-size)); }
-.theme-display-3 { font-size: calc(3 * var(--theme-size)); }
+.theme-display-1 { font-size: 1.5rem; }
+.theme-display-2 { font-size: 2rem; }
+.theme-display-3 { font-size: 3rem; }
 
 [data-design="unit"] {
-	background-color: var(--theme-bg-color-primary-lighter);
+	background-color: var(--theme-bg-color-section-lighter);
 }

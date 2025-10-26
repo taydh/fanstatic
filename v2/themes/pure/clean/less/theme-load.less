@@ -1,0 +1,31 @@
+@sm: 576px;
+@md: 768px;
+@lg: 992px;
+@xl: 1200px;
+@xxl: 1400px;
+
+@breakpoints: {
+	sm: @sm;
+	md: @md;
+	lg: @lg;
+	xl: @xl;
+	xxl: @xxl;
+}
+
+.responsive-min(@breakpoint, @rules) {
+	@media only screen and (min-width: @breakpoint) {
+		@rules();
+	}
+}
+
+@import (less) "../theme.css";
+@import "panels.block.less";
+@import "panels.section.less";
+@import "panels.navigation.less";
+
+/* create breakpoint classes */
+
+each(@breakpoints, {
+	.theme-@{key}-left-capped { .responsive-min(@value, { .theme-left-capped(); }); }
+	.theme-@{key}-right-capped { .responsive-min(@value, { .theme-right-capped(); }); }
+})

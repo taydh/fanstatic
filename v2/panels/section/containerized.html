@@ -11,7 +11,7 @@
 
 			panel.dataset['panel'] = scope;
 			panel.innerHTML = fanstatic.renderJhtm([
-				design.wrap(true, {data: {role:'container', scope:scope }})
+				design.wrap(data.items, {data: {role:'container', scope:scope }})
 			]);
 
 			controller.panelElement = panel;

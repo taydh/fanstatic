@@ -35,6 +35,24 @@
 				[tagFill]: [],
 			};
 
+			if (3 == model.mode) { // head, body, foot
+				if (!model.foot) model.foot = true;
+				model.cap = false;
+			}
+			else if (4 == model.mode) { // cap, head, body
+				if (!model.cap) model.cap = true;
+				model.foot = false;
+			}
+			else if (1 == model.mode) { // all
+				if (!model.foot) model.foot = true;
+				if (!model.cap) model.cap = true;
+			}
+			else if (2 == model.mode) { // head and body only
+				model.cap = false;
+				model.foot = false;
+			}
+
+			if (model.cap) result[tagFill].push({'div data-design="unit-cap"': model.cap});
 			if (model.head) result[tagFill].push({'div data-design="unit-head"': model.head});
 			if (model.body) result[tagFill].push({'div data-design="unit-body"': model.body});
 			if (model.foot) result[tagFill].push({'div data-design="unit-foot"': model.foot});
@@ -58,7 +76,7 @@
 			return result;
 		},
 		list: function(model, attributes = {}, secondaryAttributes = {}) {
-			let listTag = model.type || 'ul';
+			let listTag = model.listTag || 'ul';
 			let itemTag = ('div' == listTag) ? 'div' : 'li';
 			let tagFill = (listTag + ' data-design="list" ' +  _toAttributesString(attributes));
 			let result = {};
@@ -98,6 +116,24 @@
 
 			result[tagFill] = [];
 
+			if (3 == model.mode) { // head, body, foot
+				if (!model.foot) model.foot = true;
+				model.cap = false;
+			}
+			else if (4 == model.mode) { // cap, head, body
+				if (!model.cap) model.cap = true;
+				model.foot = false;
+			}
+			else if (1 == model.mode) { // all
+				if (!model.foot) model.foot = true;
+				if (!model.cap) model.cap = true;
+			}
+			else if (2 == model.mode) { // head and body only
+				model.cap = false;
+				model.foot = false;
+			}
+
+			if (model.cap) result[tagFill].push({'div data-design="unit-cap"': model.cap});
 			if (model.head) result[tagFill].push({'div data-design="unit-head"': model.head});
 			if (model.body) result[tagFill].push({'div data-design="unit-body" style="flex:1"': model.body});
 			if (model.foot) result[tagFill].push({'div data-design="unit-foot"': model.foot});
@@ -124,13 +160,15 @@
 
 			return result;
 		},
+		button: function(model, attributes = {},) {
+			let tagFill = `button data-design="button"`;
+
+			return {[tagFill]: model};
+		},
 		placeholder: function(name) {
 			let tagFill = `i data-design-placeholder="${name}"`;
-			let result = {}
-
-			result[tagFill] = true;
-
-			return result;
+			
+			return {[tagFill]: true}
 		},
 	};
 	

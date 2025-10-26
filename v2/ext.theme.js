@@ -31,16 +31,21 @@
 				`${themeScriptPrefix}${storedThemeFramework}/${storedTheme}/theme.css?${fanstatic.tail()}`,
 			]);
 
-			const prom2 = ('less' == mode) ? fanstatic.insertLess([
-				`${themeScriptPrefix}${storedThemeFramework}/${storedTheme}/theme-load.less?${fanstatic.tail()}`,
-			]) : fanstatic.insertStyles(styles);
+			const prom2 = ('less' == mode) 
+				? fanstatic.insertLess([
+					`${themeScriptPrefix}${storedThemeFramework}/${storedTheme}/less/theme-load.less?${fanstatic.tail()}`,
+					]) : (('less-compiled' == mode) 
+						? fanstatic.insertStyles([
+							`${themeScriptPrefix}${storedThemeFramework}/${storedTheme}/less-compiled/theme-compiled.css?${fanstatic.tail()}`
+						])
+						: fanstatic.insertStyles(styles))
 			
 			const prom3 = fanstatic.insertScripts([
 				themeScriptUrl + '?' + fanstatic.tail(),
 				'https://cdn.jsdelivr.net/npm/less',
 			]);
 
-			return Promise.all('less' == mode ? [prom1, prom3] : [prom1, prom2, prom3]);
+			return Promise.all([prom1, prom2, prom3]);
 		},
 
 		clearTheme: function() {

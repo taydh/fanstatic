@@ -17,16 +17,18 @@
 								design.unit({
 									head: data.identity,
 									body: data.navigation,
+									foot: data.actions,
 								},{ 'data-scope': scope }),
 							]
 						})
 					), {data: {role: 'container', scope: scope}}
 				)
 			]);
-
+			
 			controller.panelElement = panel;
-			controller.identityElement = panel.querySelector(`[data-design="unit"][data-scope="${scope}"] > [data-design="unit-head"]`)
-			controller.navigationElement = panel.querySelector(`[data-design="unit"][data-scope="${scope}"] > [data-design="unit-body"]`)
+			controller.identityElement = panel.querySelector(`[data-scope="${scope}"][data-design="unit"] > [data-design="unit-head"]`)
+			controller.navigationElement = panel.querySelector(`[data-scope="${scope}"][data-design="unit"] > [data-design="unit-body"]`)
+			controller.actionsElement = panel.querySelector(`[data-scope="${scope}"][data-design="unit"] > [data-design="unit-foot"]`)
 		},
 		controller: controller
 	};

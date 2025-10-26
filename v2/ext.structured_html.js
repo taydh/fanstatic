@@ -8,7 +8,7 @@
 			
 			for(let entry of arr) {
 				if (typeof entry === 'string') {
-					html += entry;
+					html += fanstatic.sanitizeHTML(entry);
 					continue;
 				}
 
@@ -22,7 +22,7 @@
 					innerHTML = this.renderJhtm(content);
 				}
 				else if (typeof content === 'string') {
-					innerHTML = content;
+					innerHTML = fanstatic.sanitizeHTML(content);
 				}
 
 				html += `<${tagFill}>${innerHTML}</${tagName}>`;

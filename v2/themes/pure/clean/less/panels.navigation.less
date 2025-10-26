@@ -1,0 +1,26 @@
+/* navigation.simple */
+
+[data-panel="navigation.simple"] {
+	height: 100%;
+
+	[data-scope="navigation.simple"][data-role="menu-list"] {
+		display: flex;
+		justify-content: center;
+	}
+}
+
+@media screen and (min-width: 768px) {
+	[data-panel="navigation.simple"] {
+		> [data-design="wrap"] {
+			height: 100%;
+			display: flex;
+			justify-content: end;
+			align-items: center;
+		}
+	}
+
+	[data-scope="navigation.simple"][data-role="menu-list"] { 
+		display: flex; 
+		justify-content: end; 
+	}
+}

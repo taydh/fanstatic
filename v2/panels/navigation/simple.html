@@ -12,6 +12,7 @@
 
 			panel.innerHTML = fanstatic.renderJhtm(design.wrap(
 				design.list({
+					listTag: 'div',
 					items: data.menus.map(menu => {
 						return { 'a href="#" data-role="menu-link"' : menu.label }
 					}),

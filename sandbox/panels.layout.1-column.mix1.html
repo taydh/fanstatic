@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+		<base href=""> <!-- relative -->
+		<title>Sandbox / Panels / Layout / 3-Columns</title>
+		
+		<script src="../v2/fanstatic.js"></script>
+		<script>
+			{
+				let fanstatic_version = 'v2';
+				let fanstatic_base_dir = '';
+				let origin = window.location.origin;
+				let host_env = null;
+				
+				const resolveOrigin = async function(){
+					// resolve relative origin
+					[
+						'http://localhost/fanstatic3'
+					].forEach(path => {
+						if (window.location.href.startsWith(path)) origin = path;
+					});
+
+					// resolve absolute origin
+					if (!host_env) {
+						host_env = await fanstatic.fetchJson(origin + '/env.' + origin.replace(/[:/]/g, "_") + '.json');
+					}
+
+					document.head.querySelector('base').href = host_env.base_uri; // make base URI absolute
+					fanstatic_base_dir = document.baseURI + fanstatic_version;
+				}
+				
+				const loadExtensions = async function(asyncCounter) {
+					asyncCounter.counter = 7;
+					
+					window.addEventListener('fanstatic.visual.load', () => asyncCounter.done());
+					window.addEventListener('fanstatic.design.load', () => asyncCounter.done());
+					window.addEventListener('fanstatic.structured_html.load', () => asyncCounter.done());
+					window.addEventListener('fanstatic.template.load', () => asyncCounter.done());
+					window.addEventListener('fanstatic.theme.load', () => asyncCounter.done());
+					window.addEventListener('fanstatic.tools.load', () => asyncCounter.done());
+
+					fanstatic.insertScripts([
+						fanstatic_base_dir + '/ext.visual.js?' + fanstatic.tail(),
+						fanstatic_base_dir + '/ext.design.js?' + fanstatic.tail(),
+						fanstatic_base_dir + '/ext.structured_html.js?' + fanstatic.tail(),
+						fanstatic_base_dir + '/ext.tools.js?' + fanstatic.tail(),
+						fanstatic_base_dir + '/ext.template.js?' + fanstatic.tail(),
+						fanstatic_base_dir + '/ext.theme.js?' + fanstatic.tail(),
+					]).then(() => asyncCounter.done());
+				}
+				
+				document.addEventListener('DOMContentLoaded', async function () {
+					await resolveOrigin();
+					await loadExtensions(fanstatic.asyncCounter(1, () => init()))
+				});
+				
+				const classFix = {
+					'#hero': ['','padding-top: calc(4*var(--theme-padding)); padding-bottom: calc(3*var(--theme-padding)'],
+					'#hero [data-role="title"]:first-child': ['','font-size: .5em;'],
+					'#stack1 [data-design="unit"]:nth-child(odd)': ['theme-sm-left-capped'],
+					'#stack1 [data-design="unit"]:nth-child(even)': ['theme-sm-right-capped'],
+					'#stack1 [data-role="title"]': ['','font-size: 1.5em;'],
+					'#stack1 [data-role="footnote"] button': ['pure-button pure-button-primary'],
+					'#foot [data-design="unit-body"]': ['','flex:1; text-align:end;'],
+					'#foot': ['','padding-block:var(--theme-padding);'],
+				};
+				
+				const init = async function(){
+					const design = fanstatic.design;
+					
+					Object.assign(fanstatic.settings, {
+						base_url: document.baseURI,
+						version: fanstatic_version,
+						theme: 'clean',
+						theme_framework: 'pure',
+						theme_prioritize: false,
+						theme_mode: 'less-compiled',
+						tail_span: '5s',
+						log_render: false,
+						class_fix: classFix,
+					})
+					
+					fanstatic.insertScripts([
+						document.baseURI + 'sandbox/panels.classfix.js?' + fanstatic.tail(),
+					]);
+					
+					const promTheme = fanstatic.applyTheme();
+					promTheme.then(() => { delayedRun() });
+
+					const delayedRun = async function(){
+						const template1 = await fanstatic.prependPanel(document.body, 'layout.1-column');
+						
+						template1.panelElement.style.display = 'none';
+						await composeHeader(template1);
+						await composeMain(template1);
+						await composeFooter(template1);
+						
+						fanstatic.applyClassFix(document.body);
+						
+						template1.panelElement.style.display = 'block';
+					};
+					
+					const composeHeader = async function(layoutController) {
+						const template2 = await fanstatic.insertPanel(layoutController.headerElement, 'section.header-simple', {
+							data: {
+								identity: true,
+								navigation: true,
+								actions: [],
+							}
+						});
+						
+						const template3 = await fanstatic.insertPanel(template2.identityElement, 'block.identity-basic', {
+							data: {
+								label: 'My Landing Page'
+							},
+						})
+						
+						const template4 = await fanstatic.insertPanel(template2.navigationElement, 'navigation.simple', {
+							data: {
+								menus: [
+									{ label: 'About Us' },
+									{ label: 'Products' },
+									{ label: 'Services' },
+								]
+							},
+						})
+					}
+					
+					const composeMain = async function(layoutController) {
+						const design = fanstatic.design;
+						
+						const hero = await fanstatic.appendPanel(layoutController.mainElement,
+							'section.containerized-hero',
+							{
+								data: {
+									titles: ['Sandbox', 'Welcome']
+								}
+							}
+					    )
+						
+						hero.panelElement.id = 'hero';
+						
+						const stackedUnit = {
+							figure: design.element('img', true, {src:"https://dummyimage.com/200x200/000/fff"}),
+							titles: ['This is a stacked unit'],
+							contents: ['this is a content line 1', 'this is a content line 2'],
+							footnotes: [design.button('Click me!')]
+						}
+						
+						const stack1 = await fanstatic.appendPanel(layoutController.mainElement,
+							'section.containerized-stack',
+							{
+								data: {
+									items: [stackedUnit, stackedUnit, stackedUnit]
+								}
+							}
+					   )
+						
+						stack1.panelElement.id = 'stack1';
+					}
+					
+					const composeFooter = async function(layoutController) {
+						const design = fanstatic.design;
+						
+						const section = await fanstatic.appendPanel(layoutController.footerElement,
+							'section.containerized', {
+							data: {
+								items: [
+									design.unitFlex({
+										head: 'My Company',
+										body: '2025'
+									})
+								]
+							}
+						});
+						
+						section.panelElement.id = 'foot'
+					}
+				};
+			}
+		</script>
+	</head>
+
+	<body></body>
+</html>

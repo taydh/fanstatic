@@ -313,15 +313,18 @@
 				}
 			}
 
-			return {
-				target: target,
-				url: url,
-				opt: opt,
-				insertFn: insertFn,
-				part: part,
-				scriptOpt: scriptOpt,
-				controller: scriptOpt.controller,
-			};
+			return Object.assign(scriptOpt.controller || {}, 
+				{ 
+					_template: {
+						target: target,
+						url: url,
+						opt: opt,
+						insertFn: insertFn,
+						part: part,
+						scriptOpt: scriptOpt,
+					}
+				}
+			);
 		},
 
 		/* commands */
