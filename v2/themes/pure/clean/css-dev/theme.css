@@ -78,35 +78,6 @@ section:not(:last-child) {
 	clear: both;
 }
 
-.theme-left-capped {
-	display: grid;
-	grid-template-columns: 1fr 1fr;
-	grid-template-rows: auto 1fr auto;
-
-	> [data-design="unit-cap"] {
-		grid-column: 1;
-		grid-row: 1/span 3;
-
-		img {
-			display: block;
-		}
-	}
-}
-
-.theme-right-capped {
-	display: grid;
-	grid-template-columns: 1fr 1fr;
-	grid-template-rows: auto 1fr auto;
-
-	> [data-design="unit-cap"] {
-		grid-column: 2;
-		grid-row: 1/span 3;
-		grid-row: 1/4;
-	}
-}
-
-
-
 /* THEME RULES */
 
 .theme-container {
