@@ -42,6 +42,10 @@
 		/* headjack scripts */
 		
 		insertScripts: function (urls, defaultProperties = { defer: 1 }) {
+			var nonEmptyUrls = [];
+			for (let url of urls) if (!!url) nonEmptyUrls.push(url);
+			urls = nonEmptyUrls;
+
 			return new Promise((resolve) => {
 				var el
 				var asyncCounter = this.asyncCounter(urls.length, () => resolve(true))
@@ -72,6 +76,10 @@
 		},
 
 		insertStyles: function (urls) {
+			var nonEmptyUrls = [];
+			for (let url of urls) if (!!url) nonEmptyUrls.push(url);
+			urls = nonEmptyUrls;
+
 			return new Promise((resolve) => {
 				var el;
 				var asyncCounter = this.asyncCounter(urls.length, () => resolve(true))
@@ -90,6 +98,10 @@
 		},
 
 		insertLess: function (urls) {
+			var nonEmptyUrls = [];
+			for (let url of urls) if (!!url) nonEmptyUrls.push(url);
+			urls = nonEmptyUrls;
+			
 			return new Promise((resolve) => {
 				var el;
 				var asyncCounter = this.asyncCounter(urls.length, () => resolve(true))
@@ -111,6 +123,10 @@
 		},
 
 		insertPreloads: function (items) {
+			var nonEmptyItems = [];
+			for (let item of items) if (!!item) nonEmptyItems.push(item);
+			items = nonEmptyItems;
+
 			var el;
 
 			for (let item of items) {

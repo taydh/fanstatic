@@ -1,4 +1,4 @@
-<nav data-panel="navigation.simple"></nav>
+<nav data-ds-panel="navigation.simple"></nav>
 
 <script>
 	const design = fanstatic.design;
@@ -14,9 +14,9 @@
 				design.list({
 					listTag: 'div',
 					items: data.menus.map(menu => {
-						return { 'a href="#" data-role="menu-link"' : menu.label }
+						return { 'a href="#" data-ds-role="menu-link"' : menu.label }
 					}),
-				}, { 'data-scope': scope, 'data-role': 'menu-list' }, { 'data-role': 'menu-item' })
+				}, { 'data-ds-scope': scope, 'data-ds-role': 'menu-list' }, { 'data-ds-role': 'menu-item' })
 			));
 
 			controller.panelElement = panel;

@@ -144,6 +144,17 @@
 				.replace(/</g, '&lt;')
 				.replace(/>/g, '&gt;');
 		},
+
+		removePathCharacters: function(value) {
+			return value
+				.replace(/&/g, '')
+				.replace(/"/g, '')
+				.replace(/'/g, '')
+				.replace(/</g, '')
+				.replace(/>/g, '')
+				.replace(/\//g, '')
+				.replace(/\\/g, '');
+		},
 	});
 	
 	window.dispatchEvent(new CustomEvent('fanstatic.tools.load', {

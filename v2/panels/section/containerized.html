@@ -9,11 +9,11 @@
 			const scope = data.scope = data.scope || fanstatic.resolvePanelScope(url);
 			const panel = roof.children[0];
 
-			panel.dataset['panel'] = scope;
+			panel.dataset.dsPanel = scope;
 			panel.innerHTML = fanstatic.renderJhtm([
-				design.wrap(data.items, {data: {role:'container', scope:scope }})
+				design.wrap(data.items || true, {data: {ds: { scope:scope, role:'container' } }})
 			]);
-
+			
 			controller.panelElement = panel;
 		},
 		controller: controller

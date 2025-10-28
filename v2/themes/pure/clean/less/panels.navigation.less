@@ -1,17 +1,17 @@
 /* navigation.simple */
 
-[data-panel="navigation.simple"] {
+[data-ds-panel="navigation.simple"] {
 	height: 100%;
 
-	[data-scope="navigation.simple"][data-role="menu-list"] {
+	[data-ds-scope="navigation.simple"][data-ds-role="menu-list"] {
 		display: flex;
 		justify-content: center;
 	}
 }
 
 @media screen and (min-width: 768px) {
-	[data-panel="navigation.simple"] {
-		> [data-design="wrap"] {
+	[data-ds-panel="navigation.simple"] {
+		> [data-ds-design="wrap"] {
 			height: 100%;
 			display: flex;
 			justify-content: end;
@@ -19,7 +19,7 @@
 		}
 	}
 
-	[data-scope="navigation.simple"][data-role="menu-list"] { 
+	[data-ds-scope="navigation.simple"][data-ds-role="menu-list"] { 
 		display: flex; 
 		justify-content: end; 
 	}

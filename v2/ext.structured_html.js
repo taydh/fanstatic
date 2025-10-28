@@ -11,6 +11,13 @@
 					html += fanstatic.sanitizeHTML(entry);
 					continue;
 				}
+				else if (typeof entry === 'number') {
+					html += fanstatic.sanitizeHTML(String(entry));
+					continue;
+				}
+				if (false === !!entry) {
+					continue;
+				}
 
 				entry = Object.entries(entry)[0];
 				let tagFill = entry[0];
@@ -18,11 +25,17 @@
 				let tagName = tagFill.split(' ')[0];
 				let innerHTML = '';
 
-				if (Array.isArray(content) || typeof content === 'object') {
-					innerHTML = this.renderJhtm(content);
+				if (false === !!content) {
+					continue;
 				}
 				else if (typeof content === 'string') {
 					innerHTML = fanstatic.sanitizeHTML(content);
+				}
+				else if (typeof content === 'number') {
+					innerHTML = fanstatic.sanitizeHTML(String(content));
+				}
+				else if (Array.isArray(content) || typeof content === 'object') {
+					innerHTML = this.renderJhtm(content);
 				}
 
 				html += `<${tagFill}>${innerHTML}</${tagName}>`;

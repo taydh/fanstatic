@@ -1,16 +1,22 @@
 {
 	const _toStyleAttributesString = function(attributes) {
-		return Object.entries(attributes).map(([k,v]) => `${k}:${v}`).join(';');
+		return Object.entries(attributes).map(([k,v]) => `${k}:${fanstatic.sanitizeAttribute(v)}`).join(';');
 	}
 
-	const _toDataAttributesString = function(attributes) {
-		return Object.entries(attributes).map(([k,v]) => `data-${k}="${v}"`).join(' ');
+	const _toDataAttributesString = function(attributes, suffix = '') {
+		return Object.entries(attributes).map(([k,v]) => {
+			if (typeof v === 'object') {
+				return _toDataAttributesString(v, suffix + k + '-');
+			}
+
+			return suffix + `${k}="${fanstatic.sanitizeAttribute(v)}"`
+		}).join(' ');
 	}
 
 	const _toAttributesString = function(attributes) {
 		return Object.entries(attributes).map(([k,v]) => {
 			if ('data' === k && typeof v === 'object') {
-				return _toDataAttributesString(v);
+				return _toDataAttributesString(v, 'data-');
 			}
 			else if ('style' === k && typeof v === 'object') {
 				return 'style="' + _toStyleAttributesString(v) + '"';
@@ -30,7 +36,7 @@
 			return this.element('div', items, attributes);
 		},
 		unit: function(model, attributes = {}) {
-			let tagFill = ('div data-design="unit" ' + _toAttributesString(attributes));
+			let tagFill = ('div data-ds="unit" ' + _toAttributesString(attributes));
 			let result = {
 				[tagFill]: [],
 			};
@@ -52,15 +58,15 @@
 				model.foot = false;
 			}
 
-			if (model.cap) result[tagFill].push({'div data-design="unit-cap"': model.cap});
-			if (model.head) result[tagFill].push({'div data-design="unit-head"': model.head});
-			if (model.body) result[tagFill].push({'div data-design="unit-body"': model.body});
-			if (model.foot) result[tagFill].push({'div data-design="unit-foot"': model.foot});
+			if (model.cap) result[tagFill].push({'div data-ds="unit-cap"': model.cap});
+			if (model.head) result[tagFill].push({'div data-ds="unit-head"': model.head});
+			if (model.body) result[tagFill].push({'div data-ds="unit-body"': model.body});
+			if (model.foot) result[tagFill].push({'div data-ds="unit-foot"': model.foot});
 
 			return result;
 		},
 		axis: function(model, attributes = {}) {
-			let tagFill = ('div data-design="axis" ' +  _toAttributesString(attributes));
+			let tagFill = ('div data-ds="axis" ' +  _toAttributesString(attributes));
 			let result = {};
 
 			result[tagFill] = Array.isArray(model) ? model : model.items;
@@ -68,7 +74,7 @@
 			return result;
 		},
 		wrap: function(item, attributes = {}) {
-			let tagFill = ('div data-design="wrap" ' +  _toAttributesString(attributes));
+			let tagFill = ('div data-ds="wrap" ' +  _toAttributesString(attributes));
 			let result = {};
 
 			result[tagFill] = item;
@@ -78,13 +84,13 @@
 		list: function(model, attributes = {}, secondaryAttributes = {}) {
 			let listTag = model.listTag || 'ul';
 			let itemTag = ('div' == listTag) ? 'div' : 'li';
-			let tagFill = (listTag + ' data-design="list" ' +  _toAttributesString(attributes));
+			let tagFill = (listTag + ' data-ds="list" ' +  _toAttributesString(attributes));
 			let result = {};
 			let items = (Array.isArray(model) ? model : model.items) || [];
 
 			result[tagFill] = items.map(item => {
 				let obj = {};
-				obj[itemTag + ' data-design="list-item" ' +  _toAttributesString(secondaryAttributes)] = item;
+				obj[itemTag + ' data-ds="list-item" ' +  _toAttributesString(secondaryAttributes)] = item;
 
 				return obj;
 			});
@@ -111,7 +117,7 @@
 				attributes.style = (attributes.style || '') + ';display:flex;';
 			}
 
-			let tagFill = ('div data-design="unit" ' + _toAttributesString(attributes));
+			let tagFill = ('div data-ds="unit" ' + _toAttributesString(attributes));
 			let result = {};
 
 			result[tagFill] = [];
@@ -133,10 +139,10 @@
 				model.foot = false;
 			}
 
-			if (model.cap) result[tagFill].push({'div data-design="unit-cap"': model.cap});
-			if (model.head) result[tagFill].push({'div data-design="unit-head"': model.head});
-			if (model.body) result[tagFill].push({'div data-design="unit-body" style="flex:1"': model.body});
-			if (model.foot) result[tagFill].push({'div data-design="unit-foot"': model.foot});
+			if (model.cap) result[tagFill].push({'div data-ds="unit-cap"': model.cap});
+			if (model.head) result[tagFill].push({'div data-ds="unit-head"': model.head});
+			if (model.body) result[tagFill].push({'div data-ds="unit-body" style="flex:1"': model.body});
+			if (model.foot) result[tagFill].push({'div data-ds="unit-foot"': model.foot});
 
 			return result;
 		},
@@ -147,13 +153,13 @@
 				attributes.style = (attributes.style || '') + ';display:grid;';
 			}
 
-			let tagFill = ('div data-design="grid" ' +  _toAttributesString(attributes));
+			let tagFill = ('div data-ds="grid" ' +  _toAttributesString(attributes));
 			let result = {};
 			let items = (Array.isArray(model) ? model : model.items) || [];
 
 			result[tagFill] = items.map(item => {
 				let obj = {};
-				obj['div data-design="grid-cell" ' +  _toAttributesString(secondaryAttributes)] = item;
+				obj['div data-ds="grid-cell" ' +  _toAttributesString(secondaryAttributes)] = item;
 
 				return obj;
 			});
@@ -161,12 +167,12 @@
 			return result;
 		},
 		button: function(model, attributes = {},) {
-			let tagFill = `button data-design="button"`;
+			let tagFill = `button data-ds="button"`;
 
 			return {[tagFill]: model};
 		},
 		placeholder: function(name) {
-			let tagFill = `i data-design-placeholder="${name}"`;
+			let tagFill = `i data-ds-placeholder="${name}"`;
 			
 			return {[tagFill]: true}
 		},

@@ -28,13 +28,26 @@
 				design.unit({
 					mode: mode,
 					cap: data.figure ? design.element('figure', data.figure) : false,
-					head: data.titles ? design.axis(data.titles.map(jhtm => design.element('div', jhtm, {data:{role:'title',scope:scope}}))) : false,
-					body: data.contents ? design.axis(data.contents.map(jhtm => design.element('div', jhtm, {data:{role:'content',scope:scope}}))) : false,
-					foot: data.footnotes ? design.axis(data.footnotes.map(jhtm => design.element('div', jhtm, {data:{role:'footnote',scope:scope}}))) : false,
-				}, {data: { scope:scope }})
+					head: data.titles ? design.axis(data.titles.map(jhtm => design.element('div', jhtm))) : false,
+					body: data.contents ? design.axis(data.contents.map(jhtm => design.element('div', jhtm))) : false,
+					foot: data.footnotes ? design.axis(data.footnotes.map(jhtm => design.element('div', jhtm))) : false,
+				}, {data: { ds: { scope: scope }}})
 			]);
 
-			controller.panelElement = roof.children[0];
+			const panelElement = roof.children[0];
+			const cap = panelElement.querySelector(':scope > [data-ds="unit-cap"]')
+			const head = panelElement.querySelector(':scope > [data-ds="unit-head"]')
+			const body = panelElement.querySelector(':scope > [data-ds="unit-body"]')
+			const foot = panelElement.querySelector(':scope > [data-ds="unit-foot"]')
+
+			if (cap) cap.dataset['dsRole'] = 'figure';
+			if (head) head.dataset['dsRole'] = 'title';
+			if (body) body.dataset['dsRole'] = 'content';
+			if (foot) foot.dataset['dsRole'] = 'footnote';
+			
+			for (let el of panelElement.children) { el.dataset['dsScope'] = scope; }
+			
+			controller.panelElement = panelElement;
 		},
 		controller: controller
 	};

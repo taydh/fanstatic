@@ -10,10 +10,12 @@
 				data.items.map(item => design.placeholder('unit'))
 			));
 
-			const placeholders = roof.querySelectorAll('[data-design-placeholder=unit]')
+			const placeholders = roof.querySelectorAll('[data-ds-placeholder=unit]')
 
 			for (let i=0; i<placeholders.length; i++) {
-				await fanstatic.replacePanel(placeholders[i], 'block.base-unit', { data: Object.assign(data.items[i], {scope: scope}) })
+				await fanstatic.replacePanel(placeholders[i], 'block.base-unit', { 
+					data: Object.assign(data.items[i], {scope: scope}) 
+				})
 			}
 
 			controller.panelElement = roof.children[0];

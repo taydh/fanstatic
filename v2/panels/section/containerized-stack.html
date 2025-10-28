@@ -8,14 +8,19 @@
 			const data2 = {
 				scope: scope,
 				items: [
-					design.wrap(design.placeholder('units'))
+					design.wrap([
+						(data.sectionTitles) 
+							? design.axis(data.sectionTitles.map(title => design.element('div', title)), {data:{role:'section-title', scope:scope}})
+							: null,
+						design.placeholder('units'), 
+					])
 				]
 			};
 			const tmpl1 = await fanstatic.insertPanel(roof, 'section.containerized', { data: data2 });
 			const panel = roof.children[0];
-			panel.dataset['panel'] = scope;
+			panel.dataset.dsPanel = scope;
 
-			const tmpl2 = await fanstatic.replacePanel(panel.querySelector('[data-design-placeholder=units]'), 'block.stacked-units', {
+			const tmpl2 = await fanstatic.replacePanel(panel.querySelector('[data-ds-placeholder=units]'), 'block.stacked-units', {
 				data: data,
 			});
 

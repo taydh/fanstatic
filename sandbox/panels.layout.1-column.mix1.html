@@ -7,6 +7,7 @@
 		<base href=""> <!-- relative -->
 		<title>Sandbox / Panels / Layout / 3-Columns</title>
 		
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/pure-min.css">
 		<script src="../v2/fanstatic.js"></script>
 		<script>
 			{
@@ -59,12 +60,12 @@
 				
 				const classFix = {
 					'#hero': ['','padding-top: calc(4*var(--theme-padding)); padding-bottom: calc(3*var(--theme-padding)'],
-					'#hero [data-role="title"]:first-child': ['','font-size: .5em;'],
-					'#stack1 [data-design="unit"]:nth-child(odd)': ['theme-sm-left-capped'],
-					'#stack1 [data-design="unit"]:nth-child(even)': ['theme-sm-right-capped'],
-					'#stack1 [data-role="title"]': ['','font-size: 1.5em;'],
-					'#stack1 [data-role="footnote"] button': ['pure-button pure-button-primary'],
-					'#foot [data-design="unit-body"]': ['','flex:1; text-align:end;'],
+					'#hero [data-ds-role="title"] > [data-ds] > *:first-child': ['','font-size: .5em;'],
+					'#stack1 [data-ds="unit"]:nth-child(odd)': ['theme-sm-left-capped'],
+					'#stack1 [data-ds="unit"]:nth-child(even)': ['theme-sm-right-capped'],
+					'#stack1 [data-ds-role="title"] > [data-ds] > *': ['','font-size: 1.5em;'],
+					'#stack1 [data-ds-role="footnote"] button': ['pure-button pure-button-primary'],
+					'#foot [data-ds="unit-body"]': ['','flex:1; text-align:end;'],
 					'#foot': ['','padding-block:var(--theme-padding);'],
 				};
 				
@@ -77,7 +78,8 @@
 						theme: 'clean',
 						theme_framework: 'pure',
 						theme_prioritize: false,
-						theme_mode: 'less-compiled',
+						theme_mode: 'less',
+						library_less_url: 'https://cdn.jsdelivr.net/npm/less',
 						tail_span: '5s',
 						log_render: false,
 						class_fix: classFix,

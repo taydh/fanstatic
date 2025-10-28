@@ -402,12 +402,12 @@
 			return this._insertTemplate(target, url, opt, 'replaceElement')
 		},
 
-		appendTemplate: function(...args){ return append(...args); },
-		prependTemplate: function(...args){ return prepend(...args); },
-		beforeTemplate: function(...args){ return before(...args); },
-		afterTemplate: function(...args){ return after(...args); },
-		insertTemplate: function(...args){ return insert(...args); },
-		replaceTemplate: function(...args){ return replace(...args); },
+		appendTemplate: function(...args){ return this.append(...args); },
+		prependTemplate: function(...args){ return this.prepend(...args); },
+		beforeTemplate: function(...args){ return this.before(...args); },
+		afterTemplate: function(...args){ return this.after(...args); },
+		insertTemplate: function(...args){ return this.insert(...args); },
+		replaceTemplate: function(...args){ return this.replace(...args); },
 
 		/* panel */
 
