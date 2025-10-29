@@ -1,0 +1,10 @@
+ErrorDocument 404 /404.html
+
+RewriteEngine on
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^src/.*$ - [F,L]
+RewriteRule ^(designs|showcases|docs|blog)/?$ ./index.html [NC,L,QSA]
+# only works with sub-directory
+RewriteRule ^(news/.+)$ ./src/hta_200.php?i=news&a=$1 [NC,L,QSA]
+# RewriteRule ^(.+)$ ./hta_200.php?a=$1 [NC,L,QSA] is not working

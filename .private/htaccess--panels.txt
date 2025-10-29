@@ -1,0 +1,9 @@
+# Set CORS headers for all domains (or specify a single origin)
+Header set Access-Control-Allow-Origin "*"
+Header set Access-Control-Allow-Headers "Origin, X-Requested-With, Content-Type, Accept"
+Header set Access-Control-Allow-Methods "GET, OPTIONS"
+
+# Set Access-Control-Max-Age for OPTIONS requests
+<LimitExcept GET POST PUT DELETE>
+	Header always set Access-Control-Max-Age "7200"
+</LimitExcept>
