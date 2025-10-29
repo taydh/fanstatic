@@ -20,16 +20,13 @@
 			const themeScriptPrefix = `${fanstatic.settings.base_url}${fanstatic.settings.version}/themes/`;
 			const themeScriptUrl = `${themeScriptPrefix}${storedThemeFramework}/theme-framework.js`;
 
-			const prom1 = fanstatic.insertStyles([
-				`${themeScriptPrefix}theme-base.css?${fanstatic.tail()}`,
-				`${themeScriptPrefix}${storedThemeFramework}/theme-framework.css?${fanstatic.tail()}`,
-			]);
-			
-			const prom2 = ('less' == mode) 
+			const prom1 = ('less' == mode) 
 				? fanstatic.insertLess([
 					`${themeScriptPrefix}${storedThemeFramework}/${storedTheme}/less/theme.less?${fanstatic.tail()}`,
 					]) : (('css-dev' == mode) 
 						? fanstatic.insertStyles([
+							`${themeScriptPrefix}theme-base.css?${fanstatic.tail()}`,
+							`${themeScriptPrefix}${storedThemeFramework}/theme-framework.css?${fanstatic.tail()}`,
 							`${themeScriptPrefix}${storedThemeFramework}/${storedTheme}/css-dev/theme.css?${fanstatic.tail()}`
 						])
 						: fanstatic.insertStyles([
@@ -42,9 +39,9 @@
 
 			if (fanstatic.settings.library_less_url) scriptsUrls.push(fanstatic.settings.library_less_url);
 
-			const prom3 = fanstatic.insertScripts(scriptsUrls);
+			const prom2 = fanstatic.insertScripts(scriptsUrls);
 
-			return Promise.all([prom1, prom2, prom3]);
+			return Promise.all([prom1, prom2]);
 		},
 
 		clearTheme: function() {

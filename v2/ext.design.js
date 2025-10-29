@@ -97,55 +97,6 @@
 
 			return result;
 		},
-		axisFlex: function(model, attributes = {}) {
-			if (!attributes.style) attributes.style = {};
-
-			if (typeof attributes.style === 'object') {
-				Object.assign(attributes.style, { display: 'flex' });
-			} else {
-				attributes.style = (attributes.style || '') + 'display:flex';
-			}
-
-			return this.axis(model, attributes);
-		},
-		unitFlex: function(model, attributes = {}) {
-			if (!attributes.style) attributes.style = {};
-
-			if (typeof attributes.style === 'object') {
-				Object.assign(attributes.style, { display: 'flex' });
-			} else {
-				attributes.style = (attributes.style || '') + ';display:flex;';
-			}
-
-			let tagFill = ('div data-ds="unit" ' + _toAttributesString(attributes));
-			let result = {};
-
-			result[tagFill] = [];
-
-			if (3 == model.mode) { // head, body, foot
-				if (!model.foot) model.foot = true;
-				model.cap = false;
-			}
-			else if (4 == model.mode) { // cap, head, body
-				if (!model.cap) model.cap = true;
-				model.foot = false;
-			}
-			else if (1 == model.mode) { // all
-				if (!model.foot) model.foot = true;
-				if (!model.cap) model.cap = true;
-			}
-			else if (2 == model.mode) { // head and body only
-				model.cap = false;
-				model.foot = false;
-			}
-
-			if (model.cap) result[tagFill].push({'div data-ds="unit-cap"': model.cap});
-			if (model.head) result[tagFill].push({'div data-ds="unit-head"': model.head});
-			if (model.body) result[tagFill].push({'div data-ds="unit-body" style="flex:1"': model.body});
-			if (model.foot) result[tagFill].push({'div data-ds="unit-foot"': model.foot});
-
-			return result;
-		},
 		grid: function(model, attributes = {}, secondaryAttributes = {}) {
 			if (typeof attributes.style === 'object') {
 				Object.assign(attributes.style, { display: 'grid' });
@@ -175,6 +126,41 @@
 			let tagFill = `i data-ds-placeholder="${name}"`;
 			
 			return {[tagFill]: true}
+		},
+		axisFlex: function(model, attributes = {}) {
+			if (!attributes.style) attributes.style = {};
+
+			if (typeof attributes.style === 'object') {
+				Object.assign(attributes.style, { display: 'flex' });
+			} else {
+				attributes.style = (attributes.style || '') + 'display:flex';
+			}
+
+			return this.axis(model, attributes);
+		},
+		unitFlex: function(model, attributes = {}) {
+			if (!attributes.style) attributes.style = {};
+
+			if (typeof attributes.style === 'object') {
+				Object.assign(attributes.style, { display: 'flex' });
+			} else {
+				attributes.style = (attributes.style || '') + ';display:flex;';
+			}
+
+			const unit = this.unit(model, attributes);
+
+			if (model.body) {
+				Object.entries(unit)[0][1].forEach(el => { 
+					const entry = Object.entries(el)[0];
+
+					if(entry[0].includes('data-ds="unit-body"')) {
+						el[entry[0] + ' style="flex:1"'] = entry[1];
+						delete el[entry[0]];
+					}
+				})
+			}
+
+			return unit;
 		},
 	};
 	

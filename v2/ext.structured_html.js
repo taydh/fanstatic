@@ -8,11 +8,11 @@
 			
 			for(let entry of arr) {
 				if (typeof entry === 'string') {
-					html += fanstatic.sanitizeHTML(entry);
+					html += entry; /* sanitize html or object in user data orchestration level */
 					continue;
 				}
 				else if (typeof entry === 'number') {
-					html += fanstatic.sanitizeHTML(String(entry));
+					html += String(entry);  /* sanitize html or object in user data orchestration level */
 					continue;
 				}
 				if (false === !!entry) {
@@ -29,10 +29,10 @@
 					continue;
 				}
 				else if (typeof content === 'string') {
-					innerHTML = fanstatic.sanitizeHTML(content);
+					innerHTML = content; /* sanitize html or object in user data orchestration level */
 				}
 				else if (typeof content === 'number') {
-					innerHTML = fanstatic.sanitizeHTML(String(content));
+					innerHTML = String(content); /* sanitize html or object in user data orchestration level */
 				}
 				else if (Array.isArray(content) || typeof content === 'object') {
 					innerHTML = this.renderJhtm(content);

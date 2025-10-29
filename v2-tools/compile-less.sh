@@ -1,0 +1,1 @@
+lessc ../v2/themes/pure/clean/less/theme.less ../v2/themes/pure/clean/theme.css --source-map

@@ -14,7 +14,10 @@
 			]);
 
 			const tmpl2 = await fanstatic.replacePanel(panelElement.querySelector('[data-ds-placeholder=unit]'), 'block.base-unit', {
-				data: Object.assign(data, { scope:scope }),
+				data: Object.assign(data, { 
+					id: data.id || null,
+					scope:scope,
+				}),
 			});
 
 			controller.panelElement = panelElement;

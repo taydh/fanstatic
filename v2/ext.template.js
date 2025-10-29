@@ -437,6 +437,10 @@
 		afterPanel: async function(el, panelScope, opt) {
 			return await fanstatic.after(el, this.resolvePanelPath(panelScope), opt);
 		},
+
+		removeLocalizedTemplates: function() {
+			document.getElementById(this.settings.local_area_id).remove();
+		},
 	})
 		
 	window.dispatchEvent(new CustomEvent('fanstatic.template.load'));

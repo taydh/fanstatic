@@ -6,9 +6,11 @@
 
 	return {
 		onload: function (roof, data = {}, url) {
+			const id = data.id || null;
 			const scope = data.scope = data.scope || fanstatic.resolvePanelScope(url);
 			const panel = roof.children[0];
 
+			panel.id = id;
 			panel.dataset.dsPanel = scope;
 			panel.innerHTML = fanstatic.renderJhtm([
 				design.wrap(data.items || true, {data: {ds: { scope:scope, role:'container' } }})

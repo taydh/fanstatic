@@ -11,8 +11,16 @@
 	}
 }
 
-[data-ds-scope="section.containerized-stack"][data-ds="unit"]:not(:last-child) { 
-	margin-bottom: var(--theme-margin); 
+[data-ds-scope="section.containerized-stack"] {
+	&[data-ds="unit"]:not(:last-child) { 
+		margin-bottom: var(--theme-margin); 
+	}
+
+	&[data-ds-role="section-title"] {
+		font-size: 2rem;
+		text-align: center;
+		margin-bottom: calc(1.5*var(--theme-margin));
+	}
 }
 
 [data-ds-scope="section.header-simple"][data-ds="unit"] > [data-ds="unit-head"] {  display: flex; justify-content: center; align-items:center; padding-block: var(--theme-padding) }

@@ -4,13 +4,15 @@
 
 	return {
 		onload: async function (roof, data, url) {
+			const titles = data.titles || null
 			const scope = data.scope = data.scope || fanstatic.resolvePanelScope(url);
 			const data2 = {
+				id: data.id || null,
 				scope: scope,
 				items: [
 					design.wrap([
-						(data.sectionTitles) 
-							? design.axis(data.sectionTitles.map(title => design.element('div', title)), {data:{role:'section-title', scope:scope}})
+						(titles) 
+							? design.axis(titles.map(title => design.element('div', title)), {data:{ds:{role:'section-title', scope:scope}}})
 							: null,
 						design.placeholder('units'), 
 					])
@@ -18,10 +20,12 @@
 			};
 			const tmpl1 = await fanstatic.insertPanel(roof, 'section.containerized', { data: data2 });
 			const panel = roof.children[0];
-			panel.dataset.dsPanel = scope;
 
 			const tmpl2 = await fanstatic.replacePanel(panel.querySelector('[data-ds-placeholder=units]'), 'block.stacked-units', {
-				data: data,
+				data: {
+					scope: scope,
+					items: data.items,
+				},
 			});
 
 			controller.panelElement = panel;

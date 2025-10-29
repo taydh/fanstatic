@@ -9,17 +9,27 @@
 	--theme-zindex-popover:                    1070;
 	--theme-zindex-tooltip:                    1080;
 	--theme-zindex-toast:                      1090;
+
+	--theme-cursor-on-hover: pointer;
 }
 
 .theme-w-full {
 	width: 100%;
 }
 
-.theme-d-flex {
+.theme-d-grid {
+	display: grid;
+}
+
+.theme-d-flex, .theme-d-flex-evenly {
 	display: flex;
 }
 
 .theme-d-flex > .theme-flex-fill {
+	flex: 1;
+}
+
+.theme-d-flex-evenly > * {
 	flex: 1;
 }
 

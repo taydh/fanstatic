@@ -101,7 +101,7 @@
 			var nonEmptyUrls = [];
 			for (let url of urls) if (!!url) nonEmptyUrls.push(url);
 			urls = nonEmptyUrls;
-
+			
 			return new Promise((resolve) => {
 				var el;
 				var asyncCounter = this.asyncCounter(urls.length, () => resolve(true))
@@ -411,55 +411,6 @@
 
 			return result;
 		},
-		axisFlex: function(model, attributes = {}) {
-			if (!attributes.style) attributes.style = {};
-
-			if (typeof attributes.style === 'object') {
-				Object.assign(attributes.style, { display: 'flex' });
-			} else {
-				attributes.style = (attributes.style || '') + 'display:flex';
-			}
-
-			return this.axis(model, attributes);
-		},
-		unitFlex: function(model, attributes = {}) {
-			if (!attributes.style) attributes.style = {};
-
-			if (typeof attributes.style === 'object') {
-				Object.assign(attributes.style, { display: 'flex' });
-			} else {
-				attributes.style = (attributes.style || '') + ';display:flex;';
-			}
-
-			let tagFill = ('div data-ds="unit" ' + _toAttributesString(attributes));
-			let result = {};
-
-			result[tagFill] = [];
-
-			if (3 == model.mode) { // head, body, foot
-				if (!model.foot) model.foot = true;
-				model.cap = false;
-			}
-			else if (4 == model.mode) { // cap, head, body
-				if (!model.cap) model.cap = true;
-				model.foot = false;
-			}
-			else if (1 == model.mode) { // all
-				if (!model.foot) model.foot = true;
-				if (!model.cap) model.cap = true;
-			}
-			else if (2 == model.mode) { // head and body only
-				model.cap = false;
-				model.foot = false;
-			}
-
-			if (model.cap) result[tagFill].push({'div data-ds="unit-cap"': model.cap});
-			if (model.head) result[tagFill].push({'div data-ds="unit-head"': model.head});
-			if (model.body) result[tagFill].push({'div data-ds="unit-body" style="flex:1"': model.body});
-			if (model.foot) result[tagFill].push({'div data-ds="unit-foot"': model.foot});
-
-			return result;
-		},
 		grid: function(model, attributes = {}, secondaryAttributes = {}) {
 			if (typeof attributes.style === 'object') {
 				Object.assign(attributes.style, { display: 'grid' });
@@ -490,6 +441,41 @@
 			
 			return {[tagFill]: true}
 		},
+		axisFlex: function(model, attributes = {}) {
+			if (!attributes.style) attributes.style = {};
+
+			if (typeof attributes.style === 'object') {
+				Object.assign(attributes.style, { display: 'flex' });
+			} else {
+				attributes.style = (attributes.style || '') + 'display:flex';
+			}
+
+			return this.axis(model, attributes);
+		},
+		unitFlex: function(model, attributes = {}) {
+			if (!attributes.style) attributes.style = {};
+
+			if (typeof attributes.style === 'object') {
+				Object.assign(attributes.style, { display: 'flex' });
+			} else {
+				attributes.style = (attributes.style || '') + ';display:flex;';
+			}
+
+			const unit = this.unit(model, attributes);
+
+			if (model.body) {
+				Object.entries(unit)[0][1].forEach(el => { 
+					const entry = Object.entries(el)[0];
+
+					if(entry[0].includes('data-ds="unit-body"')) {
+						el[entry[0] + ' style="flex:1"'] = entry[1];
+						delete el[entry[0]];
+					}
+				})
+			}
+
+			return unit;
+		},
 	};
 	
 	window.dispatchEvent(new CustomEvent('fanstatic.design.load', {
@@ -506,11 +492,11 @@
 			
 			for(let entry of arr) {
 				if (typeof entry === 'string') {
-					html += fanstatic.sanitizeHTML(entry);
+					html += entry; /* sanitize html or object in user data orchestration level */
 					continue;
 				}
 				else if (typeof entry === 'number') {
-					html += fanstatic.sanitizeHTML(String(entry));
+					html += String(entry);  /* sanitize html or object in user data orchestration level */
 					continue;
 				}
 				if (false === !!entry) {
@@ -527,10 +513,10 @@
 					continue;
 				}
 				else if (typeof content === 'string') {
-					innerHTML = fanstatic.sanitizeHTML(content);
+					innerHTML = content; /* sanitize html or object in user data orchestration level */
 				}
 				else if (typeof content === 'number') {
-					innerHTML = fanstatic.sanitizeHTML(String(content));
+					innerHTML = String(content); /* sanitize html or object in user data orchestration level */
 				}
 				else if (Array.isArray(content) || typeof content === 'object') {
 					innerHTML = this.renderJhtm(content);
@@ -995,6 +981,10 @@
 		afterPanel: async function(el, panelScope, opt) {
 			return await fanstatic.after(el, this.resolvePanelPath(panelScope), opt);
 		},
+
+		removeLocalizedTemplates: function() {
+			document.getElementById(this.settings.local_area_id).remove();
+		},
 	})
 		
 	window.dispatchEvent(new CustomEvent('fanstatic.template.load'));
@@ -1021,27 +1011,28 @@
 			const themeScriptPrefix = `${fanstatic.settings.base_url}${fanstatic.settings.version}/themes/`;
 			const themeScriptUrl = `${themeScriptPrefix}${storedThemeFramework}/theme-framework.js`;
 
-			const prom1 = fanstatic.insertStyles([
-				`${themeScriptPrefix}theme-base.css?${fanstatic.tail()}`,
-				`${themeScriptPrefix}${storedThemeFramework}/theme-framework.css?${fanstatic.tail()}`,
-			]);
-
-			const prom2 = ('less' == mode) 
+			const prom1 = ('less' == mode) 
 				? fanstatic.insertLess([
 					`${themeScriptPrefix}${storedThemeFramework}/${storedTheme}/less/theme.less?${fanstatic.tail()}`,
 					]) : (('css-dev' == mode) 
 						? fanstatic.insertStyles([
+							`${themeScriptPrefix}theme-base.css?${fanstatic.tail()}`,
+							`${themeScriptPrefix}${storedThemeFramework}/theme-framework.css?${fanstatic.tail()}`,
 							`${themeScriptPrefix}${storedThemeFramework}/${storedTheme}/css-dev/theme.css?${fanstatic.tail()}`
 						])
 						: fanstatic.insertStyles([
 							`${themeScriptPrefix}${storedThemeFramework}/${storedTheme}/theme.css?${fanstatic.tail()}`
 						]))
 			
-			const prom3 = fanstatic.insertScripts([
+			const scriptsUrls = [
 				themeScriptUrl + '?' + fanstatic.tail(),
-			]);
+			];
 
-			return Promise.all([prom1, prom2, prom3]);
+			if (fanstatic.settings.library_less_url) scriptsUrls.push(fanstatic.settings.library_less_url);
+
+			const prom2 = fanstatic.insertScripts(scriptsUrls);
+
+			return Promise.all([prom1, prom2]);
 		},
 
 		clearTheme: function() {
@@ -1087,6 +1078,10 @@
 		},
 
 		/* classfix */
+
+		assignClassFix: function(obj) {
+			Object.assign(this.settings.class_fix, obj);
+		},
 
 		applyClassFix: function(roof) {
 			let elems = []
@@ -1192,7 +1187,7 @@
 
 		/* sanitizer */
 
-		sanitizeHTML: function(text) {
+		sanitizeHtml: function(text) {
 			const element = document.createElement('div');
 			element.innerText = text; // Escapes HTML tags and special characters
 			return element.innerHTML;

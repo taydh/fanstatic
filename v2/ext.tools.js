@@ -26,6 +26,10 @@
 
 		/* classfix */
 
+		assignClassFix: function(obj) {
+			Object.assign(this.settings.class_fix, obj);
+		},
+
 		applyClassFix: function(roof) {
 			let elems = []
 
@@ -130,7 +134,7 @@
 
 		/* sanitizer */
 
-		sanitizeHTML: function(text) {
+		sanitizeHtml: function(text) {
 			const element = document.createElement('div');
 			element.innerText = text; // Escapes HTML tags and special characters
 			return element.innerHTML;
