@@ -157,6 +157,7 @@
 			var sourceUrl = url ? url : 'template-' + Date.now()
 			var scriptOpt = {
 				renderer: null,
+				classfix: null,
 				model: null,
 				onload: null,
 				oninsert: null,
@@ -299,8 +300,10 @@
 			if (document.body.contains(roof)) {
 				await this.searchOnRenderAndRun(document.body)
 
-				/* class fix applied after render, be aware this can lead to FOUC issue */
-				if (this.settings.class_fix) this.applyClassFix(document)
+				/* classfix applied after render, be aware this can lead to FOUC issue */
+				this.applyClassfix(document)
+
+				if (scriptOpt.classfix) this.applyClassfix(document, scriptOpt.classfix)
 
 				if (this.settings.log_render) console.log('🎬 rendered:', part.url)
 

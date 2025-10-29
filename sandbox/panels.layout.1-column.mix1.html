@@ -82,7 +82,7 @@
 						library_less_url: 'https://cdn.jsdelivr.net/npm/less',
 						tail_span: '5s',
 						log_render: false,
-						class_fix: classFix,
+						classfix: classFix,
 					})
 					
 					fanstatic.insertScripts([
@@ -100,7 +100,7 @@
 						await composeMain(template1);
 						await composeFooter(template1);
 						
-						fanstatic.applyClassFix(document.body);
+						fanstatic.applyClassfix(document.body);
 						
 						template1.panelElement.style.display = 'block';
 					};

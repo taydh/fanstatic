@@ -26,32 +26,46 @@
 
 		/* classfix */
 
-		assignClassFix: function(obj) {
-			Object.assign(this.settings.class_fix, obj);
+		assignClassfix: function(obj) {
+			if (!this.settings.classfix) this.settings.classfix = {};
+			Object.assign(this.settings.classfix, obj);
 		},
 
-		applyClassFix: function(roof) {
-			let elems = []
+		getClassfix: function() {
+			return this.settings.classfix;
+		},
 
-			Object.entries(this.settings.class_fix).forEach(entry => {
-				roof.querySelectorAll(entry[0]).forEach(elem => {
-					if (!elem.dataset.classFixed) {
-						elems.push(elem)
+		applyClassfix: function(roof, source = null) {
+			source = source || this.settings.classfix || this.settings.class_fix;
 
-						let cls = !Array.isArray(entry[1]) ? entry[1] : entry[1][0];
-						let stl = !Array.isArray(entry[1]) ? null : entry[1][1];
+			const elems = []
+			const sourceArr = source ? Object.entries(source) : null;
 
-						if (cls) elem.classList.add(...cls.split(' '));
-						if (stl) elem.setAttribute('style', (elem.getAttribute('style') || '') + ';' + stl);
-					}
+			if (sourceArr) {
+				sourceArr.forEach(entry => {
+					roof.querySelectorAll(entry[0]).forEach(elem => {
+						if (!elem.dataset.classFixed) {
+							elems.push(elem)
+
+							let cls = !Array.isArray(entry[1]) ? entry[1] : entry[1][0];
+							let stl = !Array.isArray(entry[1]) ? null : entry[1][1];
+
+							if (cls) elem.classList.add(...cls.split(' '));
+							if (stl) elem.setAttribute('style', (elem.getAttribute('style') || '') + ';' + stl);
+						}
+					})
 				})
-			})
 
-			for (let elem of elems) {
-				elem.dataset.classFixed = "1"
+				for (let elem of elems) {
+					elem.dataset.classFixed = "1"
+				}
+			
+
+				if (this.settings.log_render) console.log('🎨 classfix evaluated:', sourceArr.length, 'applied:', elems.length);
 			}
-
-			if (this.settings.log_render) console.log(`🎨 class fix applied:`, elems.length)
+			else {
+				console.log('🎨 no classfix evaluated');
+			}
 		},
 
 		/* adoption */

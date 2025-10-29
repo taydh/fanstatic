@@ -1,7 +1,5 @@
 {
-	if (!fanstatic.settings.class_fix) fanstatic.settings.class_fix = {};
-
-	Object.assign(fanstatic.settings.class_fix, {
+	fanstatic.assignClassfix({
 		'[data-ds-role="container"]': ['theme-container',''],
 		'[data-ds="unit"][data-ds-scope="section.containerized-hero"]': ['theme-hero-unit',''],
 		'[data-ds-role="menu-list"][data-ds-scope="navigation.simple"]': ['pure-menu',''],
