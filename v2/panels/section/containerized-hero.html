@@ -5,7 +5,12 @@
 	return {
 		onload: async function (roof, data = {}, url) {
 			const scope = data.scope || fanstatic.resolvePanelScope(url);
-			const tmpl1 = await fanstatic.insertPanel(roof, 'section.containerized', { data: { design: { scope: scope }}});
+			const tmpl1 = await fanstatic.insertPanel(roof, 'section.containerized', { 
+				data: { 
+					id: data.id || null,
+					scope: scope,
+				}
+			});
 			const panelElement = roof.children[0];
 
 			panelElement.dataset.dsPanel = scope;
