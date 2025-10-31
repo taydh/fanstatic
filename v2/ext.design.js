@@ -127,17 +127,8 @@
 			
 			return {[tagFill]: true}
 		},
-		axisFlex: function(model, attributes = {}) {
-			if (!attributes.style) attributes.style = {};
-
-			if (typeof attributes.style === 'object') {
-				Object.assign(attributes.style, { display: 'flex' });
-			} else {
-				attributes.style = (attributes.style || '') + 'display:flex';
-			}
-
-			return this.axis(model, attributes);
-		},
+		
+		/* raw flex elements for mobile screen, use class or style for most cases */
 		unitFlex: function(model, attributes = {}) {
 			if (!attributes.style) attributes.style = {};
 

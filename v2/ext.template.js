@@ -300,10 +300,9 @@
 			if (document.body.contains(roof)) {
 				await this.searchOnRenderAndRun(document.body)
 
-				/* classfix applied after render, be aware this can lead to FOUC issue */
-				this.applyClassfix(document)
-
-				if (scriptOpt.classfix) this.applyClassfix(document, scriptOpt.classfix)
+				/* classfix applied after render, be aware of FOUC */
+				if (scriptOpt.classfix) this.applyClassfix(document, scriptOpt.classfix);
+				this.applyClassfix(document); // global classfix (fanstatic.settings.classfix)
 
 				if (this.settings.log_render) console.log('🎬 rendered:', part.url)
 

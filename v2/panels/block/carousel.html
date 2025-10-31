@@ -1,0 +1,26 @@
+<script>
+	const design = fanstatic.design;
+	const controller = {};
+
+	return {
+		onload: async function (roof, data = {}, url) {
+			const scope = data.scope || fanstatic.resolvePanelScope(url);
+
+			roof.innerHTML = fanstatic.renderJhtm(design.axis(
+				data.items.map(item => design.placeholder('unit'))
+				, {data: {ds: {scope:scope, role:'items'}}}
+			));
+
+			const placeholders = roof.querySelectorAll('[data-ds-placeholder=unit]')
+
+			for (let i=0; i<placeholders.length; i++) {
+				await fanstatic.replacePanel(placeholders[i], 'block.base-unit', { 
+					data: Object.assign(data.items[i], {scope: scope}) 
+				})
+			}
+
+			controller.panelElement = roof.children[0];
+		},
+		controller: controller
+	};
+</script>

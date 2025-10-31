@@ -1,0 +1,28 @@
+<nav data-ds-panel="navigation.simple"></nav>
+
+<script>
+	const design = fanstatic.design;
+	const scope = 'navigation.simple';
+	const controller = {};
+
+	return {
+		controller: controller,
+		onload: function(roof, data) {
+			const panel = roof.children[0];
+
+			panel.innerHTML = fanstatic.renderJhtm(design.wrap(
+				design.list({
+					listTag: 'div',
+					items: data.menus.map(menu => {
+						const href = (menu.link ? fanstatic.sanitizeAttribute(menu.link) : null) || '#';
+						const tagFill = `a href="${href}" data-ds-role="menu-link"`;
+
+						return { [tagFill] : menu.label }
+					}),
+				}, { 'data-ds-scope': scope, 'data-ds-role': 'menu-list' }, { 'data-ds-role': 'menu-item' })
+			));
+
+			controller.panelElement = panel;
+		},	
+	}
+</script>
