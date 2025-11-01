@@ -2,42 +2,46 @@
 	const design = fanstatic.design;
 	const controller = {};
 
-	return {
-		onload: async function (roof, data = {}, url) {
-			const scope = data.scope || fanstatic.resolvePanelScope(url);
-			const mode = data.mode || 0;
+	return async function (roof, data = {}, url) {
+		const panelScope = fanstatic.resolvePanelScope(url);
+		const scope = data.scope || panelScope;
+		const mode = data.mode || 0;
 
-			if (3 == mode) { // head, body, foot
-				if (!data.footnotes) data.footnotes = [];
-				data.figure = false;
-			}
-			else if (4 == mode) { // cap, head, body
-				if (!data.figure) data.figure = [];
-				data.footnotes = false;
-			}
-			else if (1 == mode) { // all
-				if (!data.footnotes) data.footnotes = [];
-				if (!data.figure) data.figure = [];
-			}
-			else if (2 == mode) { // head and body only
-				data.figure = false;
-				data.footnotes = false;
-			}
+		if (3 == mode) { // head, body, foot
+			if (!data.footnotes) data.footnotes = [];
+			data.figure = false;
+		}
+		else if (4 == mode) { // cap, head, body
+			if (!data.figure) data.figure = [];
+			data.footnotes = false;
+		}
+		else if (1 == mode) { // all
+			if (!data.footnotes) data.footnotes = [];
+			if (!data.figure) data.figure = [];
+		}
+		else if (2 == mode) { // head and body only
+			data.figure = false;
+			data.footnotes = false;
+		}
 
-			roof.innerHTML = fanstatic.renderJhtm([
-				design.unit({
-					mode: mode,
-					cap: data.figure ? design.element('figure', data.figure, {data:{ds:{scope:scope,role:'figure'}}}) : false,
-					head: data.titles ? design.axis(data.titles.map(jhtm => design.element('div', jhtm)), {data:{ds:{scope:scope,role:'titles'}}}) : false,
-					body: data.contents ? design.axis(data.contents.map(jhtm => design.element('div', jhtm)), {data:{ds:{scope:scope,role:'contents'}}}) : false,
-					foot: data.footnotes ? design.axis(data.footnotes.map(jhtm => design.element('div', jhtm)), {data:{ds:{scope:scope,role:'footnotes'}}}) : false,
-				}, {data: { ds: { scope: scope }}})
-			]);
+		if (data.titles && !Array.isArray(data.titles)) data.titles = [data.titles];
+		if (data.contents && !Array.isArray(data.contents)) data.contents = [data.contents];
+		if (data.footnotes && !Array.isArray(data.footnotes)) data.footnotes = [data.footnotes];
 
-			const panelElement = roof.children[0];
-			
-			controller.panelElement = panelElement;
-		},
-		controller: controller
+		roof.innerHTML = fanstatic.renderJhtm([
+			design.unit({
+				mode: mode,
+				cap: data.figure ? design.element('figure', data.figure, {data:{ds:{scope:scope,role:'figure'}}}) : false,
+				head: data.titles ? design.axis(data.titles.map(jhtm => design.element('div', jhtm)), {data:{ds:{scope:scope,role:'titles'}}}) : false,
+				body: data.contents ? design.axis(data.contents.map(jhtm => design.element('div', jhtm)), {data:{ds:{scope:scope,role:'contents'}}}) : false,
+				foot: data.footnotes ? design.axis(data.footnotes.map(jhtm => design.element('div', jhtm)), {data:{ds:{scope:scope,role:'footnotes'}}}) : false,
+			}, {data: { ds: { panel: panelScope, scope: scope }}})
+		]);
+
+		const panelElement = roof.children[0];
+		
+		controller.panelElement = panelElement;
+
+		this.controller = controller;
 	};
 </script>

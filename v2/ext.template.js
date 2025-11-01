@@ -441,7 +441,9 @@
 		},
 
 		removeLocalizedTemplates: function() {
-			document.getElementById(this.settings.local_area_id).remove();
+			const localArea = document.getElementById(this.settings.local_area_id);
+			
+			if (localArea) localArea.remove();
 		},
 	})
 		

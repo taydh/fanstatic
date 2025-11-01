@@ -1,35 +1,40 @@
 <script>
 	const design = fanstatic.design;
-	const controller = {};
-
-	return {
-		onload: async function (roof, data, url) {
-			const titles = data.titles || null
-			const scope = data.scope = data.scope || fanstatic.resolvePanelScope(url);
-			const data2 = {
-				id: data.id || null,
-				scope: scope,
-				items: [
-					design.wrap([
-						(titles) 
-							? design.axis(titles.map(title => design.element('div', title)), {data:{ds:{role:'section-title', scope:scope}}})
-							: null,
-						design.placeholder('units'), 
-					])
-				]
-			};
-			const tmpl1 = await fanstatic.insertPanel(roof, 'section.containerized', { data: data2 });
-			const panel = roof.children[0];
-
-			const tmpl2 = await fanstatic.replacePanel(panel.querySelector('[data-ds-placeholder=units]'), 'block.stacked-units', {
-				data: {
-					scope: scope,
-					items: data.items,
-				},
-			});
-
-			controller.panelElement = panel;
-		},
-		controller: controller
+	const controller = {
+		panelElement: null,
+		itemControllers: [],
 	};
+
+	return async function (roof, data, url) {
+		const titles = data.titles || null
+		const scope = fanstatic.resolvePanelScope(url);
+		const stack = data.stack || 'block.base-unit';
+		const data2 = {
+			id: data.id || null,
+			scope: scope,
+			items: [
+				design.wrap([
+					(titles) 
+						? design.axis(titles.map(title => design.element('div', title)), {data:{ds:{role:'section_title', scope:scope}}})
+						: null,
+					design.placeholder('units'), 
+				])
+			]
+		};
+		const tmpl1 = await fanstatic.insertPanel(roof, 'section.containerized', { data: data2 });
+		const panelElement = roof.children[0];
+
+		const tmpl2 = await fanstatic.replacePanel(panelElement.querySelector('[data-ds-placeholder=units]'), 'block.stacked-panels', {
+			data: {
+				scope: scope,
+				stack: stack,
+				items: data.items,
+			},
+		});
+
+		controller.panelElement = panelElement;
+		controller.itemControllers = tmpl2.itemControllers;
+
+		this.controller = controller;
+	}
 </script>

@@ -7,15 +7,12 @@
 	return async function(roof, data, url) {
 		const panelScope = fanstatic.resolvePanelScope(url);
 		const scope = data.scope;
-		const photoUrl = data.photo ? data.photo : 'https://dummyimage.com/150x150/eee/000';
-		const tagFill = `img src="${photoUrl}"`;
 
 		const unitController = await fanstatic.insertPanel(roof, 'block.base-unit', {
 			data: {
 				scope: scope,
-				figure: {[tagFill]: true},
-				titles: [data.name, data.title],
-				contents: [data.quote],
+				titles: data.titles,
+				contents: data.contents,
 			}
 		})
 

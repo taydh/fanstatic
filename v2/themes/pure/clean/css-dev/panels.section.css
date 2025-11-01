@@ -3,7 +3,7 @@
 
 /* default, xs, sm */
 @media screen and (max-width: 767.98px) {
-	[data-scope="section.header-simple"][data-design="unit"] > [data-design="unit-head"] {  display: flex; justify-content: center; margin-bottom: var(--theme-margin) }
+	[data-scope="section.header-simple"][data-design="unit"] > [data-design="unit_head"] {  display: flex; justify-content: center; margin-bottom: var(--theme-margin) }
 	[data-scope="section.header-simple"][data-role="container"] > [data-design="wrap"] { padding-inline: var(--theme-margin) }
 
 	[data-scope="section.hero-top-simple"]
@@ -12,7 +12,7 @@
 /* md */
 @media screen and (min-width: 768px) {
 	[data-scope="section.header-simple"][data-design="unit"] { display: flex; }
-	[data-scope="section.header-simple"][data-design="unit"] > [data-design="unit-body"] { flex: 1; }
+	[data-scope="section.header-simple"][data-design="unit"] > [data-design="unit_body"] { flex: 1; }
 }
 
 /* containerized-unit */

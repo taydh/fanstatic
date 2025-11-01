@@ -1,27 +1,29 @@
 <script>
 	const design = fanstatic.design;
-	const controller = {};
+	const controller = {
+		panelElement: null,
+		itemControllers: [],
+	};
 
-	return {
-		onload: async function (roof, data = {}, url) {
-			const scope = data.scope || fanstatic.resolvePanelScope(url);
-			const panel = data.panel;
+	return async function (roof, data = {}, url) {
+		const scope = data.scope;
+		const stack = data.stack || 'block.base-unit';
 
-			roof.innerHTML = fanstatic.renderJhtm(design.axis(
-				data.items.map(item => design.placeholder('panel'))
-				, {data: {ds: {scope:scope, role:'items'}}}
-			));
+		roof.innerHTML = fanstatic.renderJhtm(design.axis(
+			data.items.map(item => design.placeholder('panel'))
+			, {data: {ds: {scope:scope, role:'items'}}}
+		));
 
-			const placeholders = roof.querySelectorAll('[data-ds-placeholder=panel]')
+		const placeholders = roof.querySelectorAll('[data-ds-placeholder=panel]')
 
-			for (let i=0; i<placeholders.length; i++) {
-				await fanstatic.replacePanel(placeholders[i], panel, { 
-					data: Object.assign(data.items[i], {scope: scope}) 
-				})
-			}
+		for (let i=0; i<placeholders.length; i++) {
+			controller.itemControllers.push(await fanstatic.replacePanel(placeholders[i], stack, { 
+				data: Object.assign(data.items[i], {scope: scope}) 
+			}))
+		}
 
-			controller.panelElement = roof.children[0];
-		},
-		controller: controller
+		controller.panelElement = roof.children[0];
+
+		this.controller = controller;
 	};
 </script>

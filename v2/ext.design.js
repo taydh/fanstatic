@@ -58,10 +58,10 @@
 				model.foot = false;
 			}
 
-			if (model.cap) result[tagFill].push({'div data-ds="unit-cap"': model.cap});
-			if (model.head) result[tagFill].push({'div data-ds="unit-head"': model.head});
-			if (model.body) result[tagFill].push({'div data-ds="unit-body"': model.body});
-			if (model.foot) result[tagFill].push({'div data-ds="unit-foot"': model.foot});
+			if (model.cap) result[tagFill].push({'div data-ds="unit_cap"': model.cap});
+			if (model.head) result[tagFill].push({'div data-ds="unit_head"': model.head});
+			if (model.body) result[tagFill].push({'div data-ds="unit_body"': model.body});
+			if (model.foot) result[tagFill].push({'div data-ds="unit_foot"': model.foot});
 
 			return result;
 		},
@@ -90,7 +90,7 @@
 
 			result[tagFill] = items.map(item => {
 				let obj = {};
-				obj[itemTag + ' data-ds="list-item" ' +  _toAttributesString(secondaryAttributes)] = item;
+				obj[itemTag + ' data-ds="list_item" ' +  _toAttributesString(secondaryAttributes)] = item;
 
 				return obj;
 			});
@@ -110,7 +110,7 @@
 
 			result[tagFill] = items.map(item => {
 				let obj = {};
-				obj['div data-ds="grid-cell" ' +  _toAttributesString(secondaryAttributes)] = item;
+				obj['div data-ds="grid_cell" ' +  _toAttributesString(secondaryAttributes)] = item;
 
 				return obj;
 			});
@@ -144,7 +144,7 @@
 				Object.entries(unit)[0][1].forEach(el => { 
 					const entry = Object.entries(el)[0];
 
-					if(entry[0].includes('data-ds="unit-body"')) {
+					if(entry[0].includes('data-ds="unit_body"')) {
 						el[entry[0] + ' style="flex:1"'] = entry[1];
 						delete el[entry[0]];
 					}

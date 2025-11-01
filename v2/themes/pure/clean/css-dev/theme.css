@@ -88,6 +88,6 @@ section:not(:last-child) {
 .theme-display-2 { font-size: 2rem; }
 .theme-display-3 { font-size: 3rem; }
 
-[data-ds="unit"] {
+[data-ds=unit] {
 	background-color: var(--theme-bg-color-section-lighter);
 }
