@@ -372,10 +372,10 @@
 				model.foot = false;
 			}
 
-			if (model.cap) result[tagFill].push({'div data-ds="unit-cap"': model.cap});
-			if (model.head) result[tagFill].push({'div data-ds="unit-head"': model.head});
-			if (model.body) result[tagFill].push({'div data-ds="unit-body"': model.body});
-			if (model.foot) result[tagFill].push({'div data-ds="unit-foot"': model.foot});
+			if (model.cap) result[tagFill].push({'div data-ds="unit_cap"': model.cap});
+			if (model.head) result[tagFill].push({'div data-ds="unit_head"': model.head});
+			if (model.body) result[tagFill].push({'div data-ds="unit_body"': model.body});
+			if (model.foot) result[tagFill].push({'div data-ds="unit_foot"': model.foot});
 
 			return result;
 		},
@@ -404,7 +404,7 @@
 
 			result[tagFill] = items.map(item => {
 				let obj = {};
-				obj[itemTag + ' data-ds="list-item" ' +  _toAttributesString(secondaryAttributes)] = item;
+				obj[itemTag + ' data-ds="list_item" ' +  _toAttributesString(secondaryAttributes)] = item;
 
 				return obj;
 			});
@@ -424,7 +424,7 @@
 
 			result[tagFill] = items.map(item => {
 				let obj = {};
-				obj['div data-ds="grid-cell" ' +  _toAttributesString(secondaryAttributes)] = item;
+				obj['div data-ds="grid_cell" ' +  _toAttributesString(secondaryAttributes)] = item;
 
 				return obj;
 			});
@@ -441,17 +441,8 @@
 			
 			return {[tagFill]: true}
 		},
-		axisFlex: function(model, attributes = {}) {
-			if (!attributes.style) attributes.style = {};
-
-			if (typeof attributes.style === 'object') {
-				Object.assign(attributes.style, { display: 'flex' });
-			} else {
-				attributes.style = (attributes.style || '') + 'display:flex';
-			}
-
-			return this.axis(model, attributes);
-		},
+		
+		/* raw flex elements for mobile screen, use class or style for most cases */
 		unitFlex: function(model, attributes = {}) {
 			if (!attributes.style) attributes.style = {};
 
@@ -467,7 +458,7 @@
 				Object.entries(unit)[0][1].forEach(el => { 
 					const entry = Object.entries(el)[0];
 
-					if(entry[0].includes('data-ds="unit-body"')) {
+					if(entry[0].includes('data-ds="unit_body"')) {
 						el[entry[0] + ' style="flex:1"'] = entry[1];
 						delete el[entry[0]];
 					}
@@ -844,10 +835,9 @@
 			if (document.body.contains(roof)) {
 				await this.searchOnRenderAndRun(document.body)
 
-				/* classfix applied after render, be aware this can lead to FOUC issue */
-				this.applyClassfix(document)
-
-				if (scriptOpt.classfix) this.applyClassfix(document, scriptOpt.classfix)
+				/* classfix applied after render, be aware of FOUC */
+				if (scriptOpt.classfix) this.applyClassfix(document, scriptOpt.classfix);
+				this.applyClassfix(document); // global classfix (fanstatic.settings.classfix)
 
 				if (this.settings.log_render) console.log('🎬 rendered:', part.url)
 
@@ -986,7 +976,9 @@
 		},
 
 		removeLocalizedTemplates: function() {
-			document.getElementById(this.settings.local_area_id).remove();
+			const localArea = document.getElementById(this.settings.local_area_id);
+			
+			if (localArea) localArea.remove();
 		},
 	})
 		

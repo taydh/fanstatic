@@ -1,0 +1,33 @@
+<script type="text/mustache">
+<div {{#id}}id="{{id}}"{{/id}} class="x-component" data-x-component="action-boxes">
+	<div class="x-row">
+		{{#items}}
+		<div class="x-col">
+			<a href="{{link_url}}" title="{{link_title}}">
+				<div class="x-box">
+					<img src="{{image_src}}" alt="{{image_alt}}">
+
+					{{#overlay}}
+					<div class="x-overlay">
+						{{{html}}}
+					</div>
+					{{/overlay}}
+				</div>
+			</a>
+		</div>
+		{{/items}}
+	</div>
+</div>
+</script>
+
+<script>
+	return {
+		renderer: 'mustache',
+		onload: function(roof, data) {
+			const template = roof.querySelector("script").innerText
+
+			roof.innerHTML = Mustache.render(template, data)
+
+		}
+	}
+</script>
