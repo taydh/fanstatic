@@ -257,11 +257,15 @@
 				await scriptOpt.onload(roof, opt.data, part.url);
 			}
 
-			await this.searchOnLoadAndRun(roof)
-
 			if (opt.postload) {
 				await opt.postload(roof, scriptOpt.controller);
 			}
+
+			/* run commands */
+			await this.searchOnLoadAndRun(roof)
+
+			/* apply classfix, on load not affected by FOUC */
+			if (scriptOpt.classfix) this.applyClassfix(roof, scriptOpt.classfix);
 
 			/* 2nd step: insert */
 			if (insertFn === 'replaceElement') {
@@ -282,7 +286,7 @@
 			}
 			
 			if (opt.postinsert) {
-				await scriptOpt.oninsert(nodes, scriptOpt.controller);
+				await opt.postinsert(nodes, scriptOpt.controller);
 			}
 
 			/* 2nd and a half step: collect onrender */
@@ -298,11 +302,8 @@
 			/* run onrender queue if roof in on visible DOM */
 
 			if (document.body.contains(roof)) {
+				/* run commands */
 				await this.searchOnRenderAndRun(document.body)
-
-				/* classfix applied after render, be aware of FOUC */
-				if (scriptOpt.classfix) this.applyClassfix(document, scriptOpt.classfix);
-				this.applyClassfix(document); // global classfix (fanstatic.settings.classfix)
 
 				if (this.settings.log_render) console.log('🎬 rendered:', part.url)
 
