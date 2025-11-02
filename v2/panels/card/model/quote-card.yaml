@@ -1,7 +1,11 @@
+id:
 scope:
-publish_at:
-expires_at:
 
+# card specific properties
+publish:
+expire:
+
+# custom properties
 name:
 title:
 photo:

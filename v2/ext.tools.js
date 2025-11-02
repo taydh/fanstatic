@@ -27,16 +27,16 @@
 		/* classfix */
 
 		assignClassfix: function(obj) {
-			if (!this.settings.classfix) this.settings.classfix = {};
-			Object.assign(this.settings.classfix, obj);
+			if (!this._classfix) this._classfix = {};
+			Object.assign(this._classfix, obj);
 		},
 
 		getClassfix: function() {
-			return this.settings.classfix;
+			return this._classfix;
 		},
 
 		applyClassfix: function(roof, source = null) {
-			source = source || this.settings.classfix || this.settings.class_fix;
+			source = source || this._classfix;
 
 			const elems = []
 			const sourceArr = source ? Object.entries(source) : null;
