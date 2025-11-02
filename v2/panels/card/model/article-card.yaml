@@ -1,3 +1,11 @@
+id:
+scope:
+
+# card specific properties
+publish:
+expire:
+
+# custom properties
 name: John Doe
 title: CEO
 photo_url: 

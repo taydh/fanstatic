@@ -24,6 +24,7 @@
 @import "panels.block.less";
 @import "panels.section.less";
 @import "panels.navigation.less";
+@import "panels.card.less";
 
 /* create breakpoint classes */
 
@@ -31,6 +32,11 @@ each(@breakpoints, {
 	.theme-@{key}-d-flex { .responsive-min(@value, { .theme-d-flex(); }); }
 	.theme-@{key}-d-flex-evenly { .responsive-min(@value, { .theme-d-flex-evenly(); }); }
 	.theme-@{key}-d-flex-evenly > * { .responsive-min(@value, { flex: 1; }); }
+
+	.theme-@{key}-sticky-top { .responsive-min(@value, { .theme-sticky-top(); }); }
+	.theme-@{key}-sticky-bottom { .responsive-min(@value, { .theme-sticky-bottom(); }); }
+	.theme-@{key}-fixed-top { .responsive-min(@value, { .theme-fixed-top(); }); }
+	.theme-@{key}-fixed-bottom { .responsive-min(@value, { .theme-fixed-bottom(); }); }
 
 	.theme-@{key}-left-capped { .responsive-min(@value, { .theme-left-capped(); }); }
 	.theme-@{key}-right-capped { .responsive-min(@value, { .theme-right-capped(); }); }

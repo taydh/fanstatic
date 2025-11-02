@@ -6,5 +6,7 @@ publish:
 expire:
 
 # custom properties
-image_url: 
-title:
+image:
+rate:
+subject:
+desc:

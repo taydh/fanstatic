@@ -11,15 +11,13 @@
 		const unitController = await fanstatic.insertPanel(roof, 'block.base-unit', {
 			data: {
 				scope: scope,
-				titles: data.titles,
-				contents: data.contents,
+				titles: data.rate,
+				contents: data.subject,
+				footnotes: data.desc,
 			}
 		})
 
 		unitController.panelElement.dataset.dsPanel = panelScope;
-		controller.panelElement = roof.children[0];
-		controller.itemController = unitController;
-
-		this.controller = controller;
+		this.controller = unitController;
 	}
 </script>

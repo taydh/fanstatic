@@ -1,32 +1,26 @@
 /* variables */
 
-:root {
-	--theme-spacer: 1rem;
-	--theme-gutter: .5rem;
-	--theme-margin: 1rem;
-	--theme-padding: 1rem;
 
-	--theme-color-lighter: #F8FAFC;
-	--theme-color-light: #D9EAFD;
-	--theme-color-dark: #BCCCDC;
-	--theme-color-darker: #9AA6B2;
-
-	--theme-bg-color-body: var(--theme-color-lighter);
-	--theme-bg-color-header: var(--theme-color-light);
-
-	--theme-bg-color-on-hover: var(--bs-light);
-}
 
 /* BASE RULES */
 
 /* { box-sizing: border-box; } */
 
+html {
+	font-size: 14px;
+    line-height: 1.5;
+	letter-spacing: .7px;
+}
+
 body {
-	background-color: var(--theme-bg-color-body);
+	background-color: var(--theme-color);
+	color: var(--theme-color-on-dark-8);
+	font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
 header {
-	background-color: var(--theme-bg-color-header);
+	background-color: var(--theme-color-primary);
+	color: var(--theme-color-on-dark-3);
 }
 
 figure {
