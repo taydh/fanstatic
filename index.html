@@ -72,6 +72,11 @@
 
 					document.head.querySelector('base').href = host_env.base_uri; // make base URI absolute
 					fanstatic_base_dir = fanstatic_engine_dir = document.baseURI + 'v2'
+
+					fanstatic.insertStyles([
+						`${document.baseURI}/assets/css/stbs-5-3.css`,
+						`${document.baseURI}/assets/css/main.css`,
+					]);
 				}
 				
 				const init = async function(){
@@ -82,7 +87,7 @@
 					})
 
 					fanstatic.append(
-						document.body, fanstatic_base_dir + '/component/buttons/back-to-top/back-to-top.html',
+						document.body, fanstatic_base_dir + '/panels/action/back-to-top-button.html',
 						{ tail_key: null }
 					)
 

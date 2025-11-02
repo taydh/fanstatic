@@ -15,12 +15,19 @@
 			let post = null
 
 			if (post = settings.posts.find(o => o.slug == slug)) {
+				const opt = {};
+
+				if (post.renderer) opt.renderer = post.renderer;
+
 				await fanstatic.loadTemplates([
-					'./assets/component/layout_blog.html',
+					'./assets/templates/layout_blog.html',
 					'./contents/blog/' + post.slug + '.md'])
 				
-				await fanstatic.append(roof, './assets/component/layout_blog.html')
-				await fanstatic.append(roof.querySelector('div'), './contents/blog/' + post.slug + '.md')
+				await fanstatic.append(roof, './assets/templates/layout_blog.html')
+
+				roof.querySelector('.website-blog-title').innerHTML = fanstatic.sanitizeHtml(post.title);
+				
+				await fanstatic.append(roof.querySelector('.website-blog-content'), './contents/blog/' + post.slug + '.md', opt)
 			}
 		}
 	}
