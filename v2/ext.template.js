@@ -211,8 +211,9 @@
 					scriptOpt = this._resolveScriptOptions(part.scriptElement, part.url)
 				}
 
-				if (opt.renderer) scriptOpt.renderer = opt.renderer
-				if (opt.model) scriptOpt.model = !scriptOpt.model ? opt.model : Object.assign(scriptOpt.model, opt.model)
+				if (opt.renderer && !scriptOpt.renderer) scriptOpt.renderer = opt.renderer
+				if (opt.classfix) scriptOpt.classfix = Object.assign(scriptOpt.classfix || {}, opt.classfix)
+				if (opt.model) scriptOpt.model = Object.assign(scriptOpt.model || {}, opt.model)
 
 				return await this._processPartial(target, url, opt, insertFn, part, scriptOpt)
 			}

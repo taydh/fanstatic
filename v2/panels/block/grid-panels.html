@@ -1,0 +1,22 @@
+<script>
+	const design = fanstatic.design;
+	const controller = {
+		panelElement: null,
+		itemControllers: [],
+	};
+
+	return async function (roof, data = {}, url) {
+		const scope = data.scope;
+		const panel = data.panel || 'block.base-block';
+		const items = data.items || [];
+
+		roof.innerHTML = fanstatic.renderJhtm(design.grid(
+			items.map(item => item)
+			, {data: {thm: {scope:scope, role:'items'}}}
+		));
+
+		controller.panelElement = roof.children[0];
+
+		this.controller = controller;
+	};
+</script>

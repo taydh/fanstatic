@@ -11,7 +11,7 @@
 			const panelElement = roof.children[0];
 			
 			panelElement.innerHTML = fanstatic.renderJhtm(design.wrap(
-				design.wrap(data.items, {data: {ds: {role:'container', scope:scope}}})
+				design.wrap(data.items, {data: {thm: {role:'container', scope:scope}}})
 			));
 
 			panelElement.dataset.dsPanel = scope;

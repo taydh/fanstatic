@@ -1,4 +1,4 @@
-<nav data-ds-panel="navigation.simple"></nav>
+<nav data-thm-panel="navigation.simple"></nav>
 
 <script>
 	const design = fanstatic.design;
@@ -15,11 +15,11 @@
 					listTag: 'div',
 					items: data.menus.map(menu => {
 						const href = (menu.link ? fanstatic.sanitizeAttribute(menu.link) : null) || '#';
-						const tagFill = `a href="${href}" data-ds-role="menu_link"`;
+						const tagFill = `a href="${href}" data-thm-role="menu_link"`;
 
 						return { [tagFill] : menu.label }
 					}),
-				}, { 'data-ds-scope': scope, 'data-ds-role': 'menu_list' }, { 'data-ds-role': 'menu_item' })
+				}, { 'data-thm-scope': scope, 'data-thm-role': 'menu_list' }, { 'data-thm-role': 'menu_item' })
 			));
 
 			controller.panelElement = panel;

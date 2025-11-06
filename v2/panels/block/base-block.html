@@ -1,0 +1,53 @@
+<script>
+	const design = fanstatic.design;
+	const controller = {};
+
+	return async function (roof, data = {}, url) {
+		const panelScope = fanstatic.resolvePanelScope(url);
+		const scope = data.scope || panelScope;
+		const mode = data.mode || 0;
+
+		if (3 == mode) { // head, body, foot
+			if (!data.notes) data.notes = [];
+			data.figure = false;
+		}
+		else if (4 == mode) { // cap, head, body
+			if (!data.figure) data.figure = [];
+			data.notes = false;
+		}
+		else if (1 == mode) { // all
+			if (!data.notes) data.notes = [];
+			if (!data.figure) data.figure = [];
+		}
+		else if (2 == mode) { // head and body only
+			data.figure = false;
+			data.notes = false;
+		}
+
+		if (data.titles && !Array.isArray(data.titles)) data.titles = [data.titles];
+		if (data.contents && !Array.isArray(data.contents)) data.contents = [data.contents];
+		if (data.notes && !Array.isArray(data.notes)) data.notes = [data.notes];
+
+		roof.innerHTML = fanstatic.renderJhtm([
+			design.unit({
+				mode: mode,
+				cap: data.figure ? design.element('figure', data.figure, {data:{thm:{scope:scope,role:'figure'}}}) : false,
+				head: data.titles ? data.titles.map(jhtm => design.element('div', jhtm)) : false,
+				body: data.contents ? data.contents.map(jhtm => design.element('div', jhtm)) : false,
+				foot: data.notes ? data.notes.map(jhtm => design.element('div', jhtm)) : false,
+			}, {data: { thm: { panel: panelScope, scope: scope }}})
+		]);
+
+		const panelElement = roof.children[0];
+		
+		panelElement.querySelectorAll(':scope > *').forEach(elem => { elem.dataset.thmScope = scope });
+
+		if (data.titles) panelElement.querySelector(':scope > [data-ds-sub=unit_head]').dataset.thmRole = 'titles';
+		if (data.contents) panelElement.querySelector(':scope > [data-ds-sub=unit_body]').dataset.thmRole = 'contents';
+		if (data.notes) panelElement.querySelector(':scope > [data-ds-sub=unit_foot]').dataset.thmRole = 'notes';
+
+		controller.panelElement = panelElement;
+
+		this.controller = controller;
+	};
+</script>

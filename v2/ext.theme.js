@@ -1,36 +1,36 @@
 {
 	Object.assign(fanstatic, {
-		switchTheme: function(theme, themeFramework, opt = { }) {
+		switchTheme: function(themeStyle, themeFramework, opt = { }) {
 			const prioritize = opt.prioritize || true;
 			const mode = opt.mode || 'css';
 
-			var storedTheme = window.localStorage.getItem('fanstatic.switch_theme');
+			var storedThemeStyle = window.localStorage.getItem('fanstatic.switch_theme_style');
 			var storedThemeFramework = window.localStorage.getItem('fanstatic.switch_theme_framework');
 
-			if (theme && prioritize && (theme != !storedTheme) && (themeFramework != storedThemeFramework)) { // store theme and reload
-				storedTheme = theme;
+			if (themeStyle && prioritize && (themeStyle != !storedThemeStyle) && (themeFramework != storedThemeFramework)) { // store theme and reload
+				storedThemeStyle = themeStyle;
 				storedThemeFramework = themeFramework;
-				window.localStorage.setItem('fanstatic.switch_theme', storedTheme);
+				window.localStorage.setItem('fanstatic.switch_theme_style', storedThemeStyle);
 				window.localStorage.setItem('fanstatic.switch_theme_framework', storedThemeFramework);
 				window.location.reload();
 			}
 
-			if (!storedTheme) return; // no theme
+			if (!storedThemeStyle) return; // no theme
 
 			const themeScriptPrefix = `${fanstatic.settings.base_url}${fanstatic.settings.version}/themes/`;
 			const themeScriptUrl = `${themeScriptPrefix}${storedThemeFramework}/theme-framework.js`;
 
 			const prom1 = ('less' == mode) 
 				? fanstatic.insertLess([
-					`${themeScriptPrefix}${storedThemeFramework}/${storedTheme}/less/theme.less?${fanstatic.tail()}`,
+					`${themeScriptPrefix}${storedThemeFramework}/${storedThemeStyle}/less/theme.less?${fanstatic.tail()}`,
 					]) : (('css-dev' == mode) 
 						? fanstatic.insertStyles([
 							`${themeScriptPrefix}theme-base.css?${fanstatic.tail()}`,
 							`${themeScriptPrefix}${storedThemeFramework}/theme-framework.css?${fanstatic.tail()}`,
-							`${themeScriptPrefix}${storedThemeFramework}/${storedTheme}/css-dev/theme.css?${fanstatic.tail()}`
+							`${themeScriptPrefix}${storedThemeFramework}/${storedThemeStyle}/css-dev/theme.css?${fanstatic.tail()}`
 						])
 						: fanstatic.insertStyles([
-							`${themeScriptPrefix}${storedThemeFramework}/${storedTheme}/theme.css?${fanstatic.tail()}`
+							`${themeScriptPrefix}${storedThemeFramework}/${storedThemeStyle}/theme.css?${fanstatic.tail()}`
 						]))
 			
 			const scriptsUrls = [
@@ -51,7 +51,7 @@
 		},
 
 		applyTheme: function() {
-			return this.switchTheme(fanstatic.settings.theme, fanstatic.settings.theme_framework, {
+			return this.switchTheme(fanstatic.settings.theme_style, fanstatic.settings.theme_framework, {
 				prioritize: fanstatic.settings.theme_prioritize,
 				mode: fanstatic.settings.theme_mode,
 			});

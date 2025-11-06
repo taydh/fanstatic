@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+		<base href=""> <!-- relative -->
+		<title>Fanstatic CV Design</title>
+		
+        <!-- pureCSS -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/pure-min.css">
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
+		<script src="https://fanstatic.annexdesk.com/v2/fanstatic-combined.min.js"></script>
+
+		<script>
+			{
+                let design_name = 'cv';
+                let design_model = 'james-blonde'; // <-- change this to reflect yaml model file
+                let design_variant = 'simplicity'; // <-- change this to choose a design variant
+				let fanstatic_version = 'v2';
+				let fanstatic_url = '';
+				let origin = window.location.origin;
+				let host_env = null;
+                let content_data = null;
+                let content_panels = [];
+                let searchParams = new window.URLSearchParams(window.location.search);
+                
+                // override design_model if search parameter matched
+                if (searchParams.has('model')) {
+                    design_model = fanstatic.removePathCharacters(searchParams.get('model'))
+                }
+				
+				const resolveEnvironment = async function(){
+					// select origin
+					[
+						'http://localhost/fanstatic3',
+                        'https://fanstatic.annexdesk.com',
+					].forEach(path => {
+						if (window.location.href.startsWith(path)) origin = path;
+					});
+                    
+                    // set document base
+                    // document.head.querySelector('base').href = origin + '/'; // make base URI absolute
+
+                    return new Promise(resolve => {
+                        const asyncCounter = fanstatic.asyncCounter(1, () => {
+                            resolve();
+                        })
+
+						// load host env configuration
+                        fanstatic.fetchJson(origin + '/env.' + origin.replace(/[:/]/g, "_") + '.json')
+                        .then(data => {
+                            host_env = data;
+                            fanstatic_url = host_env.base_url;
+                            asyncCounter.done();
+                        })
+                    })
+				}
+				
+				const init = async function(){
+                    await resolveEnvironment();
+                    
+					Object.assign(fanstatic.settings, {
+						base_url: fanstatic_url,
+						version: fanstatic_version,
+						theme: 'clean',
+						theme_framework: 'pure',
+						theme_prioritize: false,
+                        theme_mode: 'less',
+                        library_less_url: 'https://cdn.jsdelivr.net/npm/less',
+						tail_span: '5s',
+						log_render: false,
+					})
+					
+                    await fanstatic.applyTheme();
+                    
+                    const module = await import('./calculator-app.mjs');
+					const message = module.hello('Module');
+				};
+                
+                document.addEventListener('DOMContentLoaded', init);
+			}
+		</script>
+	</head>
+
+	<body data-theme="dark"></body>
+</html>

@@ -71,7 +71,7 @@
 						host_env = await fanstatic.fetchJson(origin + '/env.' + origin.replace(/[:/]/g, "_") + '.json');
 					}
 
-					document.head.querySelector('base').href = host_env.base_uri; // make base URI absolute
+					document.head.querySelector('base').href = host_env.base_url; // make base URI absolute
 					fanstatic_base_dir = fanstatic_engine_dir = document.baseURI + 'v2'
 
 					fanstatic.insertStyles([
@@ -153,7 +153,7 @@
 				if (window.location.pathname.includes('/designs')){	
 					await fanstatic.insert(pageBox, './assets/templates/page_designs.html', {
 						data: {
-							design_base_uri: data.host_env.design_base_uri,
+							design_base_url: data.host_env.design_base_url,
 						}
 					})
 				}

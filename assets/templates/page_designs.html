@@ -39,7 +39,7 @@
 
 		<div 
 			class="card-img-left bg-light border-end"
-			style="border-radius:var(--bs-card-border-radius) 0 0 var(--bs-card-border-radius); flex: 2; background: url('{{designBaseUri}}(assets)/diy-thumbnails/{{id}}.jpg') top left / cover">
+			style="border-radius:var(--bs-card-border-radius) 0 0 var(--bs-card-border-radius); flex: 2; background: url('{{designBaseUrl}}(assets)/diy-thumbnails/{{id}}.jpg') top left / cover">
 		</div>
 
 		<div class="card-body d-flex flex-column" style="flex: 3; min-height: 300px;">
@@ -66,7 +66,7 @@
 	//# sourceURL=page_templates.js`;
 	return function (roof, data, url) {
 		var cardGrid = roof.querySelector('.card-grid');
-		var designBaseUri = data.design_base_uri;
+		var designBaseUrl = data.design_base_url;
 		var stp = roof.querySelector('script').innerText;
 
 		// setup modal asynchronosly
@@ -90,7 +90,7 @@
 					modalElem.addEventListener('show.bs.modal', function(ev) {
 						const dataset = ev.relatedTarget.dataset
 
-						modalElem.querySelector('iframe').src = designBaseUri + dataset.url
+						modalElem.querySelector('iframe').src = designBaseUrl + dataset.url
 						modalElem.querySelector('.modal-title').innerText = dataset.name
 						modalElem.querySelector('.modal-footer').style.justifyContent = 'center'
 						modalElem.querySelector('.modal-footer').innerHTML = `<small>${dataset.gesture} <a title="download design" href="https://fanstatic.annexdesk.com/designs/${dataset.id}.zip">https://fanstatic.annexdesk.com/designs/${dataset.id}.zip</a><small>`
@@ -100,7 +100,7 @@
 		})
 
 		fanstatic.insertScripts(['https://cdn.jsdelivr.net/npm/papaparse@5.5.2/papaparse.min.js']).then(function(){
-			Papa.parse(designBaseUri + '(data)/instant-templates.csv?' + fanstatic.tail(), {
+			Papa.parse(designBaseUrl + '(data)/instant-templates.csv?' + fanstatic.tail(), {
 				download: true,
 				header: true,
 				complete: function(results) {
@@ -108,7 +108,7 @@
 
 					for (let o of results.data) {
 						o.tags = o.tags.split('|');
-						o.designBaseUri = designBaseUri;
+						o.designBaseUrl = designBaseUrl;
 						cardGrid.append(fanstatic.parseHTML(Mustache.render(stp, o)));
 					}
 

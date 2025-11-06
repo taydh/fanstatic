@@ -44,7 +44,7 @@
 			if (sourceArr) {
 				sourceArr.forEach(entry => {
 					roof.querySelectorAll(entry[0]).forEach(elem => {
-						if (!elem.dataset.classFixed) {
+						// if (!elem.dataset.classFixed) {
 							elems.push(elem)
 
 							let cls = !Array.isArray(entry[1]) ? entry[1] : entry[1][0];
@@ -52,14 +52,14 @@
 
 							if (cls) elem.classList.add(...cls.split(' '));
 							if (stl) elem.setAttribute('style', (elem.getAttribute('style') || '') + ';' + stl);
-						}
+						// }
 					})
 				})
 
-				for (let elem of elems) {
-					elem.dataset.classFixed = "1"
-				}
-			
+				// 2025-11-04 Probably no need for classFixed, applyClassfix must be run once anywhere by template or global
+				// for (let elem of elems) {
+				// 	elem.dataset.classFixed = "1"
+				// }
 
 				if (this.settings.log_render) console.log('🎨 classfix evaluated:', sourceArr.length, 'applied:', elems.length);
 			}

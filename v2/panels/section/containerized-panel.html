@@ -1,0 +1,32 @@
+<script>
+	const design = fanstatic.design;
+	const controller = {};
+
+	return {
+		onload: async function (roof, data = {}, url) {
+			const panel = data.panel || 'block.base-block';
+			const scope = data.scope || fanstatic.resolvePanelScope(url);
+			const tmpl1 = await fanstatic.insertPanel(roof, 'section.containerized', { 
+				data: { 
+					id: data.id || null,
+					scope: scope,
+				}
+			});
+
+			tmpl1.containerElement.insertAdjacentHTML('afterbegin', fanstatic.renderJhtm(
+					design.axis(data.titles ? data.titles.map(title => design.element('div', title)) : true, {data:{thm:{scope:scope, role:'section_title'}}})
+			));
+
+			const tmpl3 = await fanstatic.appendPanel(tmpl1.containerElement, panel, {
+				data: Object.assign(data.item || {}, {
+					scope:scope,
+				}),
+			});
+
+			const panelElement = tmpl1.panelElement;
+			panelElement.dataset.thmPanel = scope;
+			controller.panelElement = panelElement;
+		},
+		controller: controller
+	};
+</script>

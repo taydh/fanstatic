@@ -5,25 +5,18 @@
 	return {
 		onload: async function (roof, data = {}, url) {
 			const scope = data.scope || fanstatic.resolvePanelScope(url);
-			const tmpl1 = await fanstatic.insertPanel(roof, 'section.containerized', { 
+			const tmpl1 = await fanstatic.insertPanel(roof, 'section.containerized-panel', { 
 				data: { 
 					id: data.id || null,
 					scope: scope,
+					panel: 'block.base-block',
+					titles: data.titles,
+					item: data.block,
 				}
 			});
-			const panelElement = roof.children[0];
-
-			panelElement.dataset.dsPanel = scope;
-			panelElement.querySelector('[data-ds-role=container]').innerHTML = fanstatic.renderJhtm([
-				design.wrap(design.placeholder('unit'))
-			]);
-
-			const tmpl2 = await fanstatic.replacePanel(panelElement.querySelector('[data-ds-placeholder=unit]'), 'block.base-unit', {
-				data: Object.assign(data.unit || {}, {
-					scope:scope,
-				}),
-			});
-
+			const panelElement = tmpl1.panelElement;
+			
+			panelElement.dataset.thmPanel = scope;
 			controller.panelElement = panelElement;
 		},
 		controller: controller

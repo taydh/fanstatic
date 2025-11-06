@@ -7,17 +7,17 @@
 
 	return async function (roof, data = {}, url) {
 		const scope = data.scope;
-		const stack = data.stack || 'block.base-unit';
+		const panel = data.panel || 'block.base-block';
 
 		roof.innerHTML = fanstatic.renderJhtm(design.axis(
 			data.items.map(item => design.placeholder('panel'))
-			, {data: {ds: {scope:scope, role:'items'}}}
+			, {data: {thm: {scope:scope, role:'items'}}}
 		));
 
 		const placeholders = roof.querySelectorAll('[data-ds-placeholder=panel]')
 
 		for (let i=0; i<placeholders.length; i++) {
-			controller.itemControllers.push(await fanstatic.replacePanel(placeholders[i], stack, { 
+			controller.itemControllers.push(await fanstatic.replacePanel(placeholders[i], panel, { 
 				data: Object.assign(data.items[i], {scope: scope}) 
 			}))
 		}

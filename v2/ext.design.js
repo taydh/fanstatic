@@ -58,19 +58,20 @@
 				model.foot = false;
 			}
 
-			if (model.cap) result[tagFill].push({'div data-ds="unit_cap"': model.cap});
-			if (model.head) result[tagFill].push({'div data-ds="unit_head"': model.head});
-			if (model.body) result[tagFill].push({'div data-ds="unit_body"': model.body});
-			if (model.foot) result[tagFill].push({'div data-ds="unit_foot"': model.foot});
+			if (model.cap) result[tagFill].push({'div data-ds-sub="unit_cap"': model.cap});
+			if (model.head) result[tagFill].push({'div data-ds-sub="unit_head"': model.head});
+			if (model.body) result[tagFill].push({'div data-ds-sub="unit_body"': model.body});
+			if (model.foot) result[tagFill].push({'div data-ds-sub="unit_foot"': model.foot});
 
 			return result;
 		},
 		axis: function(model, attributes = {}) {
 			let tagFill = ('div data-ds="axis" ' +  _toAttributesString(attributes));
 			let result = {};
+			let items = (Array.isArray(model) ? model : model.items) || [];
 
-			result[tagFill] = Array.isArray(model) ? model : model.items;
-
+			result[tagFill] = items;
+			
 			return result;
 		},
 		wrap: function(item, attributes = {}) {
@@ -83,14 +84,14 @@
 		},
 		list: function(model, attributes = {}, secondaryAttributes = {}) {
 			let listTag = model.listTag || 'ul';
-			let itemTag = ('div' == listTag) ? 'div' : 'li';
+			let itemTag = ('div' == listTag) ? (model.listItemTag || 'div') : 'li';
 			let tagFill = (listTag + ' data-ds="list" ' +  _toAttributesString(attributes));
 			let result = {};
 			let items = (Array.isArray(model) ? model : model.items) || [];
 
 			result[tagFill] = items.map(item => {
 				let obj = {};
-				obj[itemTag + ' data-ds="list_item" ' +  _toAttributesString(secondaryAttributes)] = item;
+				obj[itemTag + ' data-ds-sub="list_item" ' +  _toAttributesString(secondaryAttributes)] = item;
 
 				return obj;
 			});
@@ -109,10 +110,9 @@
 			let items = (Array.isArray(model) ? model : model.items) || [];
 
 			result[tagFill] = items.map(item => {
-				let obj = {};
-				obj['div data-ds="grid_cell" ' +  _toAttributesString(secondaryAttributes)] = item;
-
-				return obj;
+				return fanstatic.tagFillContains(item, 'data-ds-sub="grid_cell"') 
+					? item
+					: { ['div data-ds-sub="grid_cell" ' +  _toAttributesString(secondaryAttributes)]: item };
 			});
 
 			return result;
@@ -152,6 +152,28 @@
 			}
 
 			return unit;
+		},
+
+		sanitize: function(val, rules = null) {
+			if (Array.isArray(val)) {
+				for (let i in val) {
+					this.sanitize(val[i], rules);
+				}
+			}
+			else if (val !== null && typeof val == 'object') {
+				const keys = Object.keys(val);
+			
+				for (let k of keys) {
+					if (typeof val[k] == 'string') {
+						const ruled = rules ? rules(k, val[k]) : false;
+
+						val[k] = ruled || fanstatic.sanitizeHtml(val[k]);
+					}
+					else {
+						this.sanitize(val[k], rules);
+					}
+				}
+			}
 		},
 	};
 	

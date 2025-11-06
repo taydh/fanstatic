@@ -9,18 +9,18 @@
 		onload: function(root, data) {
 			let panelElement = root.children[0];
 
-			panelElement.setAttribute('data-panel', scope);
+			panelElement.setAttribute('data-thm-panel', scope);
 			panelElement.innerHTML = fanstatic.renderJhtm(design.wrap(
 					design.unit({
-						head: design.element('div', {'img': true}, {style:'display:none', data:{ ds: { role:'logo', scope:scope }}}),
-						body: design.element('div', true, {style:'display:none', data:{ ds: { role:'label', scope:scope }}}),
+						head: design.element('div', {'img': true}, {style:'display:none', data:{ thm: { scope:scope, role:'logo', }}}),
+						body: design.element('div', true, {style:'display:none', data:{ thm: { scope:scope, role:'label' }}}),
 					}
 				)
 			));
 
 			controller.panelElement = panelElement;
-			controller.logoElement = panelElement.querySelector('[data-ds-role=logo]')
-			controller.labelElement = panelElement.querySelector('[data-ds-role=label]')
+			controller.logoElement = panelElement.querySelector('[data-thm-role=logo]')
+			controller.labelElement = panelElement.querySelector('[data-thm-role=label]')
 
 			if (data.logoSource) {
 				controller.logoElement.querySelector('img').setAttribute('src', data.logoSource)

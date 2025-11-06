@@ -8,8 +8,36 @@
 		<div class="card-grid-item col-md-3 border p-3">
 			Annexdesk Calendar
 		</div>
-		<div class="card-grid-item col-md-3 border p-3">
+		<div class="card-grid-item col-md-3 border p-3" id="calculator-card">
 			Annexdesk Calculator
+
+			<button data-prop="popper" class="button">Try it</button>
 		</div>
 	</div>
 </div>
+
+<script>
+	function openCenteredPopup(url, minWidth, maxWidth, minHeight, maxHeight) {
+		// Choose desired size within constraints
+		const width = Math.max(minWidth, Math.min(maxWidth, 300)); // example: 300px
+		const height = Math.max(minHeight, Math.min(maxHeight, 600)); // example: 600px
+
+		// Calculate center position
+		const left = window.screenX + (window.outerWidth - width) / 2;
+		const top = window.screenY + (window.outerHeight - height) / 2;
+
+		// Open popup
+		window.open(
+			url, // replace with your URL
+			'showcaseWindow',
+			`width=${width},height=${height},left=${left},top=${top},resizable=yes`
+  		);
+	}
+
+	 return function(roof) {
+		roof.querySelector('#calculator-card [data-prop=popper]').addEventListener('click', function(){
+			openCenteredPopup(document.baseURI + 'showcases/calculator.html', 300, 600, 400, 900)
+		});
+	 }
+
+</script>

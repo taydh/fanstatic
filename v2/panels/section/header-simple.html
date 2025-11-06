@@ -18,17 +18,17 @@
 									head: data.identity,
 									body: data.navigation,
 									foot: data.actions,
-								},{data: {ds: {scope: scope}}}),
+								},{data: {thm: {scope: scope}}}),
 							]
 						})
-					), {data: {ds: {scope: scope, role: 'container'}}}
+					), {data: {thm: {scope: scope, role: 'container'}}}
 				)
 			]);
 			
 			controller.panelElement = panel;
-			controller.identityElement = panel.querySelector(`[data-ds-scope="${scope}"][data-ds=unit] > [data-ds=unit_head]`)
-			controller.navigationElement = panel.querySelector(`[data-ds-scope="${scope}"][data-ds=unit] > [data-ds=unit_body]`)
-			controller.actionsElement = panel.querySelector(`[data-ds-scope="${scope}"][data-ds=unit] > [data-ds=unit_foot]`)
+			controller.identityElement = panel.querySelector(`[data-thm-scope="${scope}"][data-ds=unit] > [data-ds-sub=unit_head]`)
+			controller.navigationElement = panel.querySelector(`[data-thm-scope="${scope}"][data-ds=unit] > [data-ds-sub=unit_body]`)
+			controller.actionsElement = panel.querySelector(`[data-thm-scope="${scope}"][data-ds=unit] > [data-ds-sub=unit_foot]`)
 		},
 		controller: controller
 	};

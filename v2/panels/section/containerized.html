@@ -11,13 +11,14 @@
 			const panel = roof.children[0];
 
 			if (id) panel.id = id;
-			
-			panel.dataset.dsPanel = scope;
+
+			panel.dataset.thmPanel = scope;
 			panel.innerHTML = fanstatic.renderJhtm([
-				design.wrap(data.items || true, {data: {ds: { scope:scope, role:'container' } }})
+				design.wrap(data.items || true, {data: {thm: { scope:scope, role:'container' } }})
 			]);
 			
 			controller.panelElement = panel;
+			controller.containerElement = panel.children[0];
 		},
 		controller: controller
 	};

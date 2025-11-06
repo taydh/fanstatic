@@ -1,9 +1,9 @@
 {
 	fanstatic.assignClassfix({
-		'[data-ds-role=container]': ['theme-container',''],
-		'[data-ds=unit][data-ds-scope="section.containerized-hero"]': ['theme-hero-unit',''],
-		'[data-ds-role=menu_list][data-ds-scope="navigation.simple"]': ['pure-menu',''],
-		'[data-ds-role=menu_list][data-ds-scope="navigation.simple"] > [data-ds-role=menu_item]': ['pure-menu-item',''],
-		'[data-ds-role=menu_list][data-ds-scope="navigation.simple"] > [data-ds-role=menu_item] > [data-ds-role=menu_link]': ['pure-menu-link',''],
+		'[data-thm-role=container]': ['theme-container',''],
+		'[data-thm-scope="section.containerized-hero"][data-ds=unit]': ['theme-hero-unit',''],
+		'[data-thm-scope="navigation.simple"][data-thm-role=menu_list]': ['pure-menu',''],
+		'[data-thm-scope="navigation.simple"][data-thm-role=menu_list] > [data-thm-role=menu_item]': ['pure-menu-item',''],
+		'[data-thm-scope="navigation.simple"][data-thm-role=menu_list] > [data-thm-role=menu_item] > [data-thm-role=menu_link]': ['pure-menu-link',''],
 	});
 }

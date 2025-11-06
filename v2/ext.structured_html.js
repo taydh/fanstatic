@@ -1,5 +1,8 @@
 {
 	Object.assign(fanstatic, {
+		tagFillContains: function(obj, searchText) {
+			return ('object' == typeof obj) && obj ? Object.entries(obj)[0][0].includes(searchText) : false;
+		},
 		renderJhtm: function(arr) {
 			var html = '';
 			
