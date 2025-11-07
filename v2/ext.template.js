@@ -189,7 +189,10 @@
 
 		_onrenderQueue: [],
 		
-		_insertTemplate: async function(target, url, opt = {}, insertFn) {
+		_insertTemplate: async function(target, url, opt = {}, optMode, insertFn) {
+			if (optMode == 1) opt = { model: opt };
+			else if (optMode == 2) opt = { data: opt };
+
 			if (['after','before'].includes(insertFn) && target == document.body) {
 				console.error('[cannot target document.body with insertAfter method]');
 				return;
@@ -382,28 +385,28 @@
 			return Promise.all(promises)
 		},
 
-		append: function(target, url, opt){
-			return this._insertTemplate(target, url, opt, 'append')
+		append: function(target, url, opt, optMode = 0){
+			return this._insertTemplate(target, url, opt, optMode, 'append')
 		},
 		
-		prepend: function(target, url, opt){
-			return this._insertTemplate(target, url, opt, 'prepend')
+		prepend: function(target, url, opt, optMode = 0){
+			return this._insertTemplate(target, url, opt, optMode, 'prepend')
 		},
 
-		insert: function(target, url, opt){
-			return this._insertTemplate(target, url, opt, 'replaceChildren')
+		insert: function(target, url, opt, optMode = 0){
+			return this._insertTemplate(target, url, opt, optMode, 'replaceChildren')
 		},
 
-		before: function(target, url, opt){
-			return this._insertTemplate(target, url, opt, 'before')
+		before: function(target, url, opt, optMode = 0){
+			return this._insertTemplate(target, url, opt, optMode, 'before')
 		},
 
-		after: function(target, url, opt){
-			return this._insertTemplate(target, url, opt, 'after')
+		after: function(target, url, opt, optMode = 0){
+			return this._insertTemplate(target, url, opt, optMode, 'after')
 		},
 
-		replace: function(target, url, opt){
-			return this._insertTemplate(target, url, opt, 'replaceElement')
+		replace: function(target, url, opt, optMode = 0){
+			return this._insertTemplate(target, url, opt, optMode, 'replaceElement')
 		},
 
 		appendTemplate: function(...args){ return this.append(...args); },
@@ -423,23 +426,23 @@
 
 			return parts[1] + '.' + parts[0].substring(0, parts[0].lastIndexOf('.'));
 		},
-		insertPanel: async function(el, panelScope, opt) {
-			return await fanstatic.insert(el, this.resolvePanelPath(panelScope), opt);
+		insertPanel: async function(el, panelScope, opt, optMode = 2) {
+			return await fanstatic.insert(el, this.resolvePanelPath(panelScope), opt, optMode);
 		},
-		replacePanel: async function(el, panelScope, opt) {
-			return await fanstatic.replace(el, this.resolvePanelPath(panelScope), opt);
+		replacePanel: async function(el, panelScope, opt, optMode = 2) {
+			return await fanstatic.replace(el, this.resolvePanelPath(panelScope), opt, optMode);
 		},
-		appendPanel: async function(el, panelScope, opt) {
-			return await fanstatic.append(el, this.resolvePanelPath(panelScope), opt);
+		appendPanel: async function(el, panelScope, opt, optMode = 2) {
+			return await fanstatic.append(el, this.resolvePanelPath(panelScope), opt, optMode);
 		},
-		prependPanel: async function(el, panelScope, opt) {
-			return await fanstatic.prepend(el, this.resolvePanelPath(panelScope), opt);
+		prependPanel: async function(el, panelScope, opt, optMode = 2) {
+			return await fanstatic.prepend(el, this.resolvePanelPath(panelScope), opt, optMode);
 		},
-		beforePanel: async function(el, panelScope, opt) {
-			return await fanstatic.before(el, this.resolvePanelPath(panelScope), opt);
+		beforePanel: async function(el, panelScope, opt, optMode = 2) {
+			return await fanstatic.before(el, this.resolvePanelPath(panelScope), opt, optMode);
 		},
-		afterPanel: async function(el, panelScope, opt) {
-			return await fanstatic.after(el, this.resolvePanelPath(panelScope), opt);
+		afterPanel: async function(el, panelScope, opt, optMode = 2) {
+			return await fanstatic.after(el, this.resolvePanelPath(panelScope), opt, optMode);
 		},
 
 		removeLocalizedTemplates: function() {

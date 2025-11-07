@@ -29,13 +29,14 @@
 		if (data.notes && !Array.isArray(data.notes)) data.notes = [data.notes];
 
 		roof.innerHTML = fanstatic.renderJhtm([
-			design.unit({
+			design.unit({data: { thm: { panel: panelScope, scope: scope }}},
+			{
 				mode: mode,
-				cap: data.figure ? design.element('figure', data.figure, {data:{thm:{scope:scope,role:'figure'}}}) : false,
-				head: data.titles ? data.titles.map(jhtm => design.element('div', jhtm)) : false,
-				body: data.contents ? data.contents.map(jhtm => design.element('div', jhtm)) : false,
-				foot: data.notes ? data.notes.map(jhtm => design.element('div', jhtm)) : false,
-			}, {data: { thm: { panel: panelScope, scope: scope }}})
+				cap: data.figure ? design.element('figure', {data:{thm:{scope:scope,role:'figure'}}}, data.figure) : false,
+				head: data.titles ? data.titles.map(jhtm => design.element('div', {}, jhtm)) : false,
+				body: data.contents ? data.contents.map(jhtm => design.element('div', {}, jhtm)) : false,
+				foot: data.notes ? data.notes.map(jhtm => design.element('div', {}, jhtm)) : false,
+			})
 		]);
 
 		const panelElement = roof.children[0];

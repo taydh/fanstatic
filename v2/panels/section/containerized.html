@@ -5,20 +5,27 @@
 	const controller = {};
 
 	return {
-		onload: function (roof, data = {}, url) {
+		onload: async function (roof, data = {}, url) {
 			const id = data.id || null;
 			const scope = data.scope = data.scope || fanstatic.resolvePanelScope(url);
-			const panel = roof.children[0];
+			const panelElement = roof.children[0];
 
-			if (id) panel.id = id;
+			if (id) panelElement.id = id;
 
-			panel.dataset.thmPanel = scope;
-			panel.innerHTML = fanstatic.renderJhtm([
-				design.wrap(data.items || true, {data: {thm: { scope:scope, role:'container' } }})
+			panelElement.dataset.thmPanel = scope;
+			panelElement.innerHTML = fanstatic.renderJhtm([
+				design.wrap({data: {thm: { scope:scope, role:'container' }}}, [])
 			]);
 			
-			controller.panelElement = panel;
-			controller.containerElement = panel.children[0];
+			await fanstatic.insertPanel(panelElement.querySelector('[data-ds=wrap]'), 'block.section-block', {
+				scope: scope,
+				starts: data.starts || [],
+				insides: data.insides || [],
+				ends: data.ends || [],
+			})
+
+			controller.panelElement = panelElement;
+			controller.containerElement = panelElement.children[0];
 		},
 		controller: controller
 	};

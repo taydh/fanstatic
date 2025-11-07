@@ -29,7 +29,7 @@
 						host_env = await fanstatic.fetchJson(origin + '/env.' + origin.replace(/[:/]/g, "_") + '.json');
 					}
 
-					document.head.querySelector('base').href = host_env.base_uri; // make base URI absolute
+					document.head.querySelector('base').href = host_env.base_url; // make base URI absolute
 					fanstatic_base_dir = document.baseURI + fanstatic_version;
 				}
 				
@@ -64,7 +64,7 @@
 					fanstatic.assign({
 						base_url: document.baseURI,
 						version: fanstatic_version,
-						theme: 'clean',
+						theme_style: 'clean',
 						theme_framework: 'pure',
 						theme_prioritize: false,
 						theme_mode: 'less',
@@ -106,27 +106,21 @@
 					
 					const composeHeader = async function(layoutController) {
 						const template2 = await fanstatic.insertPanel(layoutController.headerElement, 'section.header-simple', {
-							data: {
-								identity: true,
-								navigation: true,
-								actions: [],
-							}
+							identity: true,
+							navigation: true,
+							actions: [],
 						});
 						
 						const template3 = await fanstatic.insertPanel(template2.identityElement, 'block.identity-basic', {
-							data: {
-								label: 'My Landing Page'
-							},
+							label: 'My Landing Page'
 						})
 						
 						const template4 = await fanstatic.insertPanel(template2.navigationElement, 'navigation.simple', {
-							data: {
-								menus: [
-									{ label: 'About Us' },
-									{ label: 'Products' },
-									{ label: 'Services' },
-								]
-							},
+							menus: [
+								{ label: 'About Us' },
+								{ label: 'Products' },
+								{ label: 'Services' },
+							]
 						})
 					}
 					
@@ -136,7 +130,7 @@
 						const hero = await fanstatic.appendPanel(layoutController.mainElement,
 							'section.containerized-hero',
 							{
-								data: {
+								block: {
 									titles: ['Sandbox', 'Welcome']
 								}
 							}
@@ -145,7 +139,7 @@
 						hero.panelElement.id = 'hero';
 						
 						const stackedUnit = {
-							figure: design.element('img', true, {src:"https://dummyimage.com/200x200/000/fff"}),
+							figure: design.element('img', {src:"https://dummyimage.com/200x200/000/fff"}),
 							titles: ['This is a stacked unit'],
 							contents: ['this is a content line 1', 'this is a content line 2'],
 							footnotes: [design.button('Click me!')]
@@ -154,9 +148,7 @@
 						const stack1 = await fanstatic.appendPanel(layoutController.mainElement,
 							'section.containerized-stack',
 							{
-								data: {
-									items: [stackedUnit, stackedUnit, stackedUnit]
-								}
+								items: [stackedUnit, stackedUnit, stackedUnit]
 							}
 					   )
 						
@@ -167,8 +159,8 @@
 						const design = fanstatic.design;
 						
 						const section = await fanstatic.appendPanel(layoutController.footerElement,
-							'section.containerized', {
-							data: {
+							'section.containerized', 
+							{
 								items: [
 									design.unitFlex({
 										head: 'My Company',
@@ -176,7 +168,7 @@
 									})
 								]
 							}
-						});
+						);
 						
 						section.panelElement.id = 'foot'
 					}

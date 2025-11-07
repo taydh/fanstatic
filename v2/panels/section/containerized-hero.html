@@ -6,18 +6,16 @@
 		onload: async function (roof, data = {}, url) {
 			const scope = data.scope || fanstatic.resolvePanelScope(url);
 			const tmpl1 = await fanstatic.insertPanel(roof, 'section.containerized-panel', { 
-				data: { 
-					id: data.id || null,
-					scope: scope,
-					panel: 'block.base-block',
-					titles: data.titles,
-					item: data.block,
-				}
+				id: data.id || null,
+				scope: scope,
+				panel: 'block.base-block',
+				item: data.block,
 			});
 			const panelElement = tmpl1.panelElement;
 			
 			panelElement.dataset.thmPanel = scope;
 			controller.panelElement = panelElement;
+			controller.blockElement = tmpl1.itemElement;
 		},
 		controller: controller
 	};

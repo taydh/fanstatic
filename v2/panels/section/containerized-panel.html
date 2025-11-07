@@ -7,25 +7,29 @@
 			const panel = data.panel || 'block.base-block';
 			const scope = data.scope || fanstatic.resolvePanelScope(url);
 			const tmpl1 = await fanstatic.insertPanel(roof, 'section.containerized', { 
-				data: { 
-					id: data.id || null,
-					scope: scope,
-				}
+				id: data.id || null,
+				scope: scope,
+				starts: data.starts,
+				ends: data.ends,
 			});
 
-			tmpl1.containerElement.insertAdjacentHTML('afterbegin', fanstatic.renderJhtm(
-					design.axis(data.titles ? data.titles.map(title => design.element('div', title)) : true, {data:{thm:{scope:scope, role:'section_title'}}})
-			));
+			// tmpl1.containerElement.insertAdjacentHTML('afterbegin', fanstatic.renderJhtm(
+			// 		design.axis({data:{thm:{scope:scope, role:'section_title'}}},
+			// 			data.titles ? data.titles.map(title => design.div([title])) : true)
+			// ));
 
-			const tmpl3 = await fanstatic.appendPanel(tmpl1.containerElement, panel, {
-				data: Object.assign(data.item || {}, {
+			const tmpl3 = await fanstatic.insertPanel(tmpl1.containerElement, panel,
+				Object.assign(data.item || {}, {
 					scope:scope,
-				}),
-			});
+				})
+			);
 
 			const panelElement = tmpl1.panelElement;
+			
 			panelElement.dataset.thmPanel = scope;
+
 			controller.panelElement = panelElement;
+			controller.itemElement = tmpl3.panelElement;
 		},
 		controller: controller
 	};

@@ -20,16 +20,14 @@
 				design.placeholder('panels'), 
 			]
 		};
-		const tmpl1 = await fanstatic.insertPanel(roof, 'section.containerized', { data: data2 });
+		const tmpl1 = await fanstatic.insertPanel(roof, 'section.containerized', data2);
 		const panelElement = tmpl1.panelElement;
 
 		if (data.items) {
 			const tmpl2 = await fanstatic.replacePanel(panelElement.querySelector('[data-ds-placeholder=panels]'), 'block.grid-panels', {
-				data: {
-					scope: scope,
-					panel: panel,
-					items: data.items,
-				},
+				scope: scope,
+				panel: panel,
+				items: data.items,
 			});
 
 			itemControllers.push(...tmpl2.itemControllers);

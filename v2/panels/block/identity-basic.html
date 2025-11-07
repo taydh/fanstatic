@@ -10,13 +10,13 @@
 			let panelElement = root.children[0];
 
 			panelElement.setAttribute('data-thm-panel', scope);
-			panelElement.innerHTML = fanstatic.renderJhtm(design.wrap(
-					design.unit({
-						head: design.element('div', {'img': true}, {style:'display:none', data:{ thm: { scope:scope, role:'logo', }}}),
-						body: design.element('div', true, {style:'display:none', data:{ thm: { scope:scope, role:'label' }}}),
+			panelElement.innerHTML = fanstatic.renderJhtm(design.wrap([
+					design.unit({}, {
+						head: design.div({style:'display:none', data:{ thm: { scope:scope, role:'logo', }}}, {'img': true}),
+						body: design.div({style:'display:none', data:{ thm: { scope:scope, role:'label' }}}),
 					}
 				)
-			));
+			]));
 
 			controller.panelElement = panelElement;
 			controller.logoElement = panelElement.querySelector('[data-thm-role=logo]')

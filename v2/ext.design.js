@@ -27,15 +27,30 @@
 	}
 
 	fanstatic.design = {
-		element: function(tag, items = true, attributes = {}) {
+		element: function(tag, attributes = {}, items = true) {
+			if (('object' != typeof attributes) || Array.isArray(attributes)) {
+				items = attributes;
+				attributes = {};
+			}
+
 			let tagFill = tag + ' ' +  _toAttributesString(attributes);
 
 			return { [tagFill]: items };
 		},
-		div: function(items = true, attributes = {}) {
-			return this.element('div', items, attributes);
+		div: function(attributes = {}, items = true) {
+			if (('object' != typeof attributes) || Array.isArray(attributes)) {
+				items = attributes;
+				attributes = {};
+			}
+
+			return this.element('div', attributes, items);
 		},
-		unit: function(model, attributes = {}) {
+		unit: function(attributes = {}, model) {
+			if (!model && Object.keys(attributes).some(k => 'head' == k || 'body' == k || 'foot' == k)) {
+				model = attributes;
+				attributes = {};
+			}
+
 			let tagFill = ('div data-ds="unit" ' + _toAttributesString(attributes));
 			let result = {
 				[tagFill]: [],
@@ -65,7 +80,12 @@
 
 			return result;
 		},
-		axis: function(model, attributes = {}) {
+		axis: function(attributes = {}, model) {
+			if (Array.isArray(attributes)) {
+				model = attributes;
+				attributes = {};
+			}
+
 			let tagFill = ('div data-ds="axis" ' +  _toAttributesString(attributes));
 			let result = {};
 			let items = (Array.isArray(model) ? model : model.items) || [];
@@ -74,7 +94,12 @@
 			
 			return result;
 		},
-		wrap: function(item, attributes = {}) {
+		wrap: function(attributes = {}, item = true) {
+			if (('object' != typeof attributes) || Array.isArray(attributes)) {
+				item = attributes;
+				attributes = {};
+			}
+
 			let tagFill = ('div data-ds="wrap" ' +  _toAttributesString(attributes));
 			let result = {};
 
@@ -82,7 +107,12 @@
 
 			return result;
 		},
-		list: function(model, attributes = {}, secondaryAttributes = {}) {
+		list: function(attributes = {}, secondaryAttributes = {}, model) {
+			if (Array.isArray(attributes)) {
+				model = attributes;
+				attributes = {};
+			}
+
 			let listTag = model.listTag || 'ul';
 			let itemTag = ('div' == listTag) ? (model.listItemTag || 'div') : 'li';
 			let tagFill = (listTag + ' data-ds="list" ' +  _toAttributesString(attributes));
@@ -98,7 +128,13 @@
 
 			return result;
 		},
-		grid: function(model, attributes = {}, secondaryAttributes = {}) {
+		grid: function(attributes = {}, secondaryAttributes = {}, model) {
+			if (Array.isArray(attributes)) {
+				model = attributes;
+				attributes = {};
+				secondaryAttributes = {};
+			}
+
 			if (typeof attributes.style === 'object') {
 				Object.assign(attributes.style, { display: 'grid' });
 			} else {
@@ -117,7 +153,12 @@
 
 			return result;
 		},
-		button: function(model, attributes = {},) {
+		button: function(attributes = {}, model) {
+			if (('object' != typeof attributes) || Array.isArray(attributes)) {
+				model = attributes;
+				attributes = {};
+			}
+
 			let tagFill = `button data-ds="button"`;
 
 			return {[tagFill]: model};
@@ -129,7 +170,12 @@
 		},
 		
 		/* raw flex elements for mobile screen, use class or style for most cases */
-		unitFlex: function(model, attributes = {}) {
+		unitFlex: function(attributes = {}, model) {
+			if (!model && Object.keys(attributes).some(k => 'head' == k || 'body' == k || 'foot' == k)) {
+				model = attributes;
+				attributes = {};
+			}
+
 			if (!attributes.style) attributes.style = {};
 
 			if (typeof attributes.style === 'object') {
@@ -138,7 +184,7 @@
 				attributes.style = (attributes.style || '') + ';display:flex;';
 			}
 
-			const unit = this.unit(model, attributes);
+			const unit = this.unit(attributes, model);
 
 			if (model.body) {
 				Object.entries(unit)[0][1].forEach(el => { 

@@ -9,12 +9,10 @@
 		const scope = data.scope;
 
 		const unitController = await fanstatic.insertPanel(roof, 'block.base-block', {
-			data: {
-				scope: scope,
-				titles: data.rate,
-				contents: data.subject,
-				notes: data.desc,
-			}
+			scope: scope,
+			titles: data.rate,
+			contents: data.subject,
+			notes: data.desc,
 		})
 
 		unitController.panelElement.dataset.thmPanel = panelScope;

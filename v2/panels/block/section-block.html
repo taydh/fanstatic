@@ -1,0 +1,32 @@
+<script>
+	const design = fanstatic.design;
+	const controller = {};
+
+	return async function (roof, data = {}, url) {
+		const panelScope = fanstatic.resolvePanelScope(url);
+		const scope = data.scope || panelScope;
+
+		if (data.starts && !Array.isArray(data.starts)) data.starts = [data.starts];
+		if (data.insides && !Array.isArray(data.insides)) data.insides = [data.insides];
+		if (data.ends && !Array.isArray(data.ends)) data.ends = [data.ends];
+
+		roof.innerHTML = fanstatic.renderJhtm(
+			design.wrap({data: { thm: { scope: scope, panel: panelScope }}},
+				[
+					design.div({data: {thm: {scope: scope, role: 'starts'}}}, data.starts ? data.starts.map(jhtm => design.div({}, jhtm)) : false),
+					design.div({data: {thm: {scope: scope, role: 'insides'}}}, data.insides ? data.insides.map(jhtm => design.div({}, jhtm)) : false),
+					design.div({data: {thm: {scope: scope, role: 'ends'}}}, data.ends ? data.ends.map(jhtm => design.div({}, jhtm)) : false),
+				]
+			)
+		);
+		
+		const panelElement = roof.children[0];
+
+		controller.panelElement = panelElement;
+		controller.startElement = panelElement.children[0];
+		controller.insideElement = panelElement.children[1];
+		controller.endElement = panelElement.children[2];
+
+		this.controller = controller;
+	};
+</script>

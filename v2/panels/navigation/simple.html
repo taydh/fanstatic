@@ -10,8 +10,9 @@
 		onload: function(roof, data) {
 			const panel = roof.children[0];
 
-			panel.innerHTML = fanstatic.renderJhtm(design.wrap(
-				design.list({
+			panel.innerHTML = fanstatic.renderJhtm(design.wrap([
+				design.list({ 'data-thm-scope': scope, 'data-thm-role': 'menu_list' }, { 'data-thm-role': 'menu_item' },
+				{
 					listTag: 'div',
 					items: data.menus.map(menu => {
 						const href = (menu.link ? fanstatic.sanitizeAttribute(menu.link) : null) || '#';
@@ -19,10 +20,10 @@
 
 						return { [tagFill] : menu.label }
 					}),
-				}, { 'data-thm-scope': scope, 'data-thm-role': 'menu_list' }, { 'data-thm-role': 'menu_item' })
-			));
+				})
+			]));
 
 			controller.panelElement = panel;
 		},	
 	}
-</script>
+</script> 

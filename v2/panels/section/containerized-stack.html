@@ -13,23 +13,25 @@
 		const data2 = {
 			id: data.id || null,
 			scope: scope,
+			starts: data.starts,
+			insides: design.placeholder('panels'),
+			ends: data.ends,
 			items: [
 				(titles)
-					? design.axis(titles.map(title => design.element('div', title)), {data:{thm:{scope:scope, role:'section_title'}}})
+					? design.axis({data:{thm:{scope:scope, role:'section_title'}}},
+						titles.map(title => design.div({}, title)))
 					: null,
 				design.placeholder('panels'), 
-			]
+			],
 		};
-		const tmpl1 = await fanstatic.insertPanel(roof, 'section.containerized', { data: data2 });
+		const tmpl1 = await fanstatic.insertPanel(roof, 'section.containerized', data2 );
 		const panelElement = tmpl1.panelElement;
 
 		if (data.items) {
 			const tmpl2 = await fanstatic.replacePanel(panelElement.querySelector('[data-ds-placeholder=panels]'), 'block.axis-panels', {
-				data: {
-					scope: scope,
-					panel: panel,
-					items: data.items,
-				},
+				scope: scope,
+				panel: panel,
+				items: data.items,
 			});
 
 			itemControllers.push(...tmpl2.itemControllers);
