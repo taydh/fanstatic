@@ -10,11 +10,11 @@
 		if (data.ends && !Array.isArray(data.ends)) data.ends = [data.ends];
 
 		roof.innerHTML = fanstatic.renderJhtm(
-			design.wrap({data: { thm: { scope: scope, panel: panelScope }}},
+			design.wrap({data: { pn:  { scope: scope, panel: panelScope }}},
 				[
-					design.div({'data-thm-role': 'starts'}, data.starts ? data.starts.map(jhtm => design.div({}, jhtm)) : true),
-					design.div({'data-thm-role': 'inside'}, data.inside || true),
-					design.div({'data-thm-role': 'ends'}, data.ends ? data.ends.map(jhtm => design.div({}, jhtm)) : true),
+					design.div({'data-pn-role': 'starts'}, data.starts ? data.starts.map(jhtm => design.div({}, jhtm)) : true),
+					design.div({'data-pn-role': 'inside'}, data.inside || true),
+					design.div({'data-pn-role': 'ends'}, data.ends ? data.ends.map(jhtm => design.div({}, jhtm)) : true),
 				]
 			)
 		);

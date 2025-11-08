@@ -18,9 +18,9 @@
 	}
 }
 
-@import (less) "../../../theme-base.css";
+@import (less) "../../../theme-global.css";
 @import (less) "../../theme-framework.css";
-@import (less) "../css-dev/theme.css";
+@import (less) "../css-dev/theme-base.css";
 @import "panels.block.less";
 @import "panels.section.less";
 @import "panels.navigation.less";
@@ -40,4 +40,8 @@ each(@breakpoints, {
 
 	.theme-@{key}-left-capped { .responsive-min(@value, { .theme-left-capped(); }); }
 	.theme-@{key}-right-capped { .responsive-min(@value, { .theme-right-capped(); }); }
+
+	.theme-@{key}-text-start { .responsive-min(@value, { .theme-text-start(); }); }
+	.theme-@{key}-text-center { .responsive-min(@value, { .theme-text-center(); }); }
+	.theme-@{key}-text-end { .responsive-min(@value, { .theme-text-end(); }); }
 })

@@ -7,7 +7,8 @@
 		<base href=""> <!-- relative -->
 		<title>Sandbox / Panels / Layout / 3-Columns</title>
 		
-		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/pure-min.css">
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css">
+		<linkx rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/pure-min.css">
 		<script src="../v2/fanstatic.js"></script>
 		<script>
 			{
@@ -40,7 +41,7 @@
 					window.addEventListener('fanstatic.design.load', () => asyncCounter.done());
 					window.addEventListener('fanstatic.structured_html.load', () => asyncCounter.done());
 					window.addEventListener('fanstatic.template.load', () => asyncCounter.done());
-					window.addEventListener('fanstatic.theme.load', () => asyncCounter.done());
+					window.addEventListener('fanstatic.style.load', () => asyncCounter.done());
 					window.addEventListener('fanstatic.tools.load', () => asyncCounter.done());
 
 					fanstatic.insertScripts([
@@ -49,7 +50,7 @@
 						fanstatic_base_dir + '/ext.structured_html.js?' + fanstatic.tail(),
 						fanstatic_base_dir + '/ext.tools.js?' + fanstatic.tail(),
 						fanstatic_base_dir + '/ext.template.js?' + fanstatic.tail(),
-						fanstatic_base_dir + '/ext.theme.js?' + fanstatic.tail(),
+						fanstatic_base_dir + '/ext.style.js?' + fanstatic.tail(),
 					]).then(() => asyncCounter.done());
 				}
 				
@@ -64,9 +65,8 @@
 					fanstatic.assign({
 						base_url: document.baseURI,
 						version: fanstatic_version,
-						theme_style: 'clean',
-						theme_framework: 'pure',
-						theme_prioritize: false,
+						theme_style: 'none',
+						theme_framework: 'sandbox',
 						theme_mode: 'less',
 						library_less_url: 'https://cdn.jsdelivr.net/npm/less',
 						tail_span: '5s',
@@ -75,11 +75,11 @@
 					
 					fanstatic.assignClassfix({
 						'#hero': ['','padding-top: calc(4*var(--theme-padding)); padding-bottom: calc(3*var(--theme-padding)'],
-						'#hero [data-ds-role="title"] > [data-ds] > *:first-child': ['','font-size: .5em;'],
+						'#hero [data-pn-role="title"] > [data-ds] > *:first-child': ['','font-size: .5em;'],
 						'#stack1 [data-ds="unit"]:nth-child(odd)': ['theme-sm-left-capped'],
 						'#stack1 [data-ds="unit"]:nth-child(even)': ['theme-sm-right-capped'],
-						'#stack1 [data-ds-role="title"] > [data-ds] > *': ['','font-size: 1.5em;'],
-						'#stack1 [data-ds-role="footnote"] button': ['pure-button pure-button-primary'],
+						'#stack1 [data-pn-role="title"] > [data-ds] > *': ['','font-size: 1.5em;'],
+						'#stack1 [data-pn-role="footnote"] button': ['pure-button pure-button-primary'],
 						'#foot [data-ds="unit_body"]': ['','flex:1; text-align:end;'],
 						'#foot': ['','padding-block:var(--theme-padding);'],
 					});
@@ -105,17 +105,17 @@
 					};
 					
 					const composeHeader = async function(layoutController) {
-						const template2 = await fanstatic.insertPanel(layoutController.headerElement, 'section.header-simple', {
+						const template2 = await fanstatic.insertPanel(layoutController.headerElement, 'section.basic-header', {
 							identity: true,
 							navigation: true,
 							actions: [],
 						});
 						
-						const template3 = await fanstatic.insertPanel(template2.identityElement, 'block.identity-basic', {
+						const template3 = await fanstatic.insertPanel(template2.identityElement, 'block.identity', {
 							label: 'My Landing Page'
 						})
 						
-						const template4 = await fanstatic.insertPanel(template2.navigationElement, 'navigation.simple', {
+						const template4 = await fanstatic.insertPanel(template2.navigationElement, 'navigation.basic-menu', {
 							menus: [
 								{ label: 'About Us' },
 								{ label: 'Products' },

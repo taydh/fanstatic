@@ -8,12 +8,12 @@
 			const sectionController = await fanstatic.insertPanel(roof, 'section.containerized-panel', { 
 				id: data.id || null,
 				scope: scope,
-				panel: 'block.base-block',
+				panel: 'block.basic-block',
 				item: data.block,
 			});
 			const panelElement = sectionController.panelElement;
 			
-			panelElement.dataset.thmPanel = scope;
+			panelElement.dataset.pnPanel = scope;
 			controller.panelElement = panelElement;
 			controller.blockElement = sectionController.itemElement;
 			controller.sectionController = sectionController;

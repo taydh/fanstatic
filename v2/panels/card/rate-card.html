@@ -8,14 +8,14 @@
 		const panelScope = fanstatic.resolvePanelScope(url);
 		const scope = data.scope;
 
-		const unitController = await fanstatic.insertPanel(roof, 'block.base-block', {
+		const unitController = await fanstatic.insertPanel(roof, 'block.basic-block', {
 			scope: scope,
 			titles: data.rate,
 			content: data.subject,
 			notes: data.desc,
 		})
 
-		unitController.panelElement.setAttribute('data-thm-panel', panelScope);
+		unitController.panelElement.setAttribute('data-pn-panel', panelScope);
 		this.controller = unitController;
 	}
 </script>

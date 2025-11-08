@@ -1,21 +1,13 @@
-/* containerized hero */
-.theme-container[data-thm-scope="section.containerized-hero"] {
-	> [data-ds=wrap] { padding-block: var(--theme-padding); }
+/* containerized */
+
+[data-thm-panel^="section"] {
+	padding-block: var(--theme-padding);
 }
+
+/* containerized hero */
+
 
 /* containerized stack */
-
-.theme-container[data-thm-scope="section.containerized-stack"] {
-	> [data-ds=wrap] { 
-		padding-block: var(--theme-padding); 
-	}
-}
-
-[data-thm-role=section_title] {
-	font-size: 2rem;
-	text-align: center;
-	margin-bottom: calc(1.5*var(--theme-margin));
-}
 
 [data-thm-scope="section.containerized-stack"] {
 	&[data-ds=unit]:not(:last-child) { 

@@ -28,10 +28,10 @@
 		if (data.notes && !Array.isArray(data.notes)) data.notes = [data.notes];
 
 		roof.innerHTML = fanstatic.renderJhtm([
-			design.unit({data: { thm: { scope: scope, panel: panelScope }}},
+			design.unit({data: { pn:  { scope: scope, panel: panelScope }}},
 			{
 				mode: mode,
-				cap: data.figure ? design.element('figure', {'data-thm-role': 'figure'}, data.figure) : false,
+				cap: data.figure ? design.element('figure', {'data-pn-role': 'figure'}, data.figure) : false,
 				head: data.titles ? data.titles.map(jhtm => design.div([jhtm])) : false,
 				body: data.content ? data.content : false,
 				foot: data.notes ? data.notes.map(jhtm => design.div([jhtm])) : false,
@@ -40,9 +40,9 @@
 
 		const panelElement = roof.children[0];
 		
-		if (data.titles) panelElement.querySelector(':scope > [data-ds-sub=unit_head]').dataset.thmRole = 'titles';
-		if (data.content) panelElement.querySelector(':scope > [data-ds-sub=unit_body]').dataset.thmRole = 'content';
-		if (data.notes) panelElement.querySelector(':scope > [data-ds-sub=unit_foot]').dataset.thmRole = 'notes';
+		if (data.titles) panelElement.querySelector(':scope > [data-ds-sub=unit_head]').dataset.pnRole = 'titles';
+		if (data.content) panelElement.querySelector(':scope > [data-ds-sub=unit_body]').dataset.pnRole = 'content';
+		if (data.notes) panelElement.querySelector(':scope > [data-ds-sub=unit_foot]').dataset.pnRole = 'notes';
 
 		controller.panelElement = panelElement;
 

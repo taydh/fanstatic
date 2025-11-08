@@ -12,10 +12,10 @@
 
 			if (id) panelElement.id = id;
 
-			panelElement.dataset.thmPanel = scope;
-			panelElement.dataset.thmScope = scope;
+			panelElement.dataset.pnPanel = scope;
+			panelElement.dataset.pnScope = scope;
 			panelElement.innerHTML = fanstatic.renderJhtm([
-				design.wrap({'data-thm-role': 'container' }, []),
+				design.wrap({'data-pn-role': 'container' }, []),
 			]);
 			
 			const sectionBlockController = await fanstatic.insertPanel(panelElement.querySelector('[data-ds=wrap]'), 'block.section-block', {

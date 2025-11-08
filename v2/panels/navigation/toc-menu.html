@@ -1,8 +1,8 @@
-<nav data-thm-panel="navigation.simple"></nav>
+<nav data-pn-panel="navigation.basic-menu"></nav>
 
 <script>
 	const design = fanstatic.design;
-	const scope = 'navigation.simple';
+	const scope = 'navigation.basic-menu';
 	const controller = {};
 
 	return {
@@ -15,11 +15,11 @@
 					listTag: 'div',
 					items: data.menus.map(menu => {
 						const href = (menu.link ? fanstatic.sanitizeAttribute(menu.link) : null) || '#';
-						const tagFill = `a href="${href}" data-thm-role="menu_link"`;
+						const tagFill = `a href="${href}" data-pn-role="menu_link"`;
 
 						return { [tagFill] : menu.label }
 					}),
-				}, { 'data-thm-scope': scope, 'data-thm-role': 'menu_list' }, { 'data-thm-role': 'menu_item' })
+				}, { 'data-pn-scope': scope, 'data-pn-role': 'menu_list' }, { 'data-pn-role': 'menu_item' })
 			));
 
 			controller.panelElement = panel;

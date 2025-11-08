@@ -14,12 +14,12 @@
 		return secMap[p] * n * 1000
 	}
 
-	const _resolveCustomTail = function(opt, settings) {
-		if (opt.hasOwnProperty('tail_key') && !opt.tail_key) return { key: null, value: null };
-		else if (!opt.hasOwnProperty('tail_key')) return false;
+	const _resolveCustomTrail = function(opt, settings) {
+		if (opt.hasOwnProperty('trail_key') && !opt.trail_key) return { key: null, value: null };
+		else if (!opt.hasOwnProperty('trail_key')) return false;
 
-		let tail_key = opt.hasOwnProperty('tail_key') ? opt.tail_key : settings.tail_key
-		let tail_span = opt.hasOwnProperty('tail_span') ? opt.tail_span : settings.tail_span
+		let tail_key = opt.hasOwnProperty('trail_key') ? opt.trail_key : settings.trail_key
+		let tail_span = opt.hasOwnProperty('trail_span') ? opt.trail_span : settings.trail_span
 		let vs = vn = Date.now()
 		let diff = _resolveSpan(tail_span)
 
@@ -31,8 +31,8 @@
 	var fanstatic = {
 		settings: {
 			base_url: '/',
-			tail_key: '_',
-			tail_span: '1d', //dhms
+			trail_key: '_',
+			trail_span: '1d', //dhms
 		},
 
 		assign: function(opt) {
@@ -148,28 +148,31 @@
 			}
 		},
 
-		/* tail */
+		/* trail */
 
-		tail: function(asObjet = false) {
-			if (!this.settings.tail_key || !this.settings.tail_span) return { key:null, value:null};
+		tail: function(asObject = false) { return this.trail(asObject); },
+		trail: function(asObjet = false) {
+			if (this.settings.tail_key) this.settings.trail_key = this.settings.tail_key;
+			if (this.settings.tail_span) this.settings.trail_span = this.settings.tail_span;
+			if (!this.settings.trail_key || !this.settings.trail_span) return { key:null, value:null};
 
 			let vn = vs = Date.now()
-			let diff = _resolveSpan(this.settings.tail_span)
+			let diff = _resolveSpan(this.settings.trail_span)
 
-			if (localStorage.hasOwnProperty('fanstatic_tail_value')) {
-				vs = localStorage.getItem('fanstatic_tail_value')
+			if (localStorage.hasOwnProperty('fanstatic.trail_value')) {
+				vs = localStorage.getItem('fanstatic.trail_value')
 				vs = (vn - diff) < vs ? vs: vn
 			}
 
 			if (vs == vn) {
-				localStorage.setItem('fanstatic_tail_value', vs)
+				localStorage.setItem('fanstatic.trail_value', vs)
 			}
 
-			let tail = {key: this.settings.tail_key, value: String(vs)}
+			let trail = {key: this.settings.trail_key, value: String(vs)}
 
 			return asObjet
-				? tail
-				: `${tail.key}=${tail.value}`
+				? trail
+				: `${trail.key}=${trail.value}`
 		},
 		
 		/* Fetch */
@@ -189,11 +192,11 @@
 					url = this.settings.base_url + url
 				}
 
-				/* resolve tail */
-				let tail = _resolveCustomTail(opt || {}, this.settings) || this.tail(true)
+				/* resolve trail */
+				let trail = _resolveCustomTrail(opt || {}, this.settings) || this.trail(true)
 				if (url[0] == '/') url = window.location.origin + url;
 				url = new URL(url)
-				if (tail.key) url.searchParams.append(...Object.values(tail))
+				if (trail.key) url.searchParams.append(...Object.values(trail))
 
 				/* fetch external template */
 				const response = await fetch(url);

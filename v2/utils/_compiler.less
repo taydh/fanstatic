@@ -1,0 +1,58 @@
+@sm: 576px;
+@md: 768px;
+@lg: 992px;
+@xl: 1200px;
+@xxl: 1400px;
+
+@breakpoints: {
+	sm: @sm;
+	md: @md;
+	lg: @lg;
+	xl: @xl;
+	xxl: @xxl;
+}
+
+.responsive-min(@breakpoint, @rules) {
+	@media only screen and (min-width: @breakpoint) {
+		@rules();
+	}
+}
+
+@import (less) "_base.css";
+
+/* create breakpoint classes */
+
+each(@breakpoints, {
+	.util-@{key}-d-flex { .responsive-min(@value, { .util-d-flex(); }); }
+	.util-@{key}-d-flex-evenly { .responsive-min(@value, { .util-d-flex-evenly(); }); }
+	.util-@{key}-d-flex-evenly > * { .responsive-min(@value, { flex: 1; }); }
+
+	.util-@{key}-sticky-top { .responsive-min(@value, { .util-sticky-top(); }); }
+	.util-@{key}-sticky-bottom { .responsive-min(@value, { .util-sticky-bottom(); }); }
+	.util-@{key}-fixed-top { .responsive-min(@value, { .util-fixed-top(); }); }
+	.util-@{key}-fixed-bottom { .responsive-min(@value, { .util-fixed-bottom(); }); }
+
+	.util-@{key}-text-start { .responsive-min(@value, { .util-text-start(); }); }
+	.util-@{key}-text-center { .responsive-min(@value, { .util-text-center(); }); }
+	.util-@{key}-text-end { .responsive-min(@value, { .util-text-end(); }); }
+
+	.util-@{key}-fs-d3 { .responsive-min(@value, { .util-fs-d3(); }); }
+	.util-@{key}-fs-d2 { .responsive-min(@value, { .util-fs-d2(); }); }
+	.util-@{key}-fs-d1 { .responsive-min(@value, { .util-fs-d1(); }); }
+	.util-@{key}-fs-normal { .responsive-min(@value, { .util-fs-normal(); }); }
+	.util-@{key}-fs-u1 { .responsive-min(@value, { .util-fs-u1(); }); }
+	.util-@{key}-fs-u2 { .responsive-min(@value, { .util-fs-u2(); }); }
+	.util-@{key}-fs-u3 { .responsive-min(@value, { .util-fs-u3(); }); }
+	.util-@{key}-fs-u4 { .responsive-min(@value, { .util-fs-u4(); }); }
+	.util-@{key}-fs-u5 { .responsive-min(@value, { .util-fs-u5(); }); }
+
+	.util-@{key}-fsem-d3 { .responsive-min(@value, { .util-fsem-d3(); }); }
+	.util-@{key}-fsem-d2 { .responsive-min(@value, { .util-fsem-d2(); }); }
+	.util-@{key}-fsem-d1 { .responsive-min(@value, { .util-fsem-d1(); }); }
+	.util-@{key}-fsem-normal { .responsive-min(@value, { .util-fsem-normal(); }); }
+	.util-@{key}-fsem-u1 { .responsive-min(@value, { .util-fsem-u1(); }); }
+	.util-@{key}-fsem-u2 { .responsive-min(@value, { .util-fsem-u2(); }); }
+	.util-@{key}-fsem-u3 { .responsive-min(@value, { .util-fsem-u3(); }); }
+	.util-@{key}-fsem-u4 { .responsive-min(@value, { .util-fsem-u4(); }); }
+	.util-@{key}-fsem-u5 { .responsive-min(@value, { .util-fsem-u5(); }); }
+})

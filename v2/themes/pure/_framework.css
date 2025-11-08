@@ -1,5 +1,7 @@
 :root {
-	--theme-spacer: 1.5rem;
+	--theme-space-gutter: 1;
+	--theme-space-margin: 1;
+	--theme-space-padding: 1;
 	--theme-gutter: 1rem;
 	--theme-margin: 1rem;
 	--theme-padding: 1rem;
@@ -14,44 +16,7 @@
 	--theme-zindex-popover:                    1070;
 	--theme-zindex-tooltip:                    1080;
 	--theme-zindex-toast:                      1090;
-
-	--theme-dark-8: #000000;
-	--theme-dark-7: #111111;
-	--theme-dark-6: #232323;
-	--theme-dark-5: #343434;
-	--theme-dark-4: #464646;
-	--theme-dark-3: #575757;
-	--theme-dark-2: #696969;
-	--theme-dark-1: #7A7A7A;
-	
-	--theme-color: #F9F9F9;
-
-	--theme-color-on-dark-8: hsl(from var(--theme-color) h s 20%);
-	--theme-color-on-dark-7: hsl(from var(--theme-color) h s 30%);
-	--theme-color-on-dark-6: hsl(from var(--theme-color) h s 40%);
-	--theme-color-on-dark-5: hsl(from var(--theme-color) h s 50%);
-	--theme-color-on-dark-4: hsl(from var(--theme-color) h s 60%);
-	--theme-color-on-dark-3: hsl(from var(--theme-color) h s 70%);
-	--theme-color-on-dark-2: hsl(from var(--theme-color) h s 80%);
-	--theme-color-on-dark-1: hsl(from var(--theme-color) h s 90%);
-
-	--theme-color-primary: #0A014F;
-	--theme-color-secondary: #383F51;
-	--theme-color-success: #5AA9E6;
-	--theme-color-error: #FF6392;
-	--theme-color-warning: #FFE45E;
-	--theme-color-info: #7FC8F8;
-	--theme-color-muted: var(--theme-dark-5);
-
-	--theme-color-brand: #0A014F;
-	--theme-color-brand-accent: #3223a5;
-
 }
-
-/*
-Palette (7): https://coolors.co/visualizer/5aa9e6-7fc8f8-f9f9f9-ffe45e-ff6392-383f51-0a014f
-Dark shades (8): https://coolors.co/visualizer/000000-111111-232323-343434-464646-575757-696969-7a7a7a
-*/
 
 .theme-w-full {
 	width: 100%;
@@ -69,10 +34,83 @@ Dark shades (8): https://coolors.co/visualizer/000000-111111-232323-343434-46464
 	flex: 1;
 }
 
+.theme-pt {
+	padding-top: calc(var(--theme-space-padding) * var(--theme-padding));
+}
+
+.theme-pr {
+	padding-right: calc(var(--theme-space-padding) * var(--theme-padding));
+}
+
+.theme-pb {
+	padding-bottom: calc(var(--theme-space-padding) * var(--theme-padding));
+}
+
+.theme-pl {
+	padding-left: calc(var(--theme-space-padding) * var(--theme-padding));
+}
+
+.theme-pblock {
+	padding-block: calc(var(--theme-space-padding) * var(--theme-padding));
+}
+
+.theme-pinline {
+	padding-inline: calc(var(--theme-space-padding) * var(--theme-padding));
+}
+
+.theme-text-start { text-align: start; }
+.theme-text-center { text-align: center; }
+.theme-text-end { text-align: end; }
+
 .theme-sticky-top { position: sticky; top: 0; z-index: var(--theme-zindex-sticky); }
 .theme-sticky-bottom { position: sticky; top: 0; z-index: var(--theme-zindex-sticky); }
 .theme-fixed-top { position: fixed; top: 0; z-index: var(--theme-zindex-fixed); }
 .theme-fixed-bottom { position: fixed; top: 0; z-index: var(--theme-zindex-fixed); }
+
+.theme-notes-flex-centered-1 {
+	display: flex; justify-content: center; gap: 1ch; 
+	margin: 0 auto;
+}
+
+.theme-fs-2 {
+	font-size: 2rem;
+}
+
+.theme-fs-3 {
+	font-size: 3rem;
+}
+
+.theme-fs-4 {
+	font-size: 4rem;
+}
+
+.theme-fs-5 {
+	font-size: 5rem;
+}
+
+.theme-fsr-025 {
+	font-size: .25em;
+}
+
+.theme-fsr-050 {
+	font-size: .5em;
+}
+
+.theme-fsr-075 {
+	font-size: .75em;
+}
+
+.theme-fsr-125 {
+	font-size: 1.25em;
+}
+
+.theme-fsr-150 {
+	font-size: 1.5em;
+}
+
+.theme-fsr-200 {
+	font-size: 2em;
+}
 
 /* colors */
 

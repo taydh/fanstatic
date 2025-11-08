@@ -3,9 +3,21 @@
 	font-size: large;
 }
 
-[data-thm-panel="block.section-block"] > [data-thm-role="starts"] {
-	font-size: 2em;
-	margin-bottom: var(--theme-margin);
+/* section-block */
+[data-thm-panel="block.section-block"] {
+	> [data-thm-role="starts"] {
+		margin-bottom: var(--theme-margin);
+
+		text-align: center;
+
+		font-size: 2rem;
+		line-height: 1.4;
+		letter-spacing: 1.6px;
+
+		> :last-child:not(:only-child) {
+			font-size: .75em;
+		}
+	}
 }
 
 .theme-hero-unit {

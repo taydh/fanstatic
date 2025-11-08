@@ -1,0 +1,34 @@
+<section data-ds-panel="section.basic-header"></section>
+
+<script>
+	const design = fanstatic.design;
+	const controller = {};
+	const scope = 'section.basic-header';
+
+	return {
+		onload: function (roof, data) {
+			const panel = roof.children[0];
+
+			panel.innerHTML = fanstatic.renderJhtm([
+				design.wrap(
+					{data: {pn: {scope: scope, role: 'container'}}},
+					design.wrap([
+						design.axis([
+							design.unit({data: {pn: {scope: scope}}}, {
+								head: data.identity,
+								body: data.navigation,
+								foot: data.actions,
+							}),
+						])
+					])
+				)
+			]);
+			
+			controller.panelElement = panel;
+			controller.identityElement = panel.querySelector(`[data-pn-scope="${scope}"][data-ds=unit] > [data-ds-sub=unit_head]`)
+			controller.navigationElement = panel.querySelector(`[data-pn-scope="${scope}"][data-ds=unit] > [data-ds-sub=unit_body]`)
+			controller.actionsElement = panel.querySelector(`[data-pn-scope="${scope}"][data-ds=unit] > [data-ds-sub=unit_foot]`)
+		},
+		controller: controller
+	};
+</script>
