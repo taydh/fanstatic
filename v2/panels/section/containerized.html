@@ -13,19 +13,21 @@
 			if (id) panelElement.id = id;
 
 			panelElement.dataset.thmPanel = scope;
+			panelElement.dataset.thmScope = scope;
 			panelElement.innerHTML = fanstatic.renderJhtm([
-				design.wrap({data: {thm: { scope:scope, role:'container' }}}, [])
+				design.wrap({'data-thm-role': 'container' }, []),
 			]);
 			
-			await fanstatic.insertPanel(panelElement.querySelector('[data-ds=wrap]'), 'block.section-block', {
+			const sectionBlockController = await fanstatic.insertPanel(panelElement.querySelector('[data-ds=wrap]'), 'block.section-block', {
 				scope: scope,
 				starts: data.starts || [],
-				insides: data.insides || [],
+				inside: data.inside || true,
 				ends: data.ends || [],
-			})
+			});
 
 			controller.panelElement = panelElement;
 			controller.containerElement = panelElement.children[0];
+			controller.sectionBlockController = sectionBlockController
 		},
 		controller: controller
 	};

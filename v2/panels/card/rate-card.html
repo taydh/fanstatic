@@ -11,11 +11,11 @@
 		const unitController = await fanstatic.insertPanel(roof, 'block.base-block', {
 			scope: scope,
 			titles: data.rate,
-			contents: data.subject,
+			content: data.subject,
 			notes: data.desc,
 		})
 
-		unitController.panelElement.dataset.thmPanel = panelScope;
+		unitController.panelElement.setAttribute('data-thm-panel', panelScope);
 		this.controller = unitController;
 	}
 </script>

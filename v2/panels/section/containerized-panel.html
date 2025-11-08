@@ -6,7 +6,7 @@
 		onload: async function (roof, data = {}, url) {
 			const panel = data.panel || 'block.base-block';
 			const scope = data.scope || fanstatic.resolvePanelScope(url);
-			const tmpl1 = await fanstatic.insertPanel(roof, 'section.containerized', { 
+			const sectionController = await fanstatic.insertPanel(roof, 'section.containerized', { 
 				id: data.id || null,
 				scope: scope,
 				starts: data.starts,
@@ -18,18 +18,19 @@
 			// 			data.titles ? data.titles.map(title => design.div([title])) : true)
 			// ));
 
-			const tmpl3 = await fanstatic.insertPanel(tmpl1.containerElement, panel,
+			const itemController = await fanstatic.insertPanel(sectionController.containerElement, panel,
 				Object.assign(data.item || {}, {
 					scope:scope,
 				})
 			);
 
-			const panelElement = tmpl1.panelElement;
+			const panelElement = sectionController.panelElement;
 			
 			panelElement.dataset.thmPanel = scope;
 
 			controller.panelElement = panelElement;
-			controller.itemElement = tmpl3.panelElement;
+			controller.itemElement = itemController.panelElement;
+			controller.itemController = itemController;
 		},
 		controller: controller
 	};

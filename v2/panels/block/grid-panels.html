@@ -6,13 +6,14 @@
 	};
 
 	return async function (roof, data = {}, url) {
+		const panelScope = fanstatic.resolvePanelScope(url);
 		const scope = data.scope;
 		const panel = data.panel || 'block.base-block';
-		const items = data.items || [];
 
 		roof.innerHTML = fanstatic.renderJhtm(design.grid(
-			items.map(item => item)
-			, {data: {thm: {scope:scope, role:'items'}}}
+			{data: {thm: {scope:scope, panel:panelScope, role:'items'}}},
+			{},
+			data.items || []
 		));
 
 		controller.panelElement = roof.children[0];

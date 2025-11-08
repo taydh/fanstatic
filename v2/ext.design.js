@@ -45,10 +45,23 @@
 
 			return this.element('div', attributes, items);
 		},
-		unit: function(attributes = {}, model) {
-			if (!model && Object.keys(attributes).some(k => 'head' == k || 'body' == k || 'foot' == k)) {
-				model = attributes;
+		par: function(attributes = {}, items = true) {
+			if (('object' != typeof attributes) || Array.isArray(attributes)) {
+				items = attributes;
 				attributes = {};
+			}
+
+			return this.element('p', attributes, items);
+		},
+		unit: function(attributes = {}, model) {
+			if (!model){
+				if (Object.keys(attributes).some(k => 'cap' == k || 'head' == k || 'body' == k || 'foot' == k)) {
+					model = attributes;
+					attributes = {};
+				}
+				else { // for fully empty model
+					model = {};
+				}
 			}
 
 			let tagFill = ('div data-ds="unit" ' + _toAttributesString(attributes));

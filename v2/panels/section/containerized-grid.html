@@ -13,12 +13,9 @@
 		const data2 = {
 			id: data.id || null,
 			scope: scope,
-			items: [
-				(titles)
-					? design.axis(titles.map(title => design.element('div', title)), {data:{thm:{scope:scope, role:'section_title'}}})
-					: null,
-				design.placeholder('panels'), 
-			]
+			starts: data.starts || [],
+			inside: design.placeholder('panels'),
+			ends: data.ends || [],
 		};
 		const tmpl1 = await fanstatic.insertPanel(roof, 'section.containerized', data2);
 		const panelElement = tmpl1.panelElement;
