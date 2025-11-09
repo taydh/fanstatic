@@ -1,6 +1,6 @@
 /* containerized */
 
-[data-thm-panel^="section"] {
+[data-pn-panel^="section."] {
 	padding-block: var(--theme-padding);
 }
 
@@ -9,43 +9,43 @@
 
 /* containerized stack */
 
-[data-thm-scope="section.containerized-stack"] {
+[data-pn-scope="section.containerized-stack"] {
 	&[data-ds=unit]:not(:last-child) { 
 		margin-bottom: var(--theme-margin); 
 	}
 }
 
-[data-thm-scope="section.header-simple"][data-ds=unit] > [data-ds-sub=unit_head] {  display: flex; justify-content: center; align-items:center; padding-block: var(--theme-padding) }
-[data-thm-scope="section.header-simple"][data-thm-role=container] > [data-ds=wrap] { padding-block: var(--theme-margin) }
+[data-pn-scope="section.basic-header"][data-ds=unit] > [data-ds=sub] {  display: flex; justify-content: center; align-items:center; padding-block: var(--theme-padding) }
+[data-pn-scope="section.basic-header"][data-pn-role=container] > [data-ds=wrap] { padding-block: var(--theme-margin) }
 
-[data-thm-scope="section.hero-top-simple"][data-thm-role=container] { min-height: 400px; }
+[data-pn-scope="section.hero-top-simple"][data-pn-role=container] { min-height: 400px; }
 
 
 /* md */
 @media screen and (min-width: 768px) {
-	[data-thm-scope="section.header-simple"][data-ds=unit] { display: flex; }
-	[data-thm-scope="section.header-simple"][data-ds=unit] > [data-ds-sub=unit_body] { flex: 1; }
+	[data-pn-scope="section.basic-header"][data-ds=unit] { display: flex; }
+	[data-pn-scope="section.basic-header"][data-ds=unit] > [data-ds=msg] { flex: 1; }
 }
 
 /* containerized-unit *
 
-[data-thm-scope="section.containerized-unit"][data-thm-role=container] > [data-ds=wrap] { padding-block: var(--theme-padding); }
-[data-thm-scope="section.containerized-unit"][data-ds=unit] > [data-ds-sub=unit_head] { padding-bottom: var(--theme-padding); }
-[data-thm-scope="section.containerized-unit"][data-ds=unit] > [data-ds-sub=unit_body] { padding-bottom: var(--theme-margin); }
+[data-pn-scope="section.containerized-unit"][data-pn-role=container] > [data-ds=wrap] { padding-block: var(--theme-padding); }
+[data-pn-scope="section.containerized-unit"][data-ds=unit] > [data-ds=sub] { padding-bottom: var(--theme-padding); }
+[data-pn-scope="section.containerized-unit"][data-ds=unit] > [data-ds=msg] { padding-bottom: var(--theme-margin); }
 
-[data-ds-sub=unit_head] > [data-thm-scope="section.containerized-unit"][data-ds=axis] > * { font-size: 2em; font-weight: 700; }
-[data-ds-sub=unit_body] > [data-thm-scope="section.containerized-unit"][data-ds=axis] > * { font-size: 1.5em; }
-[data-ds-sub=unit_foot] > [data-thm-scope="section.containerized-unit"][data-ds=axis] > * { font-size: 1em; }
+[data-ds=sub] > [data-pn-scope="section.containerized-unit"][data-ds=axis] > * { font-size: 2em; font-weight: 700; }
+[data-ds=msg] > [data-pn-scope="section.containerized-unit"][data-ds=axis] > * { font-size: 1.5em; }
+[data-ds=not] > [data-pn-scope="section.containerized-unit"][data-ds=axis] > * { font-size: 1em; }
 
 /* containerized-units *
 
-[data-thm-scope="section.containerized-units"][data-thm-role=container] > [data-ds=wrap] { padding-block: var(--theme-padding); }
-[data-thm-scope="section.containerized-units"][data-ds="unit"]:not(:last-child) { margin-bottom: var(--theme-margin); }
-[data-thm-scope="section.containerized-units"][data-ds="unit"] > [data-ds-sub=unit_head] { padding-bottom: var(--theme-padding); }
-[data-thm-scope="section.containerized-units"][data-ds="unit"] > [data-ds-sub=unit_body] { padding-bottom: var(--theme-margin); }
+[data-pn-scope="section.containerized-units"][data-pn-role=container] > [data-ds=wrap] { padding-block: var(--theme-padding); }
+[data-pn-scope="section.containerized-units"][data-ds="unit"]:not(:last-child) { margin-bottom: var(--theme-margin); }
+[data-pn-scope="section.containerized-units"][data-ds="unit"] > [data-ds=sub] { padding-bottom: var(--theme-padding); }
+[data-pn-scope="section.containerized-units"][data-ds="unit"] > [data-ds=msg] { padding-bottom: var(--theme-margin); }
 
-[data-ds-sub=unit_head] > [data-thm-scope="section.containerized-units"][data-ds=axis] > * { font-size: 2em; font-weight: 600; }
-[data-ds-sub=unit_body] > [data-thm-scope="section.containerized-units"][data-ds=axis] > * { font-size: 1.5em; }
-[data-ds-sub=unit_foot] > [data-thm-scope="section.containerized-units"][data-ds=axis] > * { font-size: 1em; }
+[data-ds=sub] > [data-pn-scope="section.containerized-units"][data-ds=axis] > * { font-size: 2em; font-weight: 600; }
+[data-ds=msg] > [data-pn-scope="section.containerized-units"][data-ds=axis] > * { font-size: 1.5em; }
+[data-ds=not] > [data-pn-scope="section.containerized-units"][data-ds=axis] > * { font-size: 1em; }
 
 */

@@ -1,15 +1,26 @@
+@xs: 359px;
 @sm: 576px;
 @md: 768px;
 @lg: 992px;
 @xl: 1200px;
 @xxl: 1400px;
 
-@breakpoints: {
+@breakpoints_max: {
+	xs: @xs;
+}
+
+@breakpoints_min: {
 	sm: @sm;
 	md: @md;
 	lg: @lg;
 	xl: @xl;
 	xxl: @xxl;
+}
+
+.responsive-max(@breakpoint, @rules) {
+	@media only screen and (max-width: @breakpoint) {
+		@rules();
+	}
 }
 
 .responsive-min(@breakpoint, @rules) {
@@ -22,37 +33,72 @@
 
 /* create breakpoint classes */
 
-each(@breakpoints, {
-	.util-@{key}-d-flex { .responsive-min(@value, { .util-d-flex(); }); }
-	.util-@{key}-d-flex-evenly { .responsive-min(@value, { .util-d-flex-evenly(); }); }
-	.util-@{key}-d-flex-evenly > * { .responsive-min(@value, { flex: 1; }); }
+each(@breakpoints_max, {
+	.util-d-@{key}-flex { .responsive-max(@value, { .util-d-flex(); }); }
+	.util-d-@{key}-flex-evenly { .responsive-max(@value, { .util-d-flex-evenly(); }); }
+	.util-d-@{key}-flex-evenly > * { .responsive-max(@value, { flex: 1; }); }
 
-	.util-@{key}-sticky-top { .responsive-min(@value, { .util-sticky-top(); }); }
-	.util-@{key}-sticky-bottom { .responsive-min(@value, { .util-sticky-bottom(); }); }
-	.util-@{key}-fixed-top { .responsive-min(@value, { .util-fixed-top(); }); }
-	.util-@{key}-fixed-bottom { .responsive-min(@value, { .util-fixed-bottom(); }); }
+	.util-sticky-@{key}-top { .responsive-max(@value, { .util-sticky-top(); }); }
+	.util-sticky-@{key}-bottom { .responsive-max(@value, { .util-sticky-bottom(); }); }
+	.util-fixed-@{key}-top { .responsive-max(@value, { .util-fixed-top(); }); }
+	.util-fixed-@{key}-bottom { .responsive-max(@value, { .util-fixed-bottom(); }); }
 
-	.util-@{key}-text-start { .responsive-min(@value, { .util-text-start(); }); }
-	.util-@{key}-text-center { .responsive-min(@value, { .util-text-center(); }); }
-	.util-@{key}-text-end { .responsive-min(@value, { .util-text-end(); }); }
+	.util-text-@{key}-start { .responsive-max(@value, { .util-text-start(); }); }
+	.util-text-@{key}-center { .responsive-max(@value, { .util-text-center(); }); }
+	.util-text-@{key}-end { .responsive-max(@value, { .util-text-end(); }); }
 
-	.util-@{key}-fs-d3 { .responsive-min(@value, { .util-fs-d3(); }); }
-	.util-@{key}-fs-d2 { .responsive-min(@value, { .util-fs-d2(); }); }
-	.util-@{key}-fs-d1 { .responsive-min(@value, { .util-fs-d1(); }); }
-	.util-@{key}-fs-normal { .responsive-min(@value, { .util-fs-normal(); }); }
-	.util-@{key}-fs-u1 { .responsive-min(@value, { .util-fs-u1(); }); }
-	.util-@{key}-fs-u2 { .responsive-min(@value, { .util-fs-u2(); }); }
-	.util-@{key}-fs-u3 { .responsive-min(@value, { .util-fs-u3(); }); }
-	.util-@{key}-fs-u4 { .responsive-min(@value, { .util-fs-u4(); }); }
-	.util-@{key}-fs-u5 { .responsive-min(@value, { .util-fs-u5(); }); }
+	.util-fs-@{key}-d3 { .responsive-max(@value, { .util-fs-d3(); }); }
+	.util-fs-@{key}-d2 { .responsive-max(@value, { .util-fs-d2(); }); }
+	.util-fs-@{key}-d1 { .responsive-max(@value, { .util-fs-d1(); }); }
+	.util-fs-@{key}-normal { .responsive-max(@value, { .util-fs-normal(); }); }
+	.util-fs-@{key}-u1 { .responsive-max(@value, { .util-fs-u1(); }); }
+	.util-fs-@{key}-u2 { .responsive-max(@value, { .util-fs-u2(); }); }
+	.util-fs-@{key}-u3 { .responsive-max(@value, { .util-fs-u3(); }); }
+	.util-fs-@{key}-u4 { .responsive-max(@value, { .util-fs-u4(); }); }
+	.util-fs-@{key}-u5 { .responsive-max(@value, { .util-fs-u5(); }); }
 
-	.util-@{key}-fsem-d3 { .responsive-min(@value, { .util-fsem-d3(); }); }
-	.util-@{key}-fsem-d2 { .responsive-min(@value, { .util-fsem-d2(); }); }
-	.util-@{key}-fsem-d1 { .responsive-min(@value, { .util-fsem-d1(); }); }
-	.util-@{key}-fsem-normal { .responsive-min(@value, { .util-fsem-normal(); }); }
-	.util-@{key}-fsem-u1 { .responsive-min(@value, { .util-fsem-u1(); }); }
-	.util-@{key}-fsem-u2 { .responsive-min(@value, { .util-fsem-u2(); }); }
-	.util-@{key}-fsem-u3 { .responsive-min(@value, { .util-fsem-u3(); }); }
-	.util-@{key}-fsem-u4 { .responsive-min(@value, { .util-fsem-u4(); }); }
-	.util-@{key}-fsem-u5 { .responsive-min(@value, { .util-fsem-u5(); }); }
+	.util-fsem-@{key}-d3 { .responsive-max(@value, { .util-fsem-d3(); }); }
+	.util-fsem-@{key}-d2 { .responsive-max(@value, { .util-fsem-d2(); }); }
+	.util-fsem-@{key}-d1 { .responsive-max(@value, { .util-fsem-d1(); }); }
+	.util-fsem-@{key}-normal { .responsive-max(@value, { .util-fsem-normal(); }); }
+	.util-fsem-@{key}-u1 { .responsive-max(@value, { .util-fsem-u1(); }); }
+	.util-fsem-@{key}-u2 { .responsive-max(@value, { .util-fsem-u2(); }); }
+	.util-fsem-@{key}-u3 { .responsive-max(@value, { .util-fsem-u3(); }); }
+	.util-fsem-@{key}-u4 { .responsive-max(@value, { .util-fsem-u4(); }); }
+	.util-fsem-@{key}-u5 { .responsive-max(@value, { .util-fsem-u5(); }); }
+})
+
+each(@breakpoints_min, {
+	.util-d-@{key}-flex { .responsive-min(@value, { .util-d-flex(); }); }
+	.util-d-@{key}-flex-evenly { .responsive-min(@value, { .util-d-flex-evenly(); }); }
+	.util-d-@{key}-flex-evenly > * { .responsive-min(@value, { flex: 1; }); }
+
+	.util-sticky-@{key}-top { .responsive-min(@value, { .util-sticky-top(); }); }
+	.util-sticky-@{key}-bottom { .responsive-min(@value, { .util-sticky-bottom(); }); }
+	.util-fixed-@{key}-top { .responsive-min(@value, { .util-fixed-top(); }); }
+	.util-fixed-@{key}-bottom { .responsive-min(@value, { .util-fixed-bottom(); }); }
+
+	.util-text-@{key}-start { .responsive-min(@value, { .util-text-start(); }); }
+	.util-text-@{key}-center { .responsive-min(@value, { .util-text-center(); }); }
+	.util-text-@{key}-end { .responsive-min(@value, { .util-text-end(); }); }
+
+	.util-fs-@{key}-d3 { .responsive-min(@value, { .util-fs-d3(); }); }
+	.util-fs-@{key}-d2 { .responsive-min(@value, { .util-fs-d2(); }); }
+	.util-fs-@{key}-d1 { .responsive-min(@value, { .util-fs-d1(); }); }
+	.util-fs-@{key}-normal { .responsive-min(@value, { .util-fs-normal(); }); }
+	.util-fs-@{key}-u1 { .responsive-min(@value, { .util-fs-u1(); }); }
+	.util-fs-@{key}-u2 { .responsive-min(@value, { .util-fs-u2(); }); }
+	.util-fs-@{key}-u3 { .responsive-min(@value, { .util-fs-u3(); }); }
+	.util-fs-@{key}-u4 { .responsive-min(@value, { .util-fs-u4(); }); }
+	.util-fs-@{key}-u5 { .responsive-min(@value, { .util-fs-u5(); }); }
+
+	.util-fsem-@{key}-d3 { .responsive-min(@value, { .util-fsem-d3(); }); }
+	.util-fsem-@{key}-d2 { .responsive-min(@value, { .util-fsem-d2(); }); }
+	.util-fsem-@{key}-d1 { .responsive-min(@value, { .util-fsem-d1(); }); }
+	.util-fsem-@{key}-normal { .responsive-min(@value, { .util-fsem-normal(); }); }
+	.util-fsem-@{key}-u1 { .responsive-min(@value, { .util-fsem-u1(); }); }
+	.util-fsem-@{key}-u2 { .responsive-min(@value, { .util-fsem-u2(); }); }
+	.util-fsem-@{key}-u3 { .responsive-min(@value, { .util-fsem-u3(); }); }
+	.util-fsem-@{key}-u4 { .responsive-min(@value, { .util-fsem-u4(); }); }
+	.util-fsem-@{key}-u5 { .responsive-min(@value, { .util-fsem-u5(); }); }
 })

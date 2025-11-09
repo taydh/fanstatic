@@ -49,6 +49,10 @@ html {
 	line-height: 1.7;
 	letter-spacing: 1.2px;
 	font-family: Verdana, Geneva, Tahoma, sans-serif;
+
+	@media only screen and (min-width: 359px) {
+
+	}
 }
 
 body {

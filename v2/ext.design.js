@@ -26,6 +26,65 @@
 		}).join(' ');
 	}
 
+	Object.assign(fanstatic, {
+		tagFillContains: function(obj, searchText) {
+			return ('object' == typeof obj) && obj ? Object.entries(obj)[0][0].includes(searchText) : false;
+		},
+		renderJhtm: function(arr) {
+			var html = '';
+			
+			if (!Array.isArray(arr) && typeof arr === 'object') arr = [arr];
+			if (1 == arr.length && null == arr[0]) return html;
+			
+			for(let entry of arr) {
+				if (typeof entry === 'string') {
+					html += entry; /* sanitize html or object in user data orchestration level */
+					continue;
+				}
+				else if (typeof entry === 'number') {
+					html += String(entry);  /* sanitize html or object in user data orchestration level */
+					continue;
+				}
+				if (false === !!entry) {
+					continue;
+				}
+
+				entry = Object.entries(entry)[0];
+				let tagFill = entry[0];
+				let content = entry[1];
+				let tagName = tagFill.split(' ')[0];
+				let innerHTML = '';
+
+				if (false === !!content) {
+					continue;
+				}
+				else if (typeof content === 'string') {
+					innerHTML = content; /* sanitize html or object in user data orchestration level */
+				}
+				else if (typeof content === 'number') {
+					innerHTML = String(content); /* sanitize html or object in user data orchestration level */
+				}
+				else if (Array.isArray(content) || typeof content === 'object') {
+					innerHTML = this.renderJhtm(content);
+				}
+
+				html += `<${tagFill}>${innerHTML}</${tagName}>`;
+			}
+
+			return html
+		},
+		renderYhtm: function (yaml) {
+			if (!window.jsyaml) {
+				console.error('[Please load JS-YAML library first]');
+			}
+
+			var o = jsyaml.load(yaml)
+			let html = this.renderJhtm(o)
+
+			return html
+		},
+	});
+
 	fanstatic.design = {
 		element: function(tag, attributes = {}, items = true) {
 			if (('object' != typeof attributes) || Array.isArray(attributes)) {
@@ -55,7 +114,7 @@
 		},
 		unit: function(attributes = {}, model) {
 			if (!model){
-				if (Object.keys(attributes).some(k => 'cap' == k || 'head' == k || 'body' == k || 'foot' == k)) {
+				if (Object.keys(attributes).some(k => 'figure' == k || 'subjects' == k || 'message' == k || 'notes' == k)) {
 					model = attributes;
 					attributes = {};
 				}
@@ -69,27 +128,27 @@
 				[tagFill]: [],
 			};
 
-			if (3 == model.mode) { // head, body, foot
-				if (!model.foot) model.foot = true;
-				model.cap = false;
-			}
-			else if (4 == model.mode) { // cap, head, body
-				if (!model.cap) model.cap = true;
-				model.foot = false;
-			}
-			else if (1 == model.mode) { // all
-				if (!model.foot) model.foot = true;
-				if (!model.cap) model.cap = true;
+			if (1 == model.mode) { // all
+				if (!model.notes) model.notes = true;
+				if (!model.figure) model.figure = true;
 			}
 			else if (2 == model.mode) { // head and body only
-				model.cap = false;
-				model.foot = false;
+				model.figure = false;
+				model.notes = false;
+			}
+			else if (3 == model.mode) { // head, body, foot
+				if (!model.notes) model.notes = true;
+				model.figure = false;
+			}
+			else if (4 == model.mode) { // cap, head, body
+				if (!model.figure) model.figure = true;
+				model.notes = false;
 			}
 
-			if (model.cap) result[tagFill].push({'div data-ds-sub="unit_cap"': model.cap});
-			if (model.head) result[tagFill].push({'div data-ds-sub="unit_head"': model.head});
-			if (model.body) result[tagFill].push({'div data-ds-sub="unit_body"': model.body});
-			if (model.foot) result[tagFill].push({'div data-ds-sub="unit_foot"': model.foot});
+			if (model.figure) result[tagFill].push({'figure data-ds="fig"': model.figure});
+			if (model.subjects) result[tagFill].push({'div data-ds="sub"': model.subjects});
+			if (model.message) result[tagFill].push({'div data-ds="msg"': model.message});
+			if (model.notes) result[tagFill].push({'div data-ds="not"': model.notes});
 
 			return result;
 		},
@@ -134,7 +193,7 @@
 
 			result[tagFill] = items.map(item => {
 				let obj = {};
-				obj[itemTag + ' data-ds-sub="list_item" ' +  _toAttributesString(secondaryAttributes)] = item;
+				obj[itemTag + ' data-ds="item" ' +  _toAttributesString(secondaryAttributes)] = item;
 
 				return obj;
 			});
@@ -151,7 +210,7 @@
 			if (typeof attributes.style === 'object') {
 				Object.assign(attributes.style, { display: 'grid' });
 			} else {
-				attributes.style = (attributes.style || '') + ';display:grid;';
+				attributes.style = (attributes.style || '') + '; display: grid;';
 			}
 
 			let tagFill = ('div data-ds="grid" ' +  _toAttributesString(attributes));
@@ -159,9 +218,9 @@
 			let items = (Array.isArray(model) ? model : model.items) || [];
 
 			result[tagFill] = items.map(item => {
-				return fanstatic.tagFillContains(item, 'data-ds-sub="grid_cell"') 
+				return fanstatic.tagFillContains(item, 'data-ds="cell"') 
 					? item
-					: { ['div data-ds-sub="grid_cell" ' +  _toAttributesString(secondaryAttributes)]: item };
+					: { ['div data-ds="cell" ' +  _toAttributesString(secondaryAttributes)]: item };
 			});
 
 			return result;
@@ -176,43 +235,11 @@
 
 			return {[tagFill]: model};
 		},
-		placeholder: function(name) {
-			let tagFill = `i data-ds-placeholder="${name}"`;
+		placeholder: function(name, model = true) {
+			let tagFill = `div data-ds-placeholder="${name}"`;
 			
-			return {[tagFill]: true}
+			return {[tagFill]: model}
 		},
-		
-		/* raw flex elements for mobile screen, use class or style for most cases */
-		unitFlex: function(attributes = {}, model) {
-			if (!model && Object.keys(attributes).some(k => 'head' == k || 'body' == k || 'foot' == k)) {
-				model = attributes;
-				attributes = {};
-			}
-
-			if (!attributes.style) attributes.style = {};
-
-			if (typeof attributes.style === 'object') {
-				Object.assign(attributes.style, { display: 'flex' });
-			} else {
-				attributes.style = (attributes.style || '') + ';display:flex;';
-			}
-
-			const unit = this.unit(attributes, model);
-
-			if (model.body) {
-				Object.entries(unit)[0][1].forEach(el => { 
-					const entry = Object.entries(el)[0];
-
-					if(entry[0].includes('data-ds="unit_body"')) {
-						el[entry[0] + ' style="flex:1"'] = entry[1];
-						delete el[entry[0]];
-					}
-				})
-			}
-
-			return unit;
-		},
-
 		sanitize: function(val, rules = null) {
 			if (Array.isArray(val)) {
 				for (let i in val) {

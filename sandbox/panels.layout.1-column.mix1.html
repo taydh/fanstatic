@@ -35,11 +35,10 @@
 				}
 				
 				const loadExtensions = async function(asyncCounter) {
-					asyncCounter.counter = 7;
+					asyncCounter.counter = 6;
 					
 					window.addEventListener('fanstatic.visual.load', () => asyncCounter.done());
 					window.addEventListener('fanstatic.design.load', () => asyncCounter.done());
-					window.addEventListener('fanstatic.structured_html.load', () => asyncCounter.done());
 					window.addEventListener('fanstatic.template.load', () => asyncCounter.done());
 					window.addEventListener('fanstatic.style.load', () => asyncCounter.done());
 					window.addEventListener('fanstatic.tools.load', () => asyncCounter.done());
@@ -47,7 +46,6 @@
 					fanstatic.insertScripts([
 						fanstatic_base_dir + '/ext.visual.js?' + fanstatic.tail(),
 						fanstatic_base_dir + '/ext.design.js?' + fanstatic.tail(),
-						fanstatic_base_dir + '/ext.structured_html.js?' + fanstatic.tail(),
 						fanstatic_base_dir + '/ext.tools.js?' + fanstatic.tail(),
 						fanstatic_base_dir + '/ext.template.js?' + fanstatic.tail(),
 						fanstatic_base_dir + '/ext.style.js?' + fanstatic.tail(),
@@ -131,7 +129,7 @@
 							'section.containerized-hero',
 							{
 								block: {
-									titles: ['Sandbox', 'Welcome']
+									headers: ['Sandbox', 'Welcome']
 								}
 							}
 					    )
@@ -139,16 +137,18 @@
 						hero.panelElement.id = 'hero';
 						
 						const stackedUnit = {
-							figure: design.element('img', {src:"https://dummyimage.com/200x200/000/fff"}),
-							titles: ['This is a stacked unit'],
-							contents: ['this is a content line 1', 'this is a content line 2'],
-							footnotes: [design.button('Click me!')]
+							cap: design.element('img', {src:"https://dummyimage.com/200x200/000/fff"}),
+							headers: ['This is a stacked unit'],
+							body: ['this is a content line 1', 'this is a content line 2'],
+							footers: [design.button('Click me!')]
 						}
 						
 						const stack1 = await fanstatic.appendPanel(layoutController.mainElement,
 							'section.containerized-stack',
 							{
-								items: [stackedUnit, stackedUnit, stackedUnit]
+								titles: 'Stacked Items',
+								items: [stackedUnit, stackedUnit, stackedUnit],
+								ends: 'Total 3 unit stacked',
 							}
 					   )
 						
@@ -162,9 +162,9 @@
 							'section.containerized', 
 							{
 								items: [
-									design.unitFlex({
-										head: 'My Company',
-										body: '2025'
+									design.unit({style: {display: 'flex'}}, {
+										subjects: 'My Company',
+										notes: '2025'
 									})
 								]
 							}

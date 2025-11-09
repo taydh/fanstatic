@@ -1,16 +1,19 @@
-<nav data-pn-panel="navigation.basic-menu"></nav>
+<nav></nav>
 
 <script>
 	const design = fanstatic.design;
-	const scope = 'navigation.basic-menu';
 	const controller = {};
 
 	return {
 		controller: controller,
-		onload: function(roof, data) {
-			const panel = roof.children[0];
+		onload: function(roof, data, url) {
+			const panelScope = fanstatic.resolvePanelScope(url);
+			const scope = data.scope || panelScope;
+			const panelElement = roof.children[0];
 
-			panel.innerHTML = fanstatic.renderJhtm(design.wrap([
+			panelElement.setAttribute('data-pn-panel', panelScope);
+			panelElement.setAttribute('data-pn-scope', scope);
+			panelElement.innerHTML = fanstatic.renderJhtm(design.wrap([
 				design.list({ 'data-pn-scope': scope, 'data-pn-role': 'menu_list' }, { 'data-pn-role': 'menu_item' },
 				{
 					listTag: 'div',
@@ -23,7 +26,7 @@
 				})
 			]));
 
-			controller.panelElement = panel;
+			controller.panelElement = panelElement;
 		},	
 	}
 </script> 

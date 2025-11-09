@@ -9,17 +9,17 @@
 	color: var(--theme-color-on-dark-1);
 }
 
-[data-thm-panel="navigation.simple"] {
+[data-pn-panel="navigation.simple"] {
 	height: 100%;
 
-	[data-thm-scope="navigation.simple"][data-thm-role=menu_list] {
+	[data-pn-scope="navigation.simple"][data-pn-role=menu_list] {
 		display: flex;
 		justify-content: center;
 	}
 }
 
 @media screen and (min-width: 768px) {
-	[data-thm-panel="navigation.simple"] {
+	[data-pn-panel="navigation.simple"] {
 		> [data-ds=wrap] {
 			height: 100%;
 			display: flex;
@@ -28,7 +28,7 @@
 		}
 	}
 
-	[data-thm-scope="navigation.simple"][data-thm-role=menu_list] { 
+	[data-pn-scope="navigation.simple"][data-pn-role=menu_list] { 
 		display: flex; 
 		justify-content: end; 
 	}

@@ -1,41 +1,38 @@
-<div></div>
-
 <script>
 	const design = fanstatic.design;
-	const controller = {};
 
-	return {
-		controller: controller,
-		onload: async function(roof, data = {}, url) {
-			const scope = data.scope || fanstatic.resolvePanelScope(url);
-			const panelElement = roof.children[0];
+	return async function(roof, data = {}, url) {
+		const panelScope = fanstatic.resolvePanelScope(url)
+		const scope = data.scope || panelScope;
+		
+		roof.innerHTML = fanstatic.renderJhtm(design.wrap([
+			design.element('header'), design.element('main'), design.element('footer'),
+		]))
 
-			panelElement.innerHTML = fanstatic.renderJhtm(design.wrap([
-				design.element('header'), design.element('main'), design.element('footer'),
-			]))
+		const panelElement = roof.children[0];
+		const headerElement = panelElement.children[0];
+		const mainElement = panelElement.children[1];
+		const footerElement = panelElement.children[2];
 
-			const headerElement = panelElement.children[0].children[0];
-			const mainElement = panelElement.children[0].children[1];
-			const footerElement = panelElement.children[0].children[2];
+		panelElement.dataset['panel'] = scope;
 
-			if (data.header) {
-				headerElement.innerHTML = fanstatic.renderJhtm(data.header);
-			}
+		if (data.header) {
+			headerElement.innerHTML = fanstatic.renderJhtm(data.header);
+		}
 
-			if (data.main) {
-				mainElement.innerHTML = fanstatic.renderJhtm(data.main);
-			}
+		if (data.main) {
+			mainElement.innerHTML = fanstatic.renderJhtm(data.main);
+		}
 
-			if (data.footer) {
-				footerElement.innerHTML = fanstatic.renderJhtm(data.footer);
-			}
+		if (data.footer) {
+			footerElement.innerHTML = fanstatic.renderJhtm(data.footer);
+		}
 
-			controller.headerElement = headerElement;
-			controller.mainElement = mainElement;
-			controller.footerElement = footerElement;
-
-			panelElement.dataset['panel'] = scope;
-			controller.panelElement = panelElement;
-		},
+		this.controller = {
+			panelElement: panelElement,
+			headerElement: headerElement,
+			mainElement: mainElement,
+			footerElement: footerElement,
+		};
 	}
 </script>

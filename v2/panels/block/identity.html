@@ -3,20 +3,20 @@
 <script>
 	const controller = {};
 	const design = fanstatic.design;
-	const scope = 'block.identity';
 
 	return {
-		onload: function(root, data) {
-			let panelElement = root.children[0];
+		onload: function(root, data, url) {
+			const panelScope = fanstatic.resolvePanelScope(url);
+			const scope = data.scope || panelScope;
+			const panelElement = root.children[0];
 
-			panelElement.setAttribute('data-pn-panel', scope);
-			panelElement.innerHTML = fanstatic.renderJhtm(design.wrap([
-					design.unit({}, {
-						head: design.div({style:'display:none', data:{ pn: { scope:scope, role:'logo', }}}, {'img': true}),
-						body: design.div({style:'display:none', data:{ pn: { scope:scope, role:'label' }}}),
-					}
-				)
-			]));
+			panelElement.setAttribute('data-pn-panel', panelScope);
+			panelElement.setAttribute('data-pn-scope', scope);
+
+			panelElement.innerHTML = fanstatic.renderJhtm([
+				design.element('figure', {style:'display:none', data:{ pn: { role:'logo', }}}),
+				design.div({style:'display:none', data:{ pn: { role:'label' }}}),
+			]);
 
 			controller.panelElement = panelElement;
 			controller.logoElement = panelElement.querySelector('[data-pn-role=logo]')

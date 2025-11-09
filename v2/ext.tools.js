@@ -70,7 +70,7 @@
 
 		/* adoption */
 
-		replaceWithChildren: function(oldParent, wrapper) {
+		replaceWithChildren: function(oldParent, wrapper = null) {
 			if (!wrapper) {
 				oldParent.after(...oldParent.childNodes)
 			}

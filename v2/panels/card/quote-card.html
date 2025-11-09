@@ -1,25 +1,28 @@
 <script>
 	const design = fanstatic.design;
-	const controller = {
-		panelElement: null,
-	};
 
 	return async function(roof, data, url) {
 		const panelScope = fanstatic.resolvePanelScope(url);
 		const scope = data.scope;
-		const photoUrl = data.photo ? data.photo : 'https://dummyimage.com/150x150/eee/000';
+		const photoUrl = data.photo || '';
 		const tagFill = `img src="${photoUrl}"`;
 
-		const unitController = await fanstatic.insertPanel(roof, 'block.base-unit', {
-			data: {
-				scope: scope,
-				figure: {[tagFill]: true},
-				titles: [data.name, data.title],
-				contents: [data.quote],
-			}
-		})
+		roof.innerHTML = fanstatic.renderJhtm(design.unit({
+			figure: {[tagFill]: true},
+			subjects: [design.div(data.name), design.div(data.title + ', ' + data.company)],
+			message: [data.quote],
+		}));
 
-		unitController.panelElement.dataset.dsPanel = panelScope;
-		this.controller = unitController;
+		const panelElement = roof.children[0];
+
+		panelElement.dataset.pnPanel = panelScope;
+		panelElement.dataset.pnScope = scope;
+		panelElement.querySelector(':scope > [data-ds=sub]').dataset.pnRole = 'person';
+		panelElement.querySelector(':scope > [data-ds=msg]').dataset.pnRole = 'quote';
+		roof.querySelectorAll('[data-ds]').forEach(elem => elem.removeAttribute('[data-ds]'));
+
+		this.controller = {
+			panelElement: panelElement,
+		};
 	}
 </script>

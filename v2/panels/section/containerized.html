@@ -20,8 +20,8 @@
 			
 			const sectionBlockController = await fanstatic.insertPanel(panelElement.querySelector('[data-ds=wrap]'), 'block.section-block', {
 				scope: scope,
-				starts: data.starts || [],
-				inside: data.inside || true,
+				titles: data.titles || [],
+				content: data.content || true,
 				ends: data.ends || [],
 			});
 

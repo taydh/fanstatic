@@ -13,8 +13,8 @@
 		const data2 = {
 			id: data.id || null,
 			scope: scope,
-			starts: data.starts,
-			inside: design.placeholder('panels'),
+			titles: data.titles,
+			content: design.placeholder('panels'),
 			ends: data.ends,
 		};
 		const tmpl1 = await fanstatic.insertPanel(roof, 'section.containerized', data2 );
