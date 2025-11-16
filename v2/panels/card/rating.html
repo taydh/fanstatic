@@ -1,0 +1,24 @@
+<script>
+	const design = fanstatic.design;
+
+	return async function(roof, data, url) {
+		const panelScope = fanstatic.resolvePanelScope(url);
+		const scope = data.scope || panelScope;
+
+		console.log('card.rating data', data);
+		const basicUnitController = await fanstatic.insertPanel(roof, 'block.base-unit', {
+			scope: scope,
+			cap: design.element('img', {src: data.icon}),
+			head: data.rating,
+			body: data.subject,
+			foot: data.summary,
+		})
+
+		basicUnitController.panelElement.setAttribute('data-pn-panel', panelScope);
+		
+		this.controller = {
+			panelElement: basicUnitController.panelElement,
+			basicUnitController: basicUnitController,
+		}
+	}
+</script>

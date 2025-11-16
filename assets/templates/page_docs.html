@@ -1,13 +1,25 @@
 <section id="docs" class="x-page py-5">
 	<div class="container">
 		<div class="row">
-			<div class="col-lg-3 mb-4 mb-lg-0">
-				<div class="card card-body">
-					<ul class="mb-0">
+			<div class="col-lg-3 mb-4">
+				<div class="bg-light h-100 border-end">
+					<h5>Main Script</h5>
+					<ul class="list-unstyled">
 						<li><a href="./docs/?doc=starter">Fanstatic Scripts</a></li>
-						<li><a href="./docs/?doc=components">Fanstatic Components</a></li>
+					</ul>
+
+					<h5>Extensions</h5>
+					<ul class="list-unstyled">
+						<li><a href="./docs/?doc=panels">Template Extension</a></li>
+						<li><a href="./docs/?doc=designs">Design Extension</a></li>
+						<li><a href="./docs/?doc=blog">Subsystems</a></li>
+					</ul>
+
+					<h5>Design</h5>
+					<ul class="list-unstyled">
+						<li><a href="./docs/?doc=panels">Panels</a></li>
+						<li><a href="./docs/?doc=panels">Styles</a></li>
 						<li><a href="./docs/?doc=designs">Instant Designs</a></li>
-						<li><a href="./docs/?doc=blog">Instant Blog</a></li>
 					</ul>
 				</div>
 			</div>
@@ -21,9 +33,9 @@
 	return async function(roof) {
 		const usp = new URLSearchParams(window.location.search)
 		const doc = usp.get('doc') || 'starter'
-		const list = ['starter', 'components', 'designs', 'blog']
+		const acceptedValues = ['starter', 'panels', 'designs', 'blog']
 
-		if (list.includes(doc)) {
+		if (acceptedValues.includes(doc)) {
 			await fanstatic.insert(roof.querySelector('#doc-content'), `./contents/docs/page_docs__${doc}.md`)
 		}
 	}

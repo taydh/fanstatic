@@ -114,7 +114,7 @@
 		},
 		unit: function(attributes = {}, model) {
 			if (!model){
-				if (Object.keys(attributes).some(k => 'figure' == k || 'subjects' == k || 'message' == k || 'notes' == k)) {
+				if (Object.keys(attributes).some(k => 'cap' == k || 'head' == k || 'body' == k || 'foot' == k)) {
 					model = attributes;
 					attributes = {};
 				}
@@ -129,26 +129,26 @@
 			};
 
 			if (1 == model.mode) { // all
-				if (!model.notes) model.notes = true;
-				if (!model.figure) model.figure = true;
+				if (!model.foot) model.foot = true;
+				if (!model.cap) model.cap = true;
 			}
 			else if (2 == model.mode) { // head and body only
-				model.figure = false;
-				model.notes = false;
+				model.cap = false;
+				model.foot = false;
 			}
 			else if (3 == model.mode) { // head, body, foot
-				if (!model.notes) model.notes = true;
-				model.figure = false;
+				if (!model.foot) model.foot = true;
+				model.cap = false;
 			}
 			else if (4 == model.mode) { // cap, head, body
-				if (!model.figure) model.figure = true;
-				model.notes = false;
+				if (!model.cap) model.cap = true;
+				model.foot = false;
 			}
 
-			if (model.figure) result[tagFill].push({'figure data-ds="fig"': model.figure});
-			if (model.subjects) result[tagFill].push({'div data-ds="sub"': model.subjects});
-			if (model.message) result[tagFill].push({'div data-ds="msg"': model.message});
-			if (model.notes) result[tagFill].push({'div data-ds="not"': model.notes});
+			if (model.cap) result[tagFill].push({'figure data-ds="cap"': model.cap});
+			if (model.head) result[tagFill].push({'div data-ds="head"': model.head});
+			if (model.body) result[tagFill].push({'div data-ds="body"': model.body});
+			if (model.foot) result[tagFill].push({'div data-ds="foot"': model.foot});
 
 			return result;
 		},
@@ -218,9 +218,34 @@
 			let items = (Array.isArray(model) ? model : model.items) || [];
 
 			result[tagFill] = items.map(item => {
-				return fanstatic.tagFillContains(item, 'data-ds="cell"') 
+				return fanstatic.tagFillContains(item, 'data-ds="item"')
 					? item
-					: { ['div data-ds="cell" ' +  _toAttributesString(secondaryAttributes)]: item };
+					: { ['div data-ds="item" ' +  _toAttributesString(secondaryAttributes)]: item };
+			});
+
+			return result;
+		},
+		flex: function(attributes = {}, secondaryAttributes = {}, model) {
+			if (Array.isArray(attributes)) {
+				model = attributes;
+				attributes = {};
+				secondaryAttributes = {};
+			}
+
+			if (typeof attributes.style === 'object') {
+				Object.assign(attributes.style, { display: 'flex' });
+			} else {
+				attributes.style = (attributes.style || '') + '; display: flex;';
+			}
+
+			let tagFill = ('div data-ds="flex" ' +  _toAttributesString(attributes));
+			let result = {};
+			let items = (Array.isArray(model) ? model : model.items) || [];
+
+			result[tagFill] = items.map(item => {
+				return fanstatic.tagFillContains(item, 'data-ds="item"') 
+					? item
+					: { ['div data-ds="item" ' +  _toAttributesString(secondaryAttributes)]: item };
 			});
 
 			return result;

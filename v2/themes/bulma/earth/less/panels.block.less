@@ -4,18 +4,32 @@
 }
 
 .panel-sidekick-unit {
-	> [data-ds=sub] {
+	> [data-ds=head] {
 		.theme-display-2();
 		&:not(:last-child) {
 			margin-bottom: 1rem;
 		}
 	}
 
-	> [data-ds=msg] {
+	> [data-ds=body] {
 		.theme-display-1();
 		&:not(:last-child) {
 			margin-bottom: 1rem;
 		}
+	}
+}
+
+.panel-block-basic-block {
+	> *:not(:last-child) {
+		margin-bottom: 1rem;
+	}
+
+	> [data-pn-role=subjects] {
+		font-size: 1.25em;
+	}
+
+	> [data-pn-role=notes] {
+		font-size: 0.75em;
 	}
 }
 

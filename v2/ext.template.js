@@ -17,12 +17,30 @@
 		'insert': async function(fanstatic, target, args) {
 			var template = args?.template
 				|| (target.dataset.templateUrl ? target.dataset.templateUrl : target.querySelector('template'))
-			await fanstatic.insert(target, template);
+
+			var dataElement = target.querySelector('script[type="text/json"]') || target.querySelector('script[type="text/yaml"]');
+			var data = dataElement ? _parseData(dataElement.innerHTML, dataElement.getAttribute('type')) : null
+
+			var templateOptions = Object.assign({
+				renderer: target.dataset.templateRenderer || null,
+				data: data,
+			}, args?.templateOptions || {});
+			
+			await fanstatic.insert(target, template, templateOptions);
 		},
 		'replace': async function(fanstatic, target, args) {
 			var template = args?.template
 				|| (target.dataset.templateUrl ? target.dataset.templateUrl : target.querySelector('template'))
-			await fanstatic.replace(target, template);
+
+			var dataElement = target.querySelector('script[type="text/json"]') || target.querySelector('script[type="text/yaml"]');
+			var data = dataElement ? _parseData(dataElement.innerHTML, dataElement.getAttribute('type')) : null
+
+			var templateOptions = Object.assign({
+				renderer: target.dataset.templateRenderer || null,
+				data: data,
+			}, args?.templateOptions || {});
+
+			await fanstatic.replace(target, template, templateOptions);
 		},
 		'replace-model': async function(fanstatic, target, args) {
 			var dataElement = target.querySelector('script[type="text/json"]') || target.querySelector('script[type="text/yaml"]');
@@ -69,29 +87,31 @@
 		},
 		'data-template-insert': async function(fanstatic, target, query) {
 			await fanstatic.runCommand(target, 'insert', {
-				template: query || target.querySelector('template')
+				template: query, // default selector sudah tercover di command // || target.querySelector('template')
+				templateOptions: fanstatic.elementStorage.get(target, 'templateOptions') || null,
 			})
 		},
 		'data-template-replace': async function(fanstatic, target, query) {
 			await fanstatic.runCommand(target, 'replace', {
-				template: query || target.querySelector('template')
+				template: query, // default selector sudah tercover di command //|| target.querySelector('template')
+				templateOptions: fanstatic.elementStorage.get(target, 'templateOptions') || null,
 			})
 		},
 		'data-template-insert-model': async function(fanstatic, target, query) {
 			await fanstatic.runCommand(target, 'insert-model', {
-				template: query || target.querySelector('template'),
+				template: query, // default selector sudah tercover di command // || target.querySelector('template'),
 				data: fanstatic.elementStorage.get(target).model || null,
 			})
 		},
 		'data-template-replace-model': async function(fanstatic, target, query) {
 			await fanstatic.runCommand(target, 'replace-model', {
-				template: query || target.querySelector('template'),
+				template: query, // default selector sudah tercover di command // || target.querySelector('template'),
 				data:  fanstatic.elementStorage.get(target).model || null,
 			})
 		},
 		'data-template-insert-markdown': async function(fanstatic, target, query) {
 			await fanstatic.runCommand(target, 'insert-markdown', {
-				template: query || target.querySelector('template')
+				template: query // default selector sudah tercover di command // || target.querySelector('template')
 			})
 		},
 	});

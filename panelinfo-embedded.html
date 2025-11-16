@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+		<base href=""> <!-- relative -->
+		<title>PANEL INFO</title>
+		
+        <!-- CSS framework: BulmaCSS -->
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+        
+        <!-- Icons: Bootstrap icon -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+        
+        <script defer src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
+		<script defer src="https://cdn.jsdelivr.net/npm/mustache@4.2.0/mustache.min.js"></script>
+		
+		<!-- script defer src="https://fanstatic.annexdesk.com/v2/fanstatic-combined.min.js"></script -->
+        <script defer src="http://localhost:8080/v2/fanstatic.js"></script>
+		<script>
+			{
+                let fanstaticVersion = 'v2';
+				let fanstaticBaseUrl = '';
+				let fanstaticVersionBaseUrl = '';
+                let origin = window.location.origin;
+				let hostEnv = null;
+                let searchParams = new window.URLSearchParams(window.location.search);
+
+				const resolveOriginAndLoadModel = async function(){
+					// resolve origin
+					[
+						'http://localhost/fanstatic3/',
+					].forEach(path => {
+						if (window.location.href.startsWith(path)) origin = path;
+					});
+                    
+                    // resolve absolute origin
+                    document.head.querySelector('base').href = origin  + '/'; // make base URI absolute
+                    
+                    return new Promise(resolve => {
+						const hostEnvPath = origin + '/env.' + origin.replace(/[:/]/g, "_") + '.json'
+                        const asyncCounter = fanstatic.asyncCounter(1, () => {
+                            resolve();
+                        })
+
+						console.log('🎁 Resolving host environment variables from', hostEnvPath) ;
+
+                        fanstatic.fetchJson(hostEnvPath)
+                        .then(data => {
+                            hostEnv = data;
+                            fanstaticBaseUrl = hostEnv.fanstatic_base_url;
+							fanstaticVersionBaseUrl = fanstaticBaseUrl + fanstaticVersion + '/';
+
+                            asyncCounter.done();
+                        })
+                    })
+				}
+
+				const loadExtensions = async function(asyncCounter) {
+					await fanstatic.insertScripts([
+						fanstaticVersionBaseUrl + 'ext.tools.js?' + fanstatic.tail(),
+						fanstaticVersionBaseUrl + 'ext.visual.js?' + fanstatic.tail(),
+						fanstaticVersionBaseUrl + 'ext.design.js?' + fanstatic.tail(),
+						fanstaticVersionBaseUrl + 'ext.template.js?' + fanstatic.tail(),
+						fanstaticVersionBaseUrl + 'ext.style.js?' + fanstatic.tail(),
+					]);
+				}
+				
+				const init = async function(){
+                    await resolveOriginAndLoadModel();
+					await loadExtensions()
+
+					const usp = new URLSearchParams(window.location.search);
+                    
+					Object.assign(fanstatic.settings, {
+						base_url: fanstaticBaseUrl,
+						version: fanstaticVersion,
+						theme_framework: usp.get('framework') || 'bulma',
+						theme_style: usp.get('style') || 'earth',
+						theme_mode: 'less',
+						library_less_url: 'https://cdn.jsdelivr.net/npm/less',
+						trail_span: hostEnv.trail_span,
+						log_render: false,
+					})
+
+					const promises = [];
+
+					if (fanstatic.settings.theme_style) {
+						const prom = fanstatic.applyTheme();
+						if (prom) promises.push(prom);
+					}
+					
+					if ('less' == fanstatic.settings.theme_mode) {
+						const prom = fanstatic.applyLess();
+						if (prom) promises.push(prom);
+					}
+
+					Promise.all(promises).then(() => {
+						less.pageLoadFinished.then(async function() {
+							// This code will execute after Less has finished compiling and applying styles
+							console.log('Less compilation and styling complete!');
+							// You can now safely interact with the DOM or perform other actions
+							// that rely on the final CSS being loaded.
+
+							const main = document.body.querySelector('main');
+							const panelInfo = searchParams.get('panel');
+							const safeList = [
+								'block.base-unit', 'block.basic-block', 'block.breadcrump', 'block.identity', 
+								'card.highlight', 'card.profile', 'card.post', 'card.rating', 'card.quote',
+								'nav.menu',
+							];
+
+							if (!safeList.includes(panelInfo)) {
+								// not run
+							}
+							else {
+								main.dataset.templateUrl = 'panel-info';
+								fanstatic.elementStorage.set(main, 'templateOptions', {
+									model: {
+										title: panelInfo,
+										panel: panelInfo,
+										code: '',
+									}
+								})
+							}
+
+							await fanstatic.searchAndRunCommand(document.body);
+							fanstatic.applyClassfix(document.body);
+
+							document.body.querySelector('.layout').classList.remove('is-hidden');
+						});
+					})
+				};
+                
+                document.addEventListener('DOMContentLoaded', init);
+			}
+		</script>
+	</head>
+
+	<body>
+		<div class="layout is-hidden">
+			<div class="layout-main-column">
+				<main data-template-insert data-template-url="" data-template-renderer="mustache"></main>
+				<footer></footer>
+			</div>
+		</div>
+
+		<div id="fanstatic-area">
+			<template data-url="panel-info">
+				<section id="infoSection" class="section">
+					<h2 class="title">Info</h2>
+				</section>
+
+				<section id="previewSection" class="section">
+					<h2 class="title">Preview</h2>
+					<div data-template-insert data-template-url="{{panel}}"></div>
+				</section>
+
+				<section id="codeSection" class="section">
+					<h2 class="title">Code</h2>
+					<pre>{{code}}</pre>
+				</section>
+
+				<script>
+					return {
+						oninsert: function(nodes) {
+							const infobox = fanstatic.elementStorage.get(document.body, 'infobox');
+							console.log('oninsert', nodes[0])
+							nodes[0].parentNode.querySelector('#infoSection').appendChild(infobox);
+						}
+					}
+				</script>
+			</template>
+
+			<template data-url="block.base-unit">
+				<div data-js="infobox">
+					Panel block.unit used internally to form other panel.
+					All card panels use this panel.
+					This panel preserve the fanstatic.design.unit structure but with panel attributes and controller.
+				</div>
+				<script>
+					return async function(roof, data) {
+						const infobox = roof.children[0];
+						fanstatic.elementStorage.set(document.body, 'infobox', infobox)
+						infobox.remove();
+
+						await fanstatic.appendPanel(roof, 'block.base-unit', {
+							cap: fanstatic.design.element('img', {src: 'https://dummyimage.com/60x60/eee/fff&text=cap'}),
+							head: '(head element)',
+							body: '(body element)',
+							foot: '(foot element)',
+						})
+					}
+				</script>
+			</template>
+
+			<template data-url="block.basic-block">
+				<div data-js="infobox">
+					Panel block.basic-block also used internally to form other general purpose panels.
+					It based on block-base-unit with different context properties and unlike block.base-unit this panel implement basic styling when use theme.
+					It accept direct image url and accept subjects and notes as an array.
+				</div>
+				<script>
+					return async function(roof, data) {
+						const infobox = roof.children[0];
+						fanstatic.elementStorage.set(document.body, 'infobox', infobox)
+						infobox.remove();
+
+						await fanstatic.appendPanel(roof, 'block.basic-block', {
+							image: 'https://dummyimage.com/60x60/eee/fff&text=image',
+							subjects: ['Subject 1', 'Subject 2'],
+							message: 'Message area',
+							notes: ['Note 1', 'Note 2'],
+						})
+					}
+				</script>
+			</template>
+
+			<template data-url="block.breadcrump">
+				<div data-js="infobox">
+					Panel block.breadcrump
+				</div>
+				<script>
+					return async function(roof, data) {
+						const infobox = roof.children[0];
+						fanstatic.elementStorage.set(document.body, 'infobox', infobox)
+						infobox.remove();
+
+						await fanstatic.appendPanel(roof, 'block.breadcrump', {
+							links: [
+								'Link 1',
+								'Link 2',
+								'Link 3',
+							]
+						})
+					}
+				</script>
+			</template>
+
+			<template data-url="block.identity">
+				<div data-js="infobox">
+					Panel block.identity
+				</div>
+				<script>
+					return async function(roof, data) {
+						const infobox = roof.children[0];
+						fanstatic.elementStorage.set(document.body, 'infobox', infobox)
+						infobox.remove();
+
+						await fanstatic.appendPanel(roof, 'block.identity', {
+							logo: 'https://dummyimage.com/100x100/fff/000&text=image',
+							name: 'Fanstatic',
+						})
+					}
+				</script>
+			</template>
+
+			<template data-url="card.rating">
+				<div data-js="infobox">
+					Use panel card.rating to implement content that show a rate.
+				</div>
+				<script>
+					return async function(roof, data) {
+						const infobox = roof.children[0];
+					
+						fanstatic.elementStorage.set(document.body, 'infobox', infobox)
+						infobox.remove();
+
+						await fanstatic.appendPanel(roof, 'card.rating', {
+							icon: 'https://dummyimage.com/60x60/fff/000&text=icon',
+							subject: 'Subject',
+							rating: 100,
+							summary: 'Perfect rates',
+						})
+					}
+				</script>
+			</template>
+
+			<template data-url="card.quote">
+				<script>
+					return async function(roof, data) {
+						await fanstatic.appendPanel(roof, 'card.quote', {
+							photo: '',
+							name: 'Name',
+							title: 'Title',
+							company: 'Company',
+							quote: 'Perfect quotes',
+						})
+					}
+				</script>
+			</template>
+
+			<template data-url="card.post">
+				<script>
+					return async function(roof, data) {
+						await fanstatic.appendPanel(roof, 'card.post', {
+							image: 'https://dummyimage.com/300x200/eee/fff&text=Image',
+							id: '1',
+							section: 'Post Section',
+							date: '2026-01-01',
+							title: 'Post Title',
+							short: 'Perfect post',
+							author: 'Me'
+						})
+					}
+				</script>
+			</template>
+
+			<template data-url="card.profile">
+				<script>
+					return async function(roof, data) {
+						await fanstatic.appendPanel(roof, 'card.profile', {
+							photo: 'https://dummyimage.com/150x150/eee/fff&text=Photo',
+							id: '1',
+							name: 'Name',
+							title: 'Title, Company',
+							// brief: 'Brief description about this person',
+							facebook: 'MyFacebook',
+							instagram: '@myinstagram',
+							twitterX: '@mytwitterx',
+							linkedIn: 'myLinkedIn',
+						})
+					}
+				</script>
+			</template>
+
+			<template data-url="card.highlight">
+				<script>
+					const design = fanstatic.design;
+					return async function(roof, data) {
+						await fanstatic.appendPanel(roof, 'card.highlight', {
+							background: '',
+							cover: [
+								design.div('Highlight Card'),
+								design.div('Title Cover'),
+							],
+							reveal: [
+								design.div('Message line 1'),
+								design.div('Message line 2'),
+							],
+						})
+					}
+				</script>
+			</template>
+		</div>
+	</body>
+</html>

@@ -1,0 +1,51 @@
+<script>
+	const design = fanstatic.design;
+
+	return async function(roof, data = {}, url) {
+		const panelScope = fanstatic.resolvePanelScope(url);
+		const scope = data.scope || panelScope;
+		const model = {
+			id: data.postId || '',
+			photo: data.photo || '',
+			name: data.name || '',
+			title: data.title || '',
+			brief: data.brief || '',
+			facebook: data.facebook || '',
+			instagram: data.instagram || '',
+			twitterX: data.twitterX || '',
+			linkedIn: data.linkedIn || '',
+			tiktok: data.tiktok || '',
+			disabled: data.disabled || false,
+		}
+		const tagFill = `img src="${model.photo}"`;
+
+		roof.innerHTML = fanstatic.renderJhtm(design.unit({
+			figure: {[tagFill]: true},
+			subject: [
+				design.div({data: {'pn-role': 'name'}}, model.name),
+				design.div({data: {'pn-role': 'title'}}, model.title),
+			],
+			message: model.brief,
+			note: design.axis([
+				design.div({data: {'pn-role': 'facebook'}}, model.facebook),
+				design.div({data: {'pn-role': 'instagram'}}, model.instagram),
+				design.div({data: {'pn-role': 'twitterX'}}, model.twitterX),
+				design.div({data: {'pn-role': 'tiktok'}}, model.tiktok),
+				design.div({data: {'pn-role': 'linkedIn'}}, model.linkedIn),
+			])
+		}));
+
+		const panelElement = roof.children[0];
+
+		if (model.id) panelElement.id = model.id;
+
+		panelElement.dataset.pnPanel = panelScope;
+		panelElement.dataset.pnScope = scope;
+		panelElement.querySelector(':scope > [data-ds=fig] > img').dataset.pnRole = 'photo';
+		if (model.brief) panelElement.querySelector(':scope > [data-ds=msg]').dataset.pnRole = 'brief';
+
+		this.controller = {
+			panelElement: panelElement,
+		};
+	}
+</script>

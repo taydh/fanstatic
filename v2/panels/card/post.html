@@ -1,0 +1,52 @@
+<script>
+	const design = fanstatic.design;
+
+	return async function(roof, data = {}, url) {
+		const panelScope = fanstatic.resolvePanelScope(url);
+		const scope = data.scope || panelScope;
+		const model = {
+			id: data.id || '',
+			image: data.image || '',
+			section: data.section || '',
+			title: data.title || '',
+			short: data.short || '',
+			date: data.date || '',
+			postLink: data.link || '#',
+
+			author: data.author || '',
+			authorLink: data.authorLink || '#',
+			authorPhoto: data.authorPhoto || '',
+
+			disabled: data.disabled || false,
+		}
+		const tagFill = `img src="${model.image}"`;
+
+		roof.innerHTML = fanstatic.renderJhtm(design.unit({
+			figure: {[tagFill]: true},
+			subject: [
+				design.div({data:{'pn-role':'section'}}, model.section),
+				design.div({data:{'pn-role':'title'}}, design.element('a', {href: model.postLink}, model.title)),
+				design.div({data:{'pn-role':'date'}}, model.date),
+			],
+			message: [
+				design.div({data:{'pn-role':'short'}}, model.short),
+				design.div({data:{'pn-role':'author'}}, model.author), 
+			],
+			note: [
+				design.div([design.element('a', {href: model.postLink, data: {'pn-role': 'button-more'}}, 'Read more')]),
+			],
+		}));
+
+		const panelElement = roof.children[0];
+
+		if (model.id) panelElement.id = model.id;
+
+		panelElement.dataset.pnPanel = panelScope;
+		panelElement.dataset.pnScope = scope;
+		panelElement.querySelector(':scope > [data-ds=fig] > img').dataset.pnRole = 'image';
+
+		this.controller = {
+			panelElement: panelElement,
+		};
+	}
+</script>

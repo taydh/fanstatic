@@ -1,0 +1,20 @@
+.panel-card-highlight {
+	display: grid;
+	grid-template-rows: auto auto;
+	grid-template-columns: auto;
+}
+
+.panel-card-highlight > [data-ds=cap] {
+	grid-row: 1 / span 2;
+	grid-column: 1;
+}
+
+.panel-card-highlight > [data-ds=head] {
+	grid-row: 1;
+	grid-column: 1;
+}
+
+.panel-card-highlight > [data-ds=body] {
+	grid-row: 2;
+	grid-column: 1;
+}

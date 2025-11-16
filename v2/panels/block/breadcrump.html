@@ -1,0 +1,20 @@
+<script>
+	const design = fanstatic.design;
+
+	return async function (roof, data = {}, url) {
+		const panelScope = fanstatic.resolvePanelScope(url);
+		const scope = data.scope || panelScope;
+
+		roof.innerHTML = fanstatic.renderJhtm([
+			design.list({data: { pn:  { scope: scope, panel: panelScope }}}, {}, {
+				items: data.links
+			})
+		]);
+
+		const panelElement = roof.children[0];
+
+		this.controller = {
+			panelElement: panelElement,
+		};
+	};
+</script>

@@ -253,21 +253,6 @@
 			return entry ? entry[0] : null;
 		},
 
-		/* adjacent html */
-
-		insertHtml: function(el, html) { 
-			el.empty();
-			el.insertAdjacentHTML('beforeend', html);
-		},
-		replaceHtml: function(el, html) { 
-			el.insertAdjacentHTML('afterend', html);
-			el.remove();
-		},
-		beforeHtml: function(el, html) { el.insertAdjacentHTML('beforebegin', html); },
-		prependHtml: function(el, html) { el.insertAdjacentHTML('afterbegin', html); },
-		appendHtml: function(el, html) { el.insertAdjacentHTML('before', html); },
-		afterHtml: function(el, html) { el.insertAdjacentHTML('afterend', html); },
-
 		/* Commands */
 		_commandAttributes: {},
 		_commands: {},

@@ -1,0 +1,49 @@
+.panel-card-rating-card {
+	background-color: #eee;
+	border-radius: 8px;
+	padding: 1rem;
+
+	display: grid;
+	grid-template-columns: auto 1fr auto;
+
+	> [data-ds=fig] { 
+		grid-row: span 2;
+	}
+
+	> [data-ds=sub] { 
+		font-size: 1.2rem;
+		vertical-align: middle; 
+	}
+
+	> [data-ds=msg] { 
+		grid-row: span 2;
+		font-size: 1.5rem; 
+		text-align: end;
+	}
+}
+
+.panel-card-quote-card {
+	background-color: #ddd;
+	border-radius: 8px;
+	padding: 2rem;
+
+	> :not(:last-child) {
+		margin-bottom: .5rem;
+	}
+	
+	> [data-pn-role=person] {
+
+		> :first-child { 
+			font-size: 1.5rem; 
+		}
+
+		> :last-child:not(:only-child) { 
+			font-size: 1.2rem; 
+		}
+	}
+
+	> [data-pn-role=quote] { 
+		font-style: italic;
+		letter-spacing: .9px;
+	}
+}

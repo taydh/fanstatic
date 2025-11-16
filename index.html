@@ -25,6 +25,7 @@
 		<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
 		
 		<script src="https://fanstatic.annexdesk.com/v2/fanstatic.js"></script>
+		<script src="http://localhost/fanstatic3/v2/fanstatic.js"></script>
 		
 		<script>
 			/*
@@ -40,18 +41,14 @@
 				document.addEventListener('DOMContentLoaded', async function () {
 					await resolveOrigin();
 
-					const asyncCounter = fanstatic.asyncCounter(6, () => init());
+					const asyncCounter = fanstatic.asyncCounter(4, () => init());
 
 					window.addEventListener('fanstatic.visual.load', () => asyncCounter.done());
-					window.addEventListener('fanstatic.design.load', () => asyncCounter.done());
-					window.addEventListener('fanstatic.structured_html.load', () => asyncCounter.done());
 					window.addEventListener('fanstatic.template.load', () => asyncCounter.done());
 					window.addEventListener('fanstatic.tools.load', () => asyncCounter.done());
 
 					fanstatic.insertScripts([
 						fanstatic_base_dir + '/ext.visual.js?_=2',
-						fanstatic_base_dir + '/ext.design.js?_=1',
-						fanstatic_base_dir + '/ext.structured_html.js?_=1',
 						fanstatic_base_dir + '/ext.tools.js?_=1',
 						fanstatic_base_dir + '/ext.template.js?_=1',
 					]).then(() => asyncCounter.done());	
@@ -183,9 +180,9 @@
 
 		<ul class="nav col-12 col-md-8 mb-2 justify-content-center justify-content-md-end mb-md-0">
 			<li><a href="./" class="nav-link text-dark px-2" data-url="/">Home</a></li>
+			<li><a href="./docs/" class="nav-link text-dark  px-2" data-url="/docs/">Documentation</a></li>
 			<li><a href="./designs/" class="nav-link text-dark  px-2" data-url="/designs/">Designs</a></li>
 			<li><a href="./showcases/" class="nav-link text-dark  px-2" data-url="/showcases/">Showcases</a></li>
-			<li><a href="./docs/" class="nav-link text-dark  px-2" data-url="/docs/">Docs</a></li>
 			<li><a href="./blog/" class="nav-link text-dark  px-2" data-url="/blog/">Blog</a></li>
 		</ul>
 

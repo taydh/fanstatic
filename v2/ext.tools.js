@@ -24,6 +24,21 @@
 			return html; // not parsed
 		},
 
+		/* adjacent html */
+
+		insertHtml: function(el, html) { 
+			el.empty();
+			el.insertAdjacentHTML('beforeend', html);
+		},
+		replaceHtml: function(el, html) { 
+			el.insertAdjacentHTML('afterend', html);
+			el.remove();
+		},
+		beforeHtml: function(el, html) { el.insertAdjacentHTML('beforebegin', html); },
+		prependHtml: function(el, html) { el.insertAdjacentHTML('afterbegin', html); },
+		appendHtml: function(el, html) { el.insertAdjacentHTML('before', html); },
+		afterHtml: function(el, html) { el.insertAdjacentHTML('afterend', html); },
+
 		/* classfix */
 
 		assignClassfix: function(obj) {
@@ -131,17 +146,36 @@
 		/* element storage */
 
 		elementStorage: {
-			set: function(target, object) {
-				let store = this.get(target);
-				Object.assign(store, object);
-				_elementStorage.set(target, store);
+			_loadStore: function(target) {
+				if (_elementStorage.has(target)) {
+					return _elementStorage.get(target);
+				}
+				else {
+					const store = {};
+					_elementStorage.set(target, store);
+
+					return store;
+				}
 			},
 
-			get: function(target) {
-				return _elementStorage.get(target) || {};
+			set: function(target, key, val) {
+				const store = this._loadStore(target);
+				store[key] = val;
 			},
 
-			reset: function(target) {
+			get: function(target, key) {
+				const store = this._loadStore(target);
+
+				return store[key];
+			},
+
+			unset: function(target, key) {
+				const store = this._loadStore(target);
+
+				delete store[key];
+			},
+
+			delete: function(target) {
 				_elementStorage.delete(target);
 			}
 		},
@@ -161,6 +195,27 @@
 				.replace(/'/g, '&#39;')
 				.replace(/</g, '&lt;')
 				.replace(/>/g, '&gt;');
+		},
+
+		sanitizeFilename: function(input) {
+			// 1. Remove any path traversal attempts (slashes, backslashes, colons)
+			let sanitized = input.replace(/[\/\\:*?"<>|]/g, '');
+
+			// 2. Allow only safe characters: letters, numbers, underscore, dash, dot
+			sanitized = sanitized.replace(/[^a-zA-Z0-9._-]/g, '');
+
+			// 3. Prevent hidden files (like ".env") by stripping leading dots
+			sanitized = sanitized.replace(/^\.+/, '');
+
+			// 4. Enforce a max length (optional, e.g., 255 chars)
+			sanitized = sanitized.substring(0, 255);
+
+			// 5. Default filename if empty after sanitization
+			if (!sanitized) {
+				sanitized = '_empty_sanitized_filename_';
+			}
+
+			return sanitized;
 		},
 
 		removePathCharacters: function(value) {

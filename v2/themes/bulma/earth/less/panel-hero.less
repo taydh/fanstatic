@@ -1,0 +1,23 @@
+.panel-hero-block {
+	.theme-display-2();
+
+	> :not(:last-child) {
+		margin-bottom: calc(.5 * var(--theme-margin));
+	}
+
+	> [data-pn-role=headers] {
+		font-size: 2em;
+
+		& :last-child:not(:only-child) {
+			font-size: .75em;	
+		}
+	}
+
+	> [data-pn-role=body] {
+		font-size: 1em;
+	}
+
+	> [data-pn-role=footers] {
+		font-size: .75em;
+	}
+}

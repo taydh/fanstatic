@@ -2,10 +2,8 @@
 	let _turnCount = 0;
 	let style = document.createElement('style');
 	
-	style.innerHTML = `
-*[data-visual-hidden] {
-	visibility: hidden;
-}`;
+	style.dataset.note = 'Fanstatic Visual';
+	style.innerHTML = `*[data-visual-hidden] { visibility: hidden; }`;
 	document.head.appendChild(style);
 
 	fanstatic.registerCommand('viewport-enter-animate', function(fanstatic, elem) {

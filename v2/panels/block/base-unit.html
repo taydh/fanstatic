@@ -1,0 +1,22 @@
+<script>
+	const design = fanstatic.design;
+
+	return async function (roof, data = {}, url) {
+		const panelScope = fanstatic.resolvePanelScope(url);
+		const scope = data.scope || panelScope;
+
+		roof.innerHTML = fanstatic.renderJhtm([
+			design.unit({data: { pn:  { scope: scope, panel: panelScope }}}, data)
+		]);
+
+		const panelElement = roof.children[0];
+
+		this.controller = {
+			panelElement: panelElement,
+			capElement: panelElement.querySelector(':scope > [data-ds=cap]'),
+			headElement: panelElement.querySelector(':scope > [data-ds=head]'),
+			bodyElement: panelElement.querySelector(':scope > [data-ds=body]'),
+			footElement: panelElement.querySelector(':scope > [data-ds=foot]'),
+		};
+	};
+</script>

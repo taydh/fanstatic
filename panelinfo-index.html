@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en" style="height:100%">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+		<base href=""> <!-- relative -->
+		<title>Fanstatic CV Design</title>
+		
+        <!-- CSS framework: BulmaCSS -->
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+        
+        <!-- Icons: Bootstrap icon -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+        
+        <script defer src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
+		<script defer src="https://cdn.jsdelivr.net/npm/mustache@4.2.0/mustache.min.js"></script>
+		
+		<!-- script defer src="https://fanstatic.annexdesk.com/v2/fanstatic-combined.min.js"></script -->
+        <script defer src="http://localhost:8080/v2/fanstatic.js"></script>
+		<script>
+			{
+                let fanstaticVersion = 'v2';
+				let fanstaticBaseUrl = '';
+				let fanstaticVersionBaseUrl = '';
+                let origin = window.location.origin;
+				let hostEnv = null;
+                let searchParams = new window.URLSearchParams(window.location.search);
+
+				const resolveOriginAndLoadModel = async function(){
+					// resolve origin on subfolder
+					[
+						'/fanstatic3/',
+					].forEach(path => {
+						if (window.location.href.startsWith(origin + path)) origin = origin + path;
+					});
+                    
+                    // resolve absolute origin
+                    document.head.querySelector('base').href = origin  + '/'; // make base URI absolute
+                    
+                    return new Promise(resolve => {
+						const hostEnvPath = origin + '/env.' + origin.replace(/[:/]/g, "_") + '.json'
+                        const asyncCounter = fanstatic.asyncCounter(1, () => {
+                            resolve();
+                        })
+
+						console.log('🎁 Resolving host environment variables from', hostEnvPath) ;
+
+                        fanstatic.fetchJson(hostEnvPath)
+                        .then(data => {
+                            hostEnv = data;
+                            fanstaticBaseUrl = hostEnv.fanstatic_base_url;
+							fanstaticVersionBaseUrl = fanstaticBaseUrl + fanstaticVersion + '/';
+
+                            asyncCounter.done();
+                        })
+                    })
+				}
+
+				const loadExtensions = async function(asyncCounter) {
+					await fanstatic.insertScripts([
+						fanstaticVersionBaseUrl + 'ext.tools.js?' + fanstatic.tail(),
+						fanstaticVersionBaseUrl + 'ext.visual.js?' + fanstatic.tail(),
+						fanstaticVersionBaseUrl + 'ext.design.js?' + fanstatic.tail(),
+						fanstaticVersionBaseUrl + 'ext.template.js?' + fanstatic.tail(),
+						fanstaticVersionBaseUrl + 'ext.style.js?' + fanstatic.tail(),
+					]);
+				}
+				
+				const init = async function(){
+                    await resolveOriginAndLoadModel();
+					await loadExtensions()
+                    
+					Object.assign(fanstatic.settings, {
+						base_url: fanstaticBaseUrl,
+						version: fanstaticVersion,
+						theme_framework: 'bulma',
+						theme_style: 'earth',
+						theme_mode: 'less',
+						library_less_url: 'https://cdn.jsdelivr.net/npm/less',
+						trail_span: hostEnv.trail_span,
+						log_render: false,
+					})
+
+					const promises = [];
+
+					if (fanstatic.settings.theme_style) {
+						const prom = fanstatic.applyTheme();
+						if (prom) promises.push(prom);
+					}
+					
+					if ('less' == fanstatic.settings.theme_mode) {
+						const prom = fanstatic.applyLess();
+						if (prom) promises.push(prom);
+					}
+
+					Promise.all(promises).then(() => {
+						less.pageLoadFinished.then(async function() {
+							// This code will execute after Less has finished compiling and applying styles
+							console.log('Less compilation and styling complete!');
+							// You can now safely interact with the DOM or perform other actions
+							// that rely on the final CSS being loaded.
+
+							await fanstatic.searchAndRunCommand(document.body);
+							fanstatic.applyClassfix(document.body);
+
+							document.body.querySelector('.layout').classList.remove('is-hidden');
+
+							// apply event handling
+
+							const selFramework = document.body.querySelector('[name=selFramework]')
+							const selStyle = document.body.querySelector('[name=selStyle]')
+							
+							selFramework.value = searchParams.get('framework') || 'bulma';
+							selStyle.value = searchParams.get('style') || 'earth';
+
+							selFramework.addEventListener('change', function() {
+								const url = new URL(window.location.href);
+								url.searchParams.set('framework', this.value)
+								window.location = url.toString();
+							})
+
+							selStyle.addEventListener('change', function() {
+								const url = new URL(window.location.href);
+								url.searchParams.set('style', this.value)
+								window.location = url.toString();
+							})
+
+							const header = document.body.querySelector('header');
+							const main = document.body.querySelector('main');
+							const panel = fanstatic.sanitizeHtml(searchParams.get('panel'));
+
+							header.querySelector('.title').innerHTML = panel;
+
+							if (panel) {
+								const url = new URL(document.baseURI + 'panelinfo-embedded.html');
+								url.searchParams.set('panel', panel);
+								url.searchParams.set('framework', selFramework.value);
+								url.searchParams.set('style', selStyle.value);
+
+								main.querySelector('iframe').src = url.toString();
+							}
+						});
+					})
+				};
+                
+                document.addEventListener('DOMContentLoaded', init);
+			}
+		</script>
+	</head>
+
+	<body style="height:100%;">
+		<div class="layout is-flex is-flex-direction-column is-hidden m-0" style="height:100%;">
+			<div class="layout-top">
+				<header class="level p-4">
+					<div class="level-left">
+						<div>
+							Panel Info of
+							<div class="title has-text-grey-lighter"></div>
+						</div>
+					</div>
+
+					<div class="level-right">
+						<div>
+							Choose Framework
+							<div>
+								<div class="select">
+									<select name="selFramework">
+										<option value="bootstrap5">Bootstrap 5</option>
+										<option value="bulma">Bulma</option>
+										<option value="pico">Pico</option>
+										<option value="pure">Pure</option>
+										<option value="normalize">Normalize</option>
+									</select>
+								</div>
+							</div>
+						</div>
+
+						<div>
+							Choose Style
+							<div>
+								<div class="select">
+									<select name="selStyle">
+										<option value="mercury">Mercury</option>
+										<option value="earth">Earth</option>
+										<option value="mars">Mars</option>
+										<option value="venus">Venus</option>
+										<option value="jupiter">Jupiter</option>
+										<option value="saturn">Saturn</option>
+										<option value="neptune">Neptune</option>
+										<option value="uranus">Uranus</option>
+										<option value="pluto">Pluto</option>
+									</select>
+								</div>
+							</div>
+						</div>
+					</div>
+				</header>
+			</div>
+			<div class="layout-middle is-flex" style="flex: 1;">
+				<div class="layout-nav-column p-5">
+					<h2 class="title">Blocks</h2>
+					<div class="mb-4">
+						<ul>
+							<li><a href="panelinfo-index.html?panel=block.base-unit">Base Unit</a></li>
+							<li><a href="panelinfo-index.html?panel=block.basic-block">Basic Block</a></li>
+							<li><a href="panelinfo-index.html?panel=block.breadcrump">Breadcrump</a></li>
+							<li><a href="panelinfo-index.html?panel=block.identity">Identity</a></li>
+						</ul>
+					</div>
+
+					<h2 class="title">Cards</h2>
+					<div class="mb-4">
+						<ul>
+							<li><a href="panelinfo-index.html?panel=card.highlight">Highlight Card</a></li>
+							<li><a href="panelinfo-index.html?panel=card.post">Post Card</a></li>
+							<li><a href="panelinfo-index.html?panel=card.profile">Profile Card</a></li>
+							<li><a href="panelinfo-index.html?panel=card.rating">Rating Card</a></li>
+							<li><a href="panelinfo-index.html?panel=card.quote">Quote Card</a></li>
+						</ul>
+					</div>
+
+					<h2 class="title">Navigation</h2>
+					<div class="mb-4">
+						<ul>
+							<li><a href="panelinfo-index.html?panel=nav.menu">Menu</a></li>
+							<li><a href="panelinfo-index.html?panel=nav.mega-menu">Mega Menu</a></li>
+							<li><a href="panelinfo-index.html?panel=nav.vertical-menu">Vertical Menu</a></li>
+						</ul>
+					</div>
+
+					<h2 class="title">Section</h2>
+					<div class="mb-4">
+						<ul>
+							<li><a href="panelinfo-index.html?panel=section.containerized">Containerized</a></li>
+							<li><a href="panelinfo-index.html?panel=section.containerized-header">Containerized Header</a></li>
+							<li><a href="panelinfo-index.html?panel=section.containerized-panel">Containerized Panel</a></li>
+							<li><a href="panelinfo-index.html?panel=section.containerized-hero">Containerized Hero</a></li>
+							<li><a href="panelinfo-index.html?panel=section.containerized-stack">Containerized Stack</a></li>
+							<li><a href="panelinfo-index.html?panel=section.containerized-grid">Containerized Grid</a></li>
+						</ul>
+					</div>
+
+					<h2 class="title">Layout</h2>
+					<div class="mb-4">
+						<ul>
+							<li><a href="panelinfo-index.html?panel=layout.1-column">1 Column</a></li>
+							<li><a href="panelinfo-index.html?panel=layout.2-columns">2 Columns</a></li>
+							<li><a href="panelinfo-index.html?panel=layout.3-columns">3 Columns</a></li>
+						</ul>
+					</div>
+				</div>
+				<div class="layout-main-column p-5" style="flex:1;">
+					<main>
+						<iframe src=""  style="min-height:600px; height:100%; width:100%; border:4px solid lightgray;"></iframe>
+					</main>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

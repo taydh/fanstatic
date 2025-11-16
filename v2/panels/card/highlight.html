@@ -1,0 +1,36 @@
+<script>
+	const design = fanstatic.design;
+
+	return async function(roof, data = {}, url) {
+		const panelScope = fanstatic.resolvePanelScope(url);
+		const scope = data.scope || panelScope;
+		const model = {
+			id: data.postId || '',
+			backgroundImage: data.backgroundImage || '',
+			cover: data.cover || '',
+			reveal: data.reveal || '',
+			disabled: data.disabled || false,
+		}
+		const tagFill = `img src="${model.backgroundImage}"`;
+
+		roof.innerHTML = fanstatic.renderJhtm(design.unit({
+			figure: {[tagFill]: true},
+			subject: model.cover,
+			message: model.reveal,
+		}));
+
+		const panelElement = roof.children[0];
+
+		if (model.id) panelElement.id = model.id;
+
+		panelElement.dataset.pnPanel = panelScope;
+		panelElement.dataset.pnScope = scope;
+		panelElement.querySelector(':scope > [data-ds=fig] > img').dataset.pnRole = 'background-image';
+		panelElement.querySelector(':scope > [data-ds=sub]').dataset.pnRole = 'cover';
+		panelElement.querySelector(':scope > [data-ds=msg]').dataset.pnRole = 'reveal';
+
+		this.controller = {
+			panelElement: panelElement,
+		};
+	}
+</script>

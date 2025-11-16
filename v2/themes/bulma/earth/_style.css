@@ -1,5 +1,7 @@
 /* variables */
 :root {
+	--util-spacer: 3;
+
 	--theme-dark-8: #000000;
 	--theme-dark-7: #111111;
 	--theme-dark-6: #232323;
@@ -50,8 +52,10 @@ html {
 	letter-spacing: 1.2px;
 	font-family: Verdana, Geneva, Tahoma, sans-serif;
 
-	@media only screen and (min-width: 359px) {
-
+	@media only screen and (max-width: 359px) {
+		font-size: 10px;
+		line-height: 2;
+		letter-spacing: 1.5px;
 	}
 }
 
@@ -102,7 +106,8 @@ section:not(:last-child) {
 	box-sizing: border-box;
 	margin: 0 auto;
 	max-width: 1000px;
-	padding-inline: var(--theme-padding);
+	padding-inline: var(--util-padding);
+	padding-block: calc(var(--util-spacer) * var(--util-padding));
 }
 
 .theme-layout-3cols {

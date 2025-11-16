@@ -8,46 +8,48 @@
 		const mode = data.mode || 0;
 
 		if (1 == mode) { // all
-			if (!data.footers) data.footers = [];
-			if (!data.cap) data.cap = [];
+			if (!data.notes) data.notes = [];
+			if (!data.image) data.image = [];
 		}
 		else if (2 == mode) { // head and body only
-			data.cap = false;
-			data.footers = false;
+			data.image = false;
+			data.notes = false;
 		}
 		else if (3 == mode) { // head, body, foot
-			if (!data.footers) data.footers = [];
-			data.cap = false;
+			if (!data.notes) data.notes = [];
+			data.image = false;
 		}
 		else if (4 == mode) { // cap, head, body
-			if (!data.cap) data.cap = [];
-			data.footers = false;
+			if (!data.image) data.image = [];
+			data.notes = false;
 		}
 
-		if (data.headers && !Array.isArray(data.headers)) data.headers = [data.headers];
-		if (data.footers && !Array.isArray(data.footers)) data.footers = [data.footers];
+		if (data.subjects && !Array.isArray(data.subjects)) data.subjects = [data.subjects];
+		if (data.notes && !Array.isArray(data.notes)) data.notes = [data.notes];
 
-		roof.innerHTML = fanstatic.renderJhtm([
-			design.unit({data: { pn:  { scope: scope, panel: panelScope }}},
-			{
+		const basicUnitController = await fanstatic.insertPanel(roof, 'block.base-unit', {
+				scope: scope,
 				mode: mode,
-				figure: data.cap ? data.cap : false,
-				subjects: data.headers ? data.headers.map(jhtm => design.div([jhtm])) : false,
-				message: data.body ? data.body : false,
-				notes: data.footers ? data.footers.map(jhtm => design.div([jhtm])) : false,
-			})
-		]);
+				cap: data.image ? design.element('img', {src: data.image}) : false,
+				head: data.subjects ? data.subjects.map(jhtm => design.div([jhtm])) : false,
+				body: data.message ? data.message : false,
+				foot: data.notes ? data.notes.map(jhtm => design.div([jhtm])) : false,
+			}
+		);
 
 		const panelElement = roof.children[0];
 		
-		if (data.cap) panelElement.querySelector(':scope > [data-ds=fig]').dataset.pnRole = 'figure';
-		if (data.headers) panelElement.querySelector(':scope > [data-ds=sub]').dataset.pnRole = 'headers';
-		if (data.body) panelElement.querySelector(':scope > [data-ds=msg]').dataset.pnRole = 'body';
-		if (data.footers) panelElement.querySelector(':scope > [data-ds=not]').dataset.pnRole = 'footers';
+		if (data.image) panelElement.querySelector(':scope > [data-ds=cap]').dataset.pnRole = 'image';
+		if (data.subjects) panelElement.querySelector(':scope > [data-ds=head]').dataset.pnRole = 'subjects';
+		if (data.message) panelElement.querySelector(':scope > [data-ds=body]').dataset.pnRole = 'message';
+		if (data.notes) panelElement.querySelector(':scope > [data-ds=foot]').dataset.pnRole = 'notes';
 
-		roof.querySelectorAll('[data-ds]').forEach(elem => elem.removeAttribute('data-ds'));
+		panelElement.dataset.pnPanel = panelScope;
+		panelElement.querySelectorAll(':scope > [data-ds]').forEach(elem => elem.removeAttribute('data-ds'));
+		panelElement.removeAttribute('data-ds');
 
 		controller.panelElement = panelElement;
+		controller.basicUnitController = basicUnitController;
 
 		this.controller = controller;
 	};

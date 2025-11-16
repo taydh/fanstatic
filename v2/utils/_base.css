@@ -2,6 +2,8 @@
 	--util-space-gutter: 1;
 	--util-space-margin: 1;
 	--util-space-padding: 1;
+
+	--util-spacer: 2;
 	--util-gutter: 1rem;
 	--util-margin: 1rem;
 	--util-padding: 1rem;
@@ -35,27 +37,27 @@
 }
 
 .util-pt {
-	padding-top: calc(var(--util-space-padding) * var(--util-padding));
+	padding-top: calc(var(--util-spacer) * var(--util-padding));
 }
 
 .util-pr {
-	padding-right: calc(var(--util-space-padding) * var(--util-padding));
+	padding-right: calc(var(--util-spacer) * var(--util-padding));
 }
 
 .util-pb {
-	padding-bottom: calc(var(--util-space-padding) * var(--util-padding));
+	padding-bottom: calc(var(--util-spacer) * var(--util-padding));
 }
 
 .util-pl {
-	padding-left: calc(var(--util-space-padding) * var(--util-padding));
+	padding-left: calc(var(--util-spacer) * var(--util-padding));
 }
 
 .util-pblock {
-	padding-block: calc(var(--util-space-padding) * var(--util-padding));
+	padding-block: calc(var(--util-spacer) * var(--util-padding));
 }
 
 .util-pinline {
-	padding-inline: calc(var(--util-space-padding) * var(--util-padding));
+	padding-inline: calc(var(--util-spacer) * var(--util-padding));
 }
 
 .util-text-start { text-align: start; }

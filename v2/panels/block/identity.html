@@ -14,22 +14,22 @@
 			panelElement.setAttribute('data-pn-scope', scope);
 
 			panelElement.innerHTML = fanstatic.renderJhtm([
-				design.element('figure', {style:'display:none', data:{ pn: { role:'logo', }}}),
-				design.div({style:'display:none', data:{ pn: { role:'label' }}}),
+				design.element('figure', {style:'display:none', data:{ pn: { role:'logo', }}}, design.element('img')),
+				design.div({style:'display:none', data:{ pn: { role:'name' }}}),
 			]);
 
 			controller.panelElement = panelElement;
 			controller.logoElement = panelElement.querySelector('[data-pn-role=logo]')
-			controller.labelElement = panelElement.querySelector('[data-pn-role=label]')
+			controller.nameElement = panelElement.querySelector('[data-pn-role=name]')
 
-			if (data.logoSource) {
-				controller.logoElement.querySelector('img').setAttribute('src', data.logoSource)
+			if (data.logo) {
+				controller.logoElement.querySelector('img').setAttribute('src', data.logo)
 				controller.logoElement.style.display = 'block';
 			}
 
-			if (data.label) {
-				controller.labelElement.innerHTML = data.label
-				controller.labelElement.style.display = 'block';
+			if (data.name) {
+				controller.nameElement.innerHTML = data.name
+				controller.nameElement.style.display = 'block';
 			}
 		},
 		controller: controller
