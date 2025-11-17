@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" style="height:100%">
+<html lang="en">
 	<head>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -20,7 +20,6 @@
         <script defer src="http://localhost:8080/v2/fanstatic.js"></script>
 		<script>
 			{
-                let fanstaticVersion = 'v2';
 				let fanstaticBaseUrl = '';
 				let fanstaticVersionBaseUrl = '';
                 let origin = window.location.origin;
@@ -50,7 +49,7 @@
                         .then(data => {
                             hostEnv = data;
                             fanstaticBaseUrl = hostEnv.fanstatic_base_url;
-							fanstaticVersionBaseUrl = fanstaticBaseUrl + fanstaticVersion + '/';
+							fanstaticVersionBaseUrl = fanstatic.getVersionedBaseUrl();
 
                             asyncCounter.done();
                         })
@@ -73,7 +72,6 @@
                     
 					Object.assign(fanstatic.settings, {
 						base_url: fanstaticBaseUrl,
-						version: fanstaticVersion,
 						theme_framework: 'bulma',
 						theme_style: 'earth',
 						theme_mode: 'less',
@@ -149,7 +147,7 @@
 		</script>
 	</head>
 
-	<body style="height:100%;">
+	<body style="height:100vh; margin:0;">
 		<div class="layout is-flex is-flex-direction-column is-hidden m-0" style="height:100%;">
 			<div class="layout-top">
 				<header class="level p-4">
@@ -181,15 +179,9 @@
 							<div>
 								<div class="select">
 									<select name="selStyle">
-										<option value="mercury">Mercury</option>
 										<option value="earth">Earth</option>
 										<option value="mars">Mars</option>
 										<option value="venus">Venus</option>
-										<option value="jupiter">Jupiter</option>
-										<option value="saturn">Saturn</option>
-										<option value="neptune">Neptune</option>
-										<option value="uranus">Uranus</option>
-										<option value="pluto">Pluto</option>
 									</select>
 								</div>
 							</div>
@@ -197,14 +189,13 @@
 					</div>
 				</header>
 			</div>
-			<div class="layout-middle is-flex" style="flex: 1;">
-				<div class="layout-nav-column p-5">
+			<div class="layout-middle columns m-0" style="flex: 1 1 auto; overflow: auto;">
+				<div class="layout-nav-column column is-one-third p-5" style="overflow: auto;">
 					<h2 class="title">Blocks</h2>
 					<div class="mb-4">
 						<ul>
 							<li><a href="panelinfo-index.html?panel=block.base-unit">Base Unit</a></li>
 							<li><a href="panelinfo-index.html?panel=block.basic-block">Basic Block</a></li>
-							<li><a href="panelinfo-index.html?panel=block.breadcrump">Breadcrump</a></li>
 							<li><a href="panelinfo-index.html?panel=block.identity">Identity</a></li>
 						</ul>
 					</div>
@@ -223,6 +214,7 @@
 					<h2 class="title">Navigation</h2>
 					<div class="mb-4">
 						<ul>
+							<li><a href="panelinfo-index.html?panel=nav.breadcrump">Breadcrump</a></li>
 							<li><a href="panelinfo-index.html?panel=nav.menu">Menu</a></li>
 							<li><a href="panelinfo-index.html?panel=nav.mega-menu">Mega Menu</a></li>
 							<li><a href="panelinfo-index.html?panel=nav.vertical-menu">Vertical Menu</a></li>
@@ -250,8 +242,8 @@
 						</ul>
 					</div>
 				</div>
-				<div class="layout-main-column p-5" style="flex:1;">
-					<main>
+				<div class="layout-main-column column p-5" style="overflow: auto;">
+					<main style="height:100%">
 						<iframe src=""  style="min-height:600px; height:100%; width:100%; border:4px solid lightgray;"></iframe>
 					</main>
 				</div>

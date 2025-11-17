@@ -41,15 +41,17 @@
 				document.addEventListener('DOMContentLoaded', async function () {
 					await resolveOrigin();
 
-					const asyncCounter = fanstatic.asyncCounter(4, () => init());
+					const asyncCounter = fanstatic.asyncCounter(5, () => init());
 
 					window.addEventListener('fanstatic.visual.load', () => asyncCounter.done());
 					window.addEventListener('fanstatic.template.load', () => asyncCounter.done());
+					window.addEventListener('fanstatic.design.load', () => asyncCounter.done());
 					window.addEventListener('fanstatic.tools.load', () => asyncCounter.done());
 
 					fanstatic.insertScripts([
 						fanstatic_base_dir + '/ext.visual.js?_=2',
 						fanstatic_base_dir + '/ext.tools.js?_=1',
+						fanstatic_base_dir + '/ext.design.js?_=1',
 						fanstatic_base_dir + '/ext.template.js?_=1',
 					]).then(() => asyncCounter.done());	
 				});
@@ -57,10 +59,10 @@
 				const resolveOrigin = async function(){
 					// relative origin
 					[
-						'http://localhost/fanstatic3',
-						'https://taydh.github.io/fanstatic',
+						'/fanstatic3',
+						'/fanstatic',
 					].forEach(path => {
-						if (window.location.href.startsWith(path)) origin = path;
+						if (window.location.href.startsWith(origin + path)) origin = origin + path;
 					});
 
 					// absolute origin

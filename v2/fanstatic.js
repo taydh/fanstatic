@@ -30,9 +30,14 @@
 	
 	var fanstatic = {
 		settings: {
-			base_url: '/',
+			base_url: 'https://fanstatic.annexdesk.com/',
+			version: 'v2',
 			trail_key: '_',
 			trail_span: '1d', //dhms
+		},
+
+		getVersionedBaseUrl: function(version =  this.settings.version) {
+			return this.settings.base_url + version + '/';
 		},
 
 		assign: function(opt) {

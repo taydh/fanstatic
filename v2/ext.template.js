@@ -241,7 +241,7 @@
 				return await this._processPartial(target, url, opt, insertFn, part, scriptOpt)
 			}
 			catch (error) {
-				console.error('[error insert template]', error)
+				console.error('[error insert template]', url, error)
 				return false;
 			}
 		},

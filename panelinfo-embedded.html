@@ -15,6 +15,7 @@
         
         <script defer src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
 		<script defer src="https://cdn.jsdelivr.net/npm/mustache@4.2.0/mustache.min.js"></script>
+		<script defer src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.15.4/beautify-html.min.js"></script>
 		
 		<!-- script defer src="https://fanstatic.annexdesk.com/v2/fanstatic-combined.min.js"></script -->
         <script defer src="http://localhost:8080/v2/fanstatic.js"></script>
@@ -105,11 +106,9 @@
 
 							const main = document.body.querySelector('main');
 							const panelInfo = searchParams.get('panel');
-							const safeList = [
-								'block.base-unit', 'block.basic-block', 'block.breadcrump', 'block.identity', 
-								'card.highlight', 'card.profile', 'card.post', 'card.rating', 'card.quote',
-								'nav.menu',
-							];
+							const prefixSafeList = ['card.', 'block.', 'nav.', 'section.', 'layout.'];
+							const selector = prefixSafeList.map(val => `template[data-url*="${val}"]`).join(',');
+							const safeList = Array.from(document.querySelectorAll(selector)).map(elem => elem.dataset.url);
 
 							if (!safeList.includes(panelInfo)) {
 								// not run
@@ -120,7 +119,7 @@
 									model: {
 										title: panelInfo,
 										panel: panelInfo,
-										code: '',
+										code: html_beautify(fanstatic._getTemplateElement(panelInfo).outerHTML),
 									}
 								})
 							}
@@ -150,6 +149,11 @@
 			<template data-url="panel-info">
 				<section id="infoSection" class="section">
 					<h2 class="title">Info</h2>
+					<div data-js="infobox" data-template-insert data-template-url="infobox">
+						<script type="text/json">
+							{ "panel": "{{panel}}" }
+						</script>
+					</div>
 				</section>
 
 				<section id="previewSection" class="section">
@@ -162,29 +166,55 @@
 					<pre>{{code}}</pre>
 				</section>
 
+				<section id="htmlOutputSection" class="section">
+					<h2 class="title">HTML Output</h2>
+					<pre></pre>
+				</section>
+
 				<script>
 					return {
 						oninsert: function(nodes) {
-							const infobox = fanstatic.elementStorage.get(document.body, 'infobox');
-							console.log('oninsert', nodes[0])
-							nodes[0].parentNode.querySelector('#infoSection').appendChild(infobox);
+							const html = nodes[0].parentNode.querySelector('#previewSection > div').innerHTML;
+							const prettyHtml = html_beautify(html,  {
+								indent_size: 4,
+								wrap_line_length: 80
+							});
+
+							nodes[0].parentNode.querySelector('#htmlOutputSection > pre').textContent = prettyHtml;
 						}
 					}
 				</script>
 			</template>
 
-			<template data-url="block.base-unit">
-				<div data-js="infobox">
+			<template data-url="infobox">
+				<div data-panel="block.base-unit">
 					Panel block.unit used internally to form other panel.
 					All card panels use this panel.
 					This panel preserve the fanstatic.design.unit structure but with panel attributes and controller.
 				</div>
+				<div data-panel="block.basic-block">
+					Panel block.basic-block also used internally to form other general purpose panels.
+					It based on block-base-unit with different context properties and unlike block.base-unit this panel implement basic styling when use theme.
+					It accept direct image url and accept subjects and notes as an array.
+				</div>
+				<div data-panel="card.rating">
+					Use panel card.rating to implement content that show a rate.
+				</div>
+
+				<div data-panel="nav.breadcrump">
+					Use panel nav.breadcrump to implement a breadcrump navigation with customized separator and link content.
+				</div>
+
+				<script>
+					return function(roof, data) {
+						roof.innerHTML = roof.querySelector(`[data-panel="${data.panel}"]`)?.innerHTML || '';
+					}
+				</script>
+			</template>
+
+			<template data-url="block.base-unit">
 				<script>
 					return async function(roof, data) {
-						const infobox = roof.children[0];
-						fanstatic.elementStorage.set(document.body, 'infobox', infobox)
-						infobox.remove();
-
 						await fanstatic.appendPanel(roof, 'block.base-unit', {
 							cap: fanstatic.design.element('img', {src: 'https://dummyimage.com/60x60/eee/fff&text=cap'}),
 							head: '(head element)',
@@ -196,17 +226,8 @@
 			</template>
 
 			<template data-url="block.basic-block">
-				<div data-js="infobox">
-					Panel block.basic-block also used internally to form other general purpose panels.
-					It based on block-base-unit with different context properties and unlike block.base-unit this panel implement basic styling when use theme.
-					It accept direct image url and accept subjects and notes as an array.
-				</div>
 				<script>
 					return async function(roof, data) {
-						const infobox = roof.children[0];
-						fanstatic.elementStorage.set(document.body, 'infobox', infobox)
-						infobox.remove();
-
 						await fanstatic.appendPanel(roof, 'block.basic-block', {
 							image: 'https://dummyimage.com/60x60/eee/fff&text=image',
 							subjects: ['Subject 1', 'Subject 2'],
@@ -217,21 +238,15 @@
 				</script>
 			</template>
 
-			<template data-url="block.breadcrump">
-				<div data-js="infobox">
-					Panel block.breadcrump
-				</div>
+			<template data-url="nav.breadcrump">
 				<script>
 					return async function(roof, data) {
-						const infobox = roof.children[0];
-						fanstatic.elementStorage.set(document.body, 'infobox', infobox)
-						infobox.remove();
-
-						await fanstatic.appendPanel(roof, 'block.breadcrump', {
+						await fanstatic.appendPanel(roof, 'nav.breadcrump', {
+							separator: '>',
 							links: [
-								'Link 1',
-								'Link 2',
-								'Link 3',
+								{ href:'#', html:'Link 1' },
+								{ href:'#', html:'Link 2' },
+								{ href:'#', html:'Link 3' },
 							]
 						})
 					}
@@ -239,15 +254,8 @@
 			</template>
 
 			<template data-url="block.identity">
-				<div data-js="infobox">
-					Panel block.identity
-				</div>
 				<script>
 					return async function(roof, data) {
-						const infobox = roof.children[0];
-						fanstatic.elementStorage.set(document.body, 'infobox', infobox)
-						infobox.remove();
-
 						await fanstatic.appendPanel(roof, 'block.identity', {
 							logo: 'https://dummyimage.com/100x100/fff/000&text=image',
 							name: 'Fanstatic',
@@ -257,16 +265,8 @@
 			</template>
 
 			<template data-url="card.rating">
-				<div data-js="infobox">
-					Use panel card.rating to implement content that show a rate.
-				</div>
 				<script>
 					return async function(roof, data) {
-						const infobox = roof.children[0];
-					
-						fanstatic.elementStorage.set(document.body, 'infobox', infobox)
-						infobox.remove();
-
 						await fanstatic.appendPanel(roof, 'card.rating', {
 							icon: 'https://dummyimage.com/60x60/fff/000&text=icon',
 							subject: 'Subject',
