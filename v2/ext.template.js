@@ -251,7 +251,7 @@
 			tmp.append(part.clonedContent)
 
 			let model = scriptOpt.model || {}
-			let renderers = scriptOpt.renderer || false ? scriptOpt.renderer.split(',') : []
+			let renderers = scriptOpt.renderer || false ? scriptOpt.renderer.split(' ') : []
 			let text = tmp.innerHTML
 
 			for (let r of renderers) {
