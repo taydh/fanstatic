@@ -10,7 +10,7 @@
 
 	fanstatic.assign({
 		local_area_id: 'fanstatic-area',
-		log_render: false,
+		log_process: false,
 	})
 
 	Object.assign(fanstatic._commands, {
@@ -81,6 +81,13 @@
 		// 'data-run': async function(fanstatic, target, query) {
 		// 	await fanstatic.run(target, query)
 		// },
+		'data-fanstatic': async function(fanstatic, target) {
+			if ('TEMPLATE' == target.tagName) {
+				await fanstatic.runCommand(target, 'replace', {
+					template: target,
+				});
+			}
+		},
 		'data-template': async function(fanstatic, target, query) {
 			let command = query;
 			await fanstatic.runCommand(target, command)
@@ -207,7 +214,7 @@
 			}
 		},
 
-		_onrenderQueue: [],
+		_onplaceQueue: [],
 		
 		_insertTemplate: async function(target, url, opt = {}, optMode, insertFn) {
 			if (optMode == 1) opt = { model: opt };
@@ -218,7 +225,7 @@
 				return;
 			}
 
-			if (this.settings.log_render) console.log('🧩 resolving:', url)
+			if (this.settings.log_process) console.log('🧩 resolving:', url)
 
 			var tpl = (url && typeof(url) === 'object' && url.tagName === 'TEMPLATE')
 				? url
@@ -247,12 +254,20 @@
 		},
 
 		_processPartial: async function(target, url, opt, insertFn, part, scriptOpt) {
-			let tmp = document.createElement('div')
-			tmp.append(part.clonedContent)
+			let tmp = document.createElement('div');
+			tmp.append(part.clonedContent);
+			let text = tmp.innerHTML;
+
+			// 1st step A: template text mutation
+
+			if (scriptOpt.mutate) {
+				text = scriptOpt.mutate(text);
+			}
+
+			// 1st step B: render text with model
 
 			let model = scriptOpt.model || {}
 			let renderers = scriptOpt.renderer || false ? scriptOpt.renderer.split(' ') : []
-			let text = tmp.innerHTML
 
 			for (let r of renderers) {
 				switch (r) {
@@ -270,11 +285,11 @@
 
 			tmp.innerHTML = text
 
-			/* collect nodes */
+			/* 2nd step: onload, postload, run command, apply classfix */
+
 			let nodes = [];
 			tmp.childNodes.forEach(n => nodes.push(n));
-
-			/* 1st step: load */
+			
 			let roof = tmp
 
 			if (scriptOpt.onload) {
@@ -291,7 +306,8 @@
 			/* apply classfix, on load not affected by FOUC */
 			if (scriptOpt.classfix) this.applyClassfix(roof, scriptOpt.classfix);
 
-			/* 2nd step: insert */
+			/* 3rd step: oninsert and postinsert */
+
 			if (insertFn === 'replaceElement') {
 				target['after'](...tmp.childNodes);
 				target.remove();
@@ -300,9 +316,10 @@
 				target[insertFn](...tmp.childNodes)
 			}
 
-			if (this.settings.log_render) console.log('🧵 inserted:', part.url)
+			if (this.settings.log_process) console.log('🧵 inserted:', part.url)
 			
 			/* roof changed after insert */
+
 			roof = ['after','before','replaceElement'].includes(insertFn) ? target.parentElement : target
 
 			if (scriptOpt.oninsert) {
@@ -313,28 +330,28 @@
 				await opt.postinsert(nodes, scriptOpt.controller);
 			}
 
-			/* 2nd and a half step: collect onrender */
+			/* 4th step: collect onplace and put in queue, and process nested onqueue if this the top template */
 
-			if (typeof(scriptOpt.onrender) == 'function') {
+			if (typeof(scriptOpt.onplace) == 'function') {
 				let fn = async function() {
-					await scriptOpt.onrender(nodes, opt.data, part.url);
+					await scriptOpt.onplace(nodes, opt.data, part.url);
 				}
 
-				this._onrenderQueue.push( fn );
+				this._onplaceQueue.push( fn );
 			}
 
-			/* run onrender queue if roof in on visible DOM */
+			/* run onplace queue if roof in on visible DOM */
 
 			if (document.body.contains(roof)) {
 				/* run commands */
-				await this.searchOnRenderAndRun(document.body)
+				await this.searchOnPlaceAndRun(document.body)
 
-				if (this.settings.log_render) console.log('🎬 rendered:', part.url)
+				if (this.settings.log_process) console.log('🎬 placed:', part.url)
 
-				if (this._onrenderQueue.length > 0) {
+				if (this._onplaceQueue.length > 0) {
 					let fn;
-					while(this._onrenderQueue.length > 0) {
-						fn = this._onrenderQueue.shift();
+					while(this._onplaceQueue.length > 0) {
+						fn = this._onplaceQueue.shift();
 						await fn();
 					}
 				}
@@ -360,7 +377,7 @@
 			return this.searchAndRunCommand(roof);
 		},
 
-		searchOnRenderAndRun: async function(roof) {
+		searchOnPlaceAndRun: async function(roof) {
 			let count = 0;
 			let targets;
 			// let targets = roof.querySelectorAll('[data-command-onrender]')
@@ -373,7 +390,7 @@
 
 			/* with command attributes */
 			for (let cmdSel of Object.entries(this._commandAttributes)) {
-				const attr = cmdSel[0] + '-onrender'
+				const attr = cmdSel[0] + '-onplace'
 				targets = roof.querySelectorAll(`[${attr}]`)
 				
 				if (targets) {
@@ -389,7 +406,7 @@
 				}
 			}
 
-			if (this.settings.log_render) console.log('searchOnRenderAndRun:', count)
+			if (this.settings.log_process) console.log('searchOnPlaceAndRun:', count)
 		},
 
 		/* Insert */

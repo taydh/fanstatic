@@ -144,6 +144,42 @@
 			}
 		},
 
+		includeScripts: function(urls, defaultProperties = { defer: 1 }) {
+			const urls_ = [];
+
+			for (let url of urls) {
+				if (!document.querySelector('head > style[src="' + ('object' == typeof url ? url.src : url) + '"]')) {
+					urls_.push(url);
+				}
+			}
+
+			return this.insertScripts(urls_, defaultProperties);
+		},
+
+		includeStyles: function(urls, defaultProperties = { defer: 1 }) {
+			const urls_ = [];
+
+			for (let url of urls) {
+				if (!document.querySelector('head > script[href="' + url + '"]')) {
+					urls_.push(url);
+				}
+			}
+
+			return this.insertStyles(urls_);
+		},
+
+		insertPreloads: function(items) {
+			const items_ = [];
+
+			for (let item of items) {
+				if (!document.querySelector('head > link[rel="preload"][href="' + item.url + '"]')) {
+					items_.push(item);
+				}
+			}
+
+			return this.insertScripts(items_, defaultProperties);
+		},
+
 		asyncCounter : function(count, onComplete) {
 			return {
 				counter: count,
