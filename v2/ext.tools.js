@@ -43,6 +43,7 @@
 
 		assignClassfix: function(obj) {
 			if (!this._classfix) this._classfix = {};
+
 			Object.assign(this._classfix, obj);
 		},
 
@@ -50,8 +51,8 @@
 			return this._classfix;
 		},
 
-		applyClassfix: function(roof, source = null) {
-			source = source || this._classfix;
+		applyClassfix: function(roof, source = null, name = null) {
+			source = source || this.getClassfix();
 
 			const elems = []
 			const sourceArr = source ? Object.entries(source) : null;
@@ -76,10 +77,12 @@
 				// 	elem.dataset.classFixed = "1"
 				// }
 
-				if (this.settings.log_render) console.log('🎨 classfix evaluated:', sourceArr.length, 'applied:', elems.length);
+				if (this.settings.log_render) 
+					console.log(`🎨 classfix evaluated at ${name}:`, sourceArr.length, 'applied:', elems.length);
 			}
 			else {
-				console.log('🎨 no classfix evaluated');
+				if (this.settings.log_render) 
+					console.log(`🎨 no classfix evaluated at ${name}`);
 			}
 		},
 

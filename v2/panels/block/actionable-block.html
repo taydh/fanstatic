@@ -1,0 +1,55 @@
+<script>
+	const design = fanstatic.design;
+	const controller = {};
+
+	return async function (roof, data = {}, url) {
+		const panelScope = data.panelScope || fanstatic.resolvePanelScope(url);
+		const scope = data.scope || panelScope;
+		const mode = data.mode || 0;
+
+		if (1 == mode) { // all
+			if (!data.actions) data.actions = [];
+			if (!data.image) data.image = [];
+		}
+		else if (2 == mode) { // head and body only
+			data.image = false;
+			data.actions = false;
+		}
+		else if (3 == mode) { // head, body, foot
+			if (!data.actions) data.actions = [];
+			data.image = false;
+		}
+		else if (4 == mode) { // cap, head, body
+			if (!data.image) data.image = [];
+			data.actions = false;
+		}
+
+		if (data.subjects && !Array.isArray(data.subjects)) data.subjects = [data.subjects];
+		if (data.actions && !Array.isArray(data.actions)) data.actions = [data.actions];
+
+		await fanstatic.insertPanel(roof, 'block.base-block', {
+				id: data.id,
+				scope: scope,
+				panelScope: panelScope,
+				mode: mode,
+				cap: data.image ? design.element('img', {src: data.image}) : false,
+				head: data.subjects ? data.subjects.map(jhtm => design.div([jhtm])) : false,
+				body: data.message ? data.message : false,
+				foot: data.actions ? data.actions.map(jhtm => design.div([jhtm])) : false,
+			}
+		);
+
+		const panelElement = roof.children[0];
+		
+		if (data.image) panelElement.querySelector(':scope > [data-pn=cap]').dataset.pn = 'image';
+		if (data.subjects) panelElement.querySelector(':scope > [data-pn=head]').dataset.pn = 'subjects';
+		if (data.message) panelElement.querySelector(':scope > [data-pn=body]').dataset.pn = 'message';
+		if (data.actions) panelElement.querySelector(':scope > [data-pn=foot]').dataset.pn = 'actions';
+
+		panelElement.dataset.pnPanel = panelScope;
+
+		controller.panelElement = panelElement;
+
+		this.controller = controller;
+	};
+</script>

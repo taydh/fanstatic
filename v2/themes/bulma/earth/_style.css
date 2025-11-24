@@ -86,7 +86,7 @@ section:not(:last-child) {
 	margin-bottom: var(--theme-margin);
 }
 
-/* LAYOUT RULES */
+/* LAYOUT RULES 
 
 .theme-pi-0 { padding-inline: 0; }
 .theme-pi-1 { padding-inline: calc(.25 * var(--theme-padding)); }
@@ -101,6 +101,8 @@ section:not(:last-child) {
 .theme-pb-3 { padding-block: var(--theme-padding); }
 .theme-pb-4 { padding-block: calc(2 * var(--theme-padding)); }
 .theme-pb-5 { padding-block: calc(2.5 * var(--theme-padding)); }
+
+*/
 
 .theme-container {
 	box-sizing: border-box;

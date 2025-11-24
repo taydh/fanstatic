@@ -2,33 +2,29 @@
 
 <script>
 	const design = fanstatic.design;
-	const controller = {};
 
-	return {
-		onload: async function (roof, data = {}, url) {
-			const id = data.id || null;
-			const scope = data.scope = data.scope || fanstatic.resolvePanelScope(url);
-			const panelElement = roof.children[0];
+	return async function (roof, data = {}, url) {
+		const panelScope = data.panelScope || fanstatic.resolvePanelScope(url);
+		const scope = data.scope = data.scope || panelScope;
+		const panelElement = roof.children[0];
 
-			if (id) panelElement.id = id;
+		if (data.id) panelElement.id = data.id;
 
-			panelElement.dataset.pnPanel = scope;
-			panelElement.dataset.pnScope = scope;
-			panelElement.innerHTML = fanstatic.renderJhtm([
-				design.wrap({'data-pn-role': 'container' }, []),
-			]);
-			
-			const sectionBlockController = await fanstatic.insertPanel(panelElement.querySelector('[data-ds=wrap]'), 'block.section-block', {
+		panelElement.dataset.pnPanel = panelScope;
+		panelElement.dataset.pnScope = scope;
+
+		const contentBlockController = await fanstatic.insertPanel(panelElement, 'block.content-block', 
+			Object.assign(data, {
+				panelScope: null,
 				scope: scope,
-				titles: data.titles || [],
-				content: data.content || true,
-				ends: data.ends || [],
-			});
+			})
+		);
 
-			controller.panelElement = panelElement;
-			controller.containerElement = panelElement.children[0];
-			controller.sectionBlockController = sectionBlockController
-		},
-		controller: controller
-	};
+		contentBlockController.panelElement.dataset.pn = 'container';
+
+		this.controller = {
+			panelElement: panelElement,
+			contentBlockController: contentBlockController,
+		}
+	}
 </script>

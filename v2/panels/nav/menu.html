@@ -2,31 +2,47 @@
 
 <script>
 	const design = fanstatic.design;
-	const controller = {};
 
-	return {
-		controller: controller,
-		onload: function(roof, data, url) {
-			const panelScope = fanstatic.resolvePanelScope(url);
-			const scope = data.scope || panelScope;
-			const panelElement = roof.children[0];
+	return async function(roof, data, url) {
+		const panelScope = data.panelScope || fanstatic.resolvePanelScope(url);
+		const outerScope = data.scope || panelScope;
+		const panelElement = roof.children[0];
 
-			panelElement.setAttribute('data-pn-panel', panelScope);
-			panelElement.setAttribute('data-pn-scope', scope);
-			panelElement.innerHTML = fanstatic.renderJhtm(design.wrap([
-				design.list({ 'data-pn-scope': scope, 'data-pn-role': 'menu_list' }, { 'data-pn-role': 'menu_item' },
-				{
-					listTag: 'div',
-					items: data.menus.map(menu => {
-						const href = (menu.link ? fanstatic.sanitizeAttribute(menu.link) : null) || '#';
-						const tagFill = `a href="${href}" data-pn-role="menu_link"`;
+		panelElement.setAttribute('data-pn-panel', panelScope);
+		panelElement.setAttribute('data-pn-scope', outerScope);
 
-						return { [tagFill] : menu.label }
-					}),
-				})
-			]));
+		panelElement.innerHTML = fanstatic.renderJhtm(
+			design.list({ 'data-pn': 'nav_list' }, { 'data-pn': 'nav_item' },
+			{
+				listTag: 'div',
+				items: data.links.map(link => {
+					const href = (link.url ? fanstatic.sanitizeAttribute(link.url) : null) || null;
 
-			controller.panelElement = panelElement;
-		},	
+					return href 
+						? design.element('a', { href: href, 'data-pn': 'nav_link' }, link.label || true)
+						: design.element('span', { 'data-pn': 'nav_link' }, link.label || true)
+				}),
+			})
+		);
+
+		const listElement = panelElement.children[0];
+		listElement.querySelectorAll(':scope > [data-ds]').forEach(elem => elem.removeAttribute('data-ds'));
+		listElement.removeAttribute('data-ds');
+
+		// data.links.forEach((link, i) => {
+		// 	const a = listElement.querySelector(`:scope > [data-pn=nav_item]:nth-of-type(${i + 1}) > [data-pn=nav_link]`);
+
+		// 	a.disabled = link.disabled || false;
+		// 	a.addEventListener('click', function(ev) {
+		// 		if (this.disabled) {
+		// 			console.log('nav-link element is disabled, click event cancelled!');
+		// 			ev.preventDefault();
+		// 		}
+		// 	});
+		// });
+
+		this.controller = {
+			panelElement: panelElement,
+		};
 	}
 </script> 

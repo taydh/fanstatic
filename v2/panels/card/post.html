@@ -2,7 +2,7 @@
 	const design = fanstatic.design;
 
 	return async function(roof, data = {}, url) {
-		const panelScope = fanstatic.resolvePanelScope(url);
+		const panelScope = data.panelScope || fanstatic.resolvePanelScope(url);
 		const scope = data.scope || panelScope;
 		const model = {
 			id: data.id || '',
@@ -21,29 +21,28 @@
 		}
 		const tagFill = `img src="${model.image}"`;
 
-		roof.innerHTML = fanstatic.renderJhtm(design.unit({
-			figure: {[tagFill]: true},
-			subject: [
-				design.div({data:{'pn-role':'section'}}, model.section),
-				design.div({data:{'pn-role':'title'}}, design.element('a', {href: model.postLink}, model.title)),
-				design.div({data:{'pn-role':'date'}}, model.date),
+		const baseBlockController = await fanstatic.appendPanel(roof, 'block.base-block', {
+			id: model.id,
+			panelScope: panelScope,
+			scope: scope,
+			cap: {[tagFill]: true},
+			head: [
+				design.div({data:{'pn':'section'}}, model.section),
+				design.div({data:{'pn':'title'}}, design.element('a', {href: model.postLink}, model.title)),
+				design.div({data:{'pn':'date'}}, model.date),
+				design.div({data:{'pn':'author'}}, model.author), 
 			],
-			message: [
-				design.div({data:{'pn-role':'short'}}, model.short),
-				design.div({data:{'pn-role':'author'}}, model.author), 
+			body: [
+				design.div({data:{'pn':'short'}}, model.short),
 			],
-			note: [
-				design.div([design.element('a', {href: model.postLink, data: {'pn-role': 'button-more'}}, 'Read more')]),
+			foot: [
+				design.div([design.element('a', {href: model.postLink, data: {'pn': 'button-more'}}, 'Read more')]),
 			],
-		}));
+		})
 
-		const panelElement = roof.children[0];
+		const panelElement = baseBlockController.panelElement;
 
-		if (model.id) panelElement.id = model.id;
-
-		panelElement.dataset.pnPanel = panelScope;
-		panelElement.dataset.pnScope = scope;
-		panelElement.querySelector(':scope > [data-ds=fig] > img').dataset.pnRole = 'image';
+		panelElement.querySelector(':scope > [data-pn=cap]').dataset.pn = 'image';
 
 		this.controller = {
 			panelElement: panelElement,

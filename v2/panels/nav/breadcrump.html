@@ -1,23 +1,41 @@
+<nav></nav>
+
 <script>
 	const design = fanstatic.design;
 
 	return async function (roof, data = {}, url) {
-		const panelScope = fanstatic.resolvePanelScope(url);
-		const scope = data.scope || panelScope;
-
-		roof.innerHTML = fanstatic.renderJhtm([
-			design.div({data: { pn:  { scope: scope, panel: panelScope }}}, ["\n"].concat(data.links.map((link, i) => {
-					return [
-						design.element('span', { 'data-pn-role': 'separator' }, i > 0 ? data.separator : '')
-						, ' '
-						, design.element('a', { href: link.href}, link.html || true)
-						, "\n"
-					];
-				}).flat()),
-			)
-		]);
-
+		const panelScope = data.panelScope || fanstatic.resolvePanelScope(url);
+		const outerScope = data.scope || panelScope;
 		const panelElement = roof.children[0];
+
+		panelElement.setAttribute('data-pn-panel', panelScope);
+		panelElement.setAttribute('data-pn-scope', outerScope);
+
+		panelElement.innerHTML = fanstatic.renderJhtm(
+			data.links.map((link, i) => {
+				const href = (link.url ? fanstatic.sanitizeAttribute(link.url) : null) || null;
+				return [
+					, design.element('span', { 'data-pn': 'separator' }, i > 0 ? data.separator : '')
+					, "\n"
+					, href 
+						? design.element('a', { href: href, 'data-pn': 'nav_link' }, link.label || true)
+						: design.element('span', { 'data-pn': 'nav_link' }, link.label || true)
+					, "\n"
+				];
+			}).flat()
+		);
+
+		// data.links.forEach((link, i) => {
+		// 	const a = panelElement.querySelector(`:scope > [data-pn="nav_link"]:nth-of-type(${i + 1})`);
+
+		// 	a.disabled = link.disabled || false;
+		// 	a.addEventListener('click', function(ev) {
+		// 		if (this.disabled) {
+		// 			console.log('nav-link element is disabled, click event cancelled!');
+		// 			ev.preventDefault();
+		// 		}
+		// 	});
+		// });
 
 		this.controller = {
 			panelElement: panelElement,

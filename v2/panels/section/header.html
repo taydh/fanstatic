@@ -1,0 +1,43 @@
+<section></section>
+
+<script>
+	const design = fanstatic.design;
+
+	return async function (roof, data, url) {
+		const panelScope = data.panel || fanstatic.resolvePanelScope(url);
+		const outerScope = data.scope || panelScope;
+		const panelElement = roof.children[0];
+
+		panelElement.dataset.pnPanel = panelScope;
+		panelElement.dataset.pnScope = outerScope;
+
+		panelElement.innerHTML = fanstatic.renderJhtm([
+			design.wrap(
+				{data: {pn: {role: 'container'}}},
+				[ 
+					design.wrap({data: {pn: {role: 'identity'}}}),
+					design.wrap({data: {pn: {role: 'navigation'}}}),
+					design.wrap({data: {pn: {role: 'actions'}}}),
+				],
+			)
+		]);
+
+		const controller = {
+			panelElement: panelElement,
+			identityElement: panelElement.querySelector(`:scope > [data-pn-role=container] > [data-pn-role=identity]`),
+			navigationElement: panelElement.querySelector(`:scope > [data-pn-role=container] > [data-pn-role=navigation]`),
+			actionsElement: panelElement.querySelector(`:scope > [data-pn-role=container] > [data-pn-role=navigation]`)
+		}
+
+		if (data.identity)
+			await fanstatic.appendPanel(controller.identityElement, data.identity.panel, data.identity.data);
+		
+		if (data.navigation)
+			await fanstatic.appendPanel(controller.navigationElement, data.navigation.panel, data.navigation.data);
+
+		if (data.actions)
+			await fanstatic.appendPanel(controller.actionsElement, data.actions.panel, data.actions.data);
+
+		this.controller = controller;
+	};
+</script>

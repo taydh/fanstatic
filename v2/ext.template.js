@@ -303,8 +303,8 @@
 			/* run commands */
 			await this.searchOnLoadAndRun(roof)
 
-			/* apply classfix, on load not affected by FOUC */
-			if (scriptOpt.classfix) this.applyClassfix(roof, scriptOpt.classfix);
+			/* apply template classfix, on load not affected by FOUC */
+			if (scriptOpt.classfix) this.applyClassfix(roof, scriptOpt.classfix, url);
 
 			/* 3rd step: oninsert and postinsert */
 
@@ -348,6 +348,10 @@
 
 				if (this.settings.log_process) console.log('🎬 placed:', part.url)
 
+				/* apply global classfix before onplace method called */
+				this.applyClassfix(document.body);
+
+				/* execute onplace queue, this allow override global classfix when necessary */
 				if (this._onplaceQueue.length > 0) {
 					let fn;
 					while(this._onplaceQueue.length > 0) {
@@ -455,13 +459,15 @@
 
 		/* panel */
 
-		resolvePanelPath: function(panelScope) {
-			return fanstatic.settings.base_url + fanstatic.settings.version + '/panels/'+panelScope.replace('.','/')+'.html'
-		},
 		resolvePanelScope: function(path) {
 			const parts = path.split('/').reverse();
 
 			return parts[1] + '.' + parts[0].substring(0, parts[0].lastIndexOf('.'));
+		},
+		resolvePanelPath: function(panelScope) {
+			const panelBaseUrl = panelScope.match(/^.+?:\/\//i) ? panelScope : fanstatic.settings.base_url + fanstatic.settings.version;
+			
+			return panelBaseUrl + '/panels/'+panelScope.replace('.','/')+'.html'
 		},
 		insertPanel: async function(el, panelScope, opt, optMode = 2) {
 			return await fanstatic.insert(el, this.resolvePanelPath(panelScope), opt, optMode);

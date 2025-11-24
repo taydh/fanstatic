@@ -1,4 +1,8 @@
 {
+	fanstatic.assign({
+		style_base_url: null,
+	});
+
 	Object.assign(fanstatic, {
 		applyLess: function(url = fanstatic.settings.library_less_url) {
 			if (url) {
@@ -10,6 +14,7 @@
 		applyTheme: function(style = fanstatic.settings.theme_style, framework = fanstatic.settings.theme_framework, opt = { mode: fanstatic.settings.theme_mode, includeUtility: null }) {
 			const mode = opt.mode || fanstatic.settings.theme_mode || 'css';
 			const includeUtility = opt.includeUtility !== null ? opt.includeUtility : false;
+			const styleBaseUrl = fanstatic.settings.style_base_url || fanstatic.settings.base_url + fanstatic.settings.version;
 
 			// sanitize values
 			style = fanstatic.removePathCharacters(style);
@@ -17,30 +22,32 @@
 
 			console.log('🖼️ Style theme applied: ' + style + ' (' + framework + '), mode: ' + mode);
 
-			const utilsBaseUrl = `${fanstatic.settings.base_url}${fanstatic.settings.version}/utils/`;
-			const themeBaseUrl = `${fanstatic.settings.base_url}${fanstatic.settings.version}/themes/`;
-			const styleScriptUrl = `${themeBaseUrl}${framework}/theme-framework.js`;
-			const genericScriptUrl = `${themeBaseUrl}/theme-generic.js`;
+			const utilsBaseUrl = `${styleBaseUrl}/utils/`;
+			const themeBaseUrl = `${styleBaseUrl}/themes/`;
+			const themeFrameworkBaseUrl = fanstatic.settings.theme_framework_base_url || `${themeBaseUrl}${framework}/`;
+			const themeStyleBaseUrl = fanstatic.settings.theme_style_base_url || `${themeBaseUrl}${framework}/${style}/`;
+
 			const scriptsUrls = [
-				genericScriptUrl + '?' + fanstatic.trail(),
-				styleScriptUrl + '?' + fanstatic.trail(),
+				`${themeBaseUrl}/theme-generic.js` + '?' + fanstatic.trail(),
+				`${themeFrameworkBaseUrl}theme-framework.js` + '?' + fanstatic.trail(),
+				`${themeStyleBaseUrl}theme-style.js` + '?' + fanstatic.trail(),
 			];
 
 			const prom1 = ('less' == mode) 
 				? fanstatic.insertLess([
 					includeUtility ? `${utilsBaseUrl}_compiler.less?${fanstatic.trail()}` : null,
-					`${themeBaseUrl}${framework}/${style}/_compiler.less?${fanstatic.trail()}`,
+					`${themeStyleBaseUrl}_compiler.less?${fanstatic.trail()}`,
 					]) 
 				: (('css-dev' == mode)
 					? fanstatic.insertStyles([
-						includeUtility ? `${utilsBaseUrl}/_base.css?${fanstatic.trail()}` : null,
+						includeUtility ? `${utilsBaseUrl}_base.css?${fanstatic.trail()}` : null,
 						`${themeBaseUrl}_global.css?${fanstatic.trail()}`,
-						`${themeBaseUrl}${framework}/_framework.css?${fanstatic.trail()}`,
-						`${themeBaseUrl}${framework}/${style}/_base.css?${fanstatic.trail()}`
+						`${themeFrameworkBaseUrl}_framework.css?${fanstatic.trail()}`,
+						`${themeStyleBaseUrl}_base.css?${fanstatic.trail()}`
 					])
 					: fanstatic.insertStyles([
-						includeUtility ? `${utilsBaseUrl}/utils.css?${fanstatic.trail()}` : null,
-						`${themeBaseUrl}${framework}/${style}/theme.css?${fanstatic.trail()}`
+						includeUtility ? `${utilsBaseUrl}utils.css?${fanstatic.trail()}` : null,
+						`${themeStyleBaseUrl}theme.css?${fanstatic.trail()}`
 					]));
 			
 			const prom2 = fanstatic.insertScripts(scriptsUrls);

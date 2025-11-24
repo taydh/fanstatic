@@ -1,56 +1,53 @@
 <div>
-	<div></div>
-	<div>
-		<div class="theme-layout-3cols">
-			<div></div>
-			<div></div>
-			<div></div>
-		</div>
-	</div>
-	<div></div>
+	<header></header>
+	<main>
+		<div></div>
+		<div></div>
+		<div></div>
+	</main>
+	<footer></footer>
 </div>
 
 <script>
 	const design = fanstatic.design;
-	const controller = {};
 
-	return {
-		onload: async function(roof, data = {}, url) {
-			const scope = data.scope || fanstatic.resolvePanelScope(url);
-			const panelElement = roof.children[0];
-			const topElement = panelElement.children[0];
-			const middleElement = panelElement.children[1];
-			const bottomElement = panelElement.children[2];
-			const columnsElement = middleElement.children[0];
+	return async function(roof, data = {}, url) {
+		const scope = data.scope || fanstatic.resolvePanelScope(url);
+		
+		const panelElement = roof.children[0];
+		const topElement = panelElement.children[0];
+		const middleElement = panelElement.children[1];
+		const bottomElement = panelElement.children[2];
+		const columnsElement = middleElement.children[0];
 
-			if (data.top) {
-				topElement.innerHTML = fanstatic.renderJhtm(data.top);
-			}
+		if (data.top) {
+			topElement.innerHTML = fanstatic.renderJhtm(data.top);
+		}
 
-			if (data.startColumn) {
-				columnsElement.children[0].innerHTML = fanstatic.renderJhtm(data.startColumn);
-			}
+		if (data.startColumn) {
+			columnsElement.children[0].innerHTML = fanstatic.renderJhtm(data.startColumn);
+		}
 
-			if (data.mainColumn) {
-				columnsElement.children[1].innerHTML = fanstatic.renderJhtm(data.mainColumn);
-			}
+		if (data.mainColumn) {
+			columnsElement.children[1].innerHTML = fanstatic.renderJhtm(data.mainColumn);
+		}
 
-			if (data.endColumn) {
-				columnsElement.children[2].innerHTML = fanstatic.renderJhtm(data.endColumn);
-			}
+		if (data.endColumn) {
+			columnsElement.children[2].innerHTML = fanstatic.renderJhtm(data.endColumn);
+		}
 
-			if (data.bottom) {
-				bottomElement.innerHTML = fanstatic.renderJhtm(data.bottom);
-			}
+		if (data.bottom) {
+			bottomElement.innerHTML = fanstatic.renderJhtm(data.bottom);
+		}
 
-			controller.topElement = topElement;
-			controller.middleElement = middleElement;
-			controller.bottomElement = bottomElement;
-			controller.columnsElement = columnsElement;
-
-			panelElement.dataset['panel'] = scope;
-			controller.panelElement = panelElement;
-		},
-		controller: controller,
+		panelElement.dataset.pnPanel = scope;
+		
+		this.controller = {
+			panelElement: panelElement,
+			topElement: topElement,
+			middleElement: middleElement,
+			bottomElement: bottomElement,
+			columnsElement: columnsElement,
+		}
 	}
 </script>

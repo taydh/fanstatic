@@ -2,8 +2,8 @@
 	const design = fanstatic.design;
 
 	return async function(roof, data = {}, url) {
-		const panelScope = fanstatic.resolvePanelScope(url);
-		const scope = data.scope || panelScope;
+		const panelScope = data.panelScope || fanstatic.resolvePanelScope(url);
+		const outerScope = data.scope || panelScope;
 		const model = {
 			id: data.postId || '',
 			backgroundImage: data.backgroundImage || '',
@@ -13,21 +13,20 @@
 		}
 		const tagFill = `img src="${model.backgroundImage}"`;
 
-		roof.innerHTML = fanstatic.renderJhtm(design.unit({
-			figure: {[tagFill]: true},
-			subject: model.cover,
-			message: model.reveal,
-		}));
+		const baseBlockController = await fanstatic.appendPanel(roof, 'block.base-block', {
+			id: model.id,
+			panelScope: panelScope,
+			scope: outerScope,
+			cap: {[tagFill]: true},
+			head: model.cover,
+			body: model.reveal,
+		})
 
-		const panelElement = roof.children[0];
+		const panelElement = baseBlockController.panelElement;
 
-		if (model.id) panelElement.id = model.id;
-
-		panelElement.dataset.pnPanel = panelScope;
-		panelElement.dataset.pnScope = scope;
-		panelElement.querySelector(':scope > [data-ds=fig] > img').dataset.pnRole = 'background-image';
-		panelElement.querySelector(':scope > [data-ds=sub]').dataset.pnRole = 'cover';
-		panelElement.querySelector(':scope > [data-ds=msg]').dataset.pnRole = 'reveal';
+		panelElement.querySelector(':scope > [data-pn=cap]').dataset.pn = 'background-image';
+		panelElement.querySelector(':scope > [data-pn=head]').dataset.pn = 'cover';
+		panelElement.querySelector(':scope > [data-pn=body]').dataset.pn = 'reveal';
 
 		this.controller = {
 			panelElement: panelElement,

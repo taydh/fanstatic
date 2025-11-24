@@ -2,14 +2,14 @@
 	const design = fanstatic.design;
 
 	return async function(roof, data = {}, url) {
-		const panelScope = fanstatic.resolvePanelScope(url);
+		const panelScope = data.panelScope || fanstatic.resolvePanelScope(url);
 		const scope = data.scope || panelScope;
 		const model = {
 			id: data.postId || '',
 			photo: data.photo || '',
-			name: data.name || '',
-			title: data.title || '',
-			brief: data.brief || '',
+			name: data.name || true,
+			title: data.title || true,
+			brief: data.brief || true,
 			facebook: data.facebook || '',
 			instagram: data.instagram || '',
 			twitterX: data.twitterX || '',
@@ -19,31 +19,32 @@
 		}
 		const tagFill = `img src="${model.photo}"`;
 
-		roof.innerHTML = fanstatic.renderJhtm(design.unit({
-			figure: {[tagFill]: true},
-			subject: [
-				design.div({data: {'pn-role': 'name'}}, model.name),
-				design.div({data: {'pn-role': 'title'}}, model.title),
-			],
-			message: model.brief,
-			note: design.axis([
-				design.div({data: {'pn-role': 'facebook'}}, model.facebook),
-				design.div({data: {'pn-role': 'instagram'}}, model.instagram),
-				design.div({data: {'pn-role': 'twitterX'}}, model.twitterX),
-				design.div({data: {'pn-role': 'tiktok'}}, model.tiktok),
-				design.div({data: {'pn-role': 'linkedIn'}}, model.linkedIn),
+		const baseBlockController = await fanstatic.appendPanel(roof, 'block.base-block', {
+			id: model.id,
+			panelScope: panelScope,
+			scope: scope,
+			cap: {[tagFill]: true},
+			head: design.wrap([
+				design.div({data: {'pn': 'name'}}, model.name),
+				design.div({data: {'pn': 'title'}}, model.title),
+			]),
+			body: model.brief,
+			foot: design.axis([
+				design.div({data: {'pn': 'facebook'}}, model.facebook),
+				design.div({data: {'pn': 'instagram'}}, model.instagram),
+				design.div({data: {'pn': 'twitterX'}}, model.twitterX),
+				design.div({data: {'pn': 'tiktok'}}, model.tiktok),
+				design.div({data: {'pn': 'linkedIn'}}, model.linkedIn),
 			])
-		}));
+		})
 
-		const panelElement = roof.children[0];
-
-		if (model.id) panelElement.id = model.id;
-
-		panelElement.dataset.pnPanel = panelScope;
-		panelElement.dataset.pnScope = scope;
-		panelElement.querySelector(':scope > [data-ds=fig] > img').dataset.pnRole = 'photo';
-		if (model.brief) panelElement.querySelector(':scope > [data-ds=msg]').dataset.pnRole = 'brief';
-
+		const panelElement = baseBlockController.panelElement;
+		const cap = panelElement.querySelector(':scope > [data-pn=cap]')
+		const body = panelElement.querySelector(':scope > [data-pn=body]');
+		
+		if (model.photo) cap.dataset.pn = 'photo';
+		if (model.brief) body.dataset.pn = 'brief';
+		
 		this.controller = {
 			panelElement: panelElement,
 		};

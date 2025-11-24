@@ -85,19 +85,19 @@
 						log_render: false,
 					})
 
-					const promises = [];
+					const themingPromises = [];
 
 					if (fanstatic.settings.theme_style) {
 						const prom = fanstatic.applyTheme();
-						if (prom) promises.push(prom);
+						if (prom) themingPromises.push(prom);
 					}
 					
 					if ('less' == fanstatic.settings.theme_mode) {
 						const prom = fanstatic.applyLess();
-						if (prom) promises.push(prom);
+						if (prom) themingPromises.push(prom);
 					}
 
-					Promise.all(promises).then(() => {
+					Promise.all(themingPromises).then(() => {
 						less.pageLoadFinished.then(async function() {
 							// This code will execute after Less has finished compiling and applying styles
 							console.log('Less compilation and styling complete!');
@@ -125,8 +125,8 @@
 							}
 
 							await fanstatic.searchAndRunCommand(document.body);
-							fanstatic.applyClassfix(document.body);
-
+							fanstatic.applyClassfix(document.body, fanstatic.getClassfix('general'), 'general');
+							window.dispatchEvent(new CustomEvent('document_classfixed'));
 							document.body.querySelector('.layout').classList.remove('is-hidden');
 						});
 					})
@@ -174,35 +174,45 @@
 				<script>
 					return {
 						oninsert: function(nodes) {
-							const html = nodes[0].parentNode.querySelector('#previewSection > div').innerHTML;
-							const prettyHtml = html_beautify(html,  {
-								indent_size: 4,
-								wrap_line_length: 80
-							});
+							window.addEventListener('document_classfixed', function() {
+								const html = nodes[0].parentNode.querySelector('#previewSection > div').innerHTML;
+								const prettyHtml = html_beautify(html,  {
+									indent_size: 4,
+									wrap_line_length: 80
+								});
 
-							nodes[0].parentNode.querySelector('#htmlOutputSection > pre').textContent = prettyHtml;
+								nodes[0].parentNode.querySelector('#htmlOutputSection > pre').textContent = prettyHtml;
+							});
 						}
 					}
 				</script>
 			</template>
 
 			<template data-url="infobox">
-				<div data-panel="block.base-unit">
-					Panel block.unit used internally to form other panel.
+				<div data-panel="block.base-block">
+					Panel block.base-block used internally to form other panel.
 					All card panels use this panel.
 					This panel preserve the fanstatic.design.unit structure but with panel attributes and controller.
 				</div>
-				<div data-panel="block.basic-block">
+				<div data-panel="block.actionable-block">
 					Panel block.basic-block also used internally to form other general purpose panels.
 					It based on block-base-unit with different context properties and unlike block.base-unit this panel implement basic styling when use theme.
 					It accept direct image url and accept subjects and notes as an array.
 				</div>
 				<div data-panel="card.rating">
-					Use panel card.rating to implement content that show a rate.
+					Use <i>card.rating</i> panel rate to implement content that show a skill rate or achivement.
+				</div>
+
+				<div data-panel="card.quote">
+					Use <i>card.quote</i> panel to implement content that show quote from person.
 				</div>
 
 				<div data-panel="nav.breadcrump">
 					Use panel nav.breadcrump to implement a breadcrump navigation with customized separator and link content.
+				</div>
+
+				<div data-panel="nav.menu">
+					Use nav.menu panel to implement a breadcrump navigation with customized separator and link content.
 				</div>
 
 				<script>
@@ -212,10 +222,10 @@
 				</script>
 			</template>
 
-			<template data-url="block.base-unit">
+			<template data-url="block.base-block">
 				<script>
 					return async function(roof, data) {
-						await fanstatic.appendPanel(roof, 'block.base-unit', {
+						await fanstatic.appendPanel(roof, 'block.base-block', {
 							cap: fanstatic.design.element('img', {src: 'https://dummyimage.com/60x60/eee/fff&text=cap'}),
 							head: '(head element)',
 							body: '(body element)',
@@ -225,28 +235,79 @@
 				</script>
 			</template>
 
-			<template data-url="block.basic-block">
+			<template data-url="block.content-block">
 				<script>
 					return async function(roof, data) {
-						await fanstatic.appendPanel(roof, 'block.basic-block', {
-							image: 'https://dummyimage.com/60x60/eee/fff&text=image',
-							subjects: ['Subject 1', 'Subject 2'],
-							message: 'Message area',
-							notes: ['Note 1', 'Note 2'],
+						await fanstatic.appendPanel(roof, 'block.content-block', {
+							context: 'block',
+							title: 'CONTENT BLOCK',
+							subtitle: 'This is the content block',
+							caption: 'The content block is heavy on subjects',
+							content: 'This is content',
+							footnote: 'What a content',
 						})
 					}
 				</script>
 			</template>
 
-			<template data-url="nav.breadcrump">
+			<template data-url="block.actionable-block">
 				<script>
 					return async function(roof, data) {
-						await fanstatic.appendPanel(roof, 'nav.breadcrump', {
-							separator: '>',
-							links: [
-								{ href:'#', html:'Link 1' },
-								{ href:'#', html:'Link 2' },
-								{ href:'#', html:'Link 3' },
+						await fanstatic.appendPanel(roof, 'block.actionable-block', {
+							image: 'https://dummyimage.com/60x60/eee/fff&text=image',
+							subjects: ['Subject 1', 'Subject 2'],
+							message: 'Message area',
+							actions: ['Action 1', 'Action 2'],
+						})
+					}
+				</script>
+			</template>
+
+			<template data-url="block.stack-blocks">
+				<script>
+					return async function(roof, data) {
+						await fanstatic.appendPanel(roof, 'block.stack-blocks', {
+							panel: 'block.actionable-block',
+							items: [
+								{
+									image: 'https://dummyimage.com/60x60/eee/fff&text=image',
+									subjects: ['Subject 1', 'Subject 2'],
+									message: 'Message area',
+									actions: ['Action 1', 'Action 2'],
+								},
+								{
+									image: 'https://dummyimage.com/60x60/eee/fff&text=image',
+									subjects: ['Subject 1', 'Subject 2'],
+									message: 'Message area',
+									actions: ['Action 1', 'Action 2'],
+								},
+							]
+						})
+					}
+				</script>
+			</template>
+
+			<template data-url="block.grid-blocks">
+				<script>
+					return async function(roof, data) {
+						await fanstatic.appendPanel(roof, 'block.grid-blocks', {
+							items: [
+								{
+									panel: 'block.actionable-block',
+									data: {
+										image: 'https://dummyimage.com/240x240/eee/fff&text=image',
+										subjects: ['Subject 1', 'Subject 2'],
+										message: 'Message area',
+										actions: ['Action 1', 'Action 2'],
+									}
+								},
+								{
+									panel: 'block.identity',
+									data: {
+										logo: 'https://dummyimage.com/120x120/eee/fff&text=LOGO',
+										name: 'LOGO'
+									}
+								}
 							]
 						})
 					}
@@ -315,7 +376,7 @@
 							id: '1',
 							name: 'Name',
 							title: 'Title, Company',
-							// brief: 'Brief description about this person',
+							brief: 'Brief description about this person',
 							facebook: 'MyFacebook',
 							instagram: '@myinstagram',
 							twitterX: '@mytwitterx',
@@ -340,6 +401,206 @@
 								design.div('Message line 2'),
 							],
 						})
+					}
+				</script>
+			</template>
+
+			<template data-url="nav.breadcrump">
+				<script>
+					return async function(roof, data) {
+						await fanstatic.appendPanel(roof, 'nav.breadcrump', {
+							separator: '&raquo;',
+							links: [
+								{ label:'Link 1' },
+								{ url:'#', label:'Link 2' },
+								{ url:'#', label:'Link 3' },
+							]
+						})
+					}
+				</script>
+			</template>
+
+			<template data-url="nav.menu">
+				<script>
+					return async function(roof, data) {
+						await fanstatic.appendPanel(roof, 'nav.menu', {
+							links: [
+								{ label:'Link 1' },
+								{ url:'#', label:'Link 2' },
+								{ url:'#', label:'Link 3' },
+							]
+						})
+					}
+				</script>
+			</template>
+
+			<template data-url="nav.toc">
+				<script>
+					return async function(roof, data) {
+						await fanstatic.appendPanel(roof, 'nav.toc', {
+							chapters: [
+								{
+									title: 'Chapter 1',
+									links: [
+										{ url:'#', label:'Link 1' },
+										{ url:'#', label:'Link 2' },
+										{ url:'#', label:'Link 3' },
+									]
+								},
+								{
+									title: 'Chapter 2',
+									links: [
+										{ url:'#', label:'Link 1' },
+										{ url:'#', label:'Link 2' },
+										{ url:'#', label:'Link 3' },
+									]
+								}
+							]
+						})
+					}
+				</script>
+			</template>
+
+			<!-- SECTION PANELS -->
+
+			<template data-url="section.containerized">
+				<script>
+					return async function(roof, data) {
+						await fanstatic.appendPanel(roof, 'section.containerized', {
+							title: 'Section',
+							content: 'Hello'
+						})
+					}
+				</script>
+			</template>
+
+			<template data-url="section.containerized-subpanel">
+				<script>
+					return async function(roof, data) {
+						await fanstatic.appendPanel(roof, 'section.containerized-subpanel', {
+							title: 'Section Title',
+							subPanel: {
+								panel: 'block.actionable-block',
+								data: {
+									image: 'https://dummyimage.com/60x60/eee/fff&text=image',
+									subjects: ['Subject 1', 'Subject 2'],
+									message: 'Message area',
+									actions: ['Action 1', 'Action 2'],
+								}
+							}
+						})
+					}
+				</script>
+			</template>
+
+			<template data-url="section.containerized-hero">
+				<script>
+					return async function(roof, data) {
+						await fanstatic.appendPanel(roof, 'section.containerized-hero', {
+							title: 'Section Title',
+							image: 'https://dummyimage.com/60x60/eee/fff&text=image',
+							subjects: ['Subject 1', 'Subject 2'],
+							message: 'Message area',
+							actions: ['Action 1', 'Action 2'],
+						})
+					}
+				</script>
+			</template>
+
+			<template data-url="section.containerized-stack">
+				<script>
+					return async function(roof, data) {
+						await fanstatic.appendPanel(roof, 'section.containerized-stack', {
+							title: 'Section Title',
+							stackPanels: {
+								panel: 'block.actionable-block',
+								items: [
+									{
+										image: 'https://dummyimage.com/60x60/eee/fff&text=image',
+										subjects: ['Subject 1', 'Subject 2'],
+										message: 'Message area',
+										actions: ['Action 1', 'Action 2'],
+									},
+									{
+										image: 'https://dummyimage.com/60x60/eee/fff&text=image',
+										subjects: ['Subject 1', 'Subject 2'],
+										message: 'Message area',
+										actions: ['Action 1', 'Action 2'],
+									},
+								]
+							}
+						})
+					}
+				</script>
+			</template>
+
+			<template data-url="section.containerized-grid">
+				<script>
+					return async function(roof, data) {
+						await fanstatic.appendPanel(roof, 'section.containerized-grid', {
+							gridPanels: [
+								{
+									panel: 'block.actionable-block',
+									data: {
+										image: 'https://dummyimage.com/240x240/eee/fff&text=image',
+										subjects: ['Subject 1', 'Subject 2'],
+										message: 'Message area',
+										actions: ['Action 1', 'Action 2'],
+									}
+								},
+								{
+									panel: 'block.identity',
+									data: {
+										logo: 'https://dummyimage.com/120x120/eee/fff&text=LOGO',
+										name: 'LOGO'
+									}
+								}
+							]
+						})
+					}
+				</script>
+			</template>
+
+			<template data-url="section.header">
+				<script>
+					return async function(roof, data) {
+						const headerController = await fanstatic.appendPanel(roof, 'section.header', {
+							identity: {
+								panel: 'block.identity',
+								data: {
+									logo: 'https://dummyimage.com/150x150/eee/fff&text=LOGO',
+									name: 'The Company',
+								}
+							},
+							navigation: {
+								panel: 'nav.menu',
+								data: {
+									links: [
+										{ label:'Link 1' },
+										{ url:'#', label:'Link 2' },
+										{ url:'#', label:'Link 3' },
+									]
+								}
+							}
+						});						
+					}
+				</script>
+			</template>
+
+			<!-- LAYOUT -->
+
+			<template data-url="layout.1-column">
+				<script>
+					return async function(roof, data) {
+						await fanstatic.appendPanel(roof, 'layout.1-column')
+					}
+				</script>
+			</template>
+			
+			<template data-url="layout.3-columns">
+				<script>
+					return async function(roof, data) {
+						await fanstatic.appendPanel(roof, 'layout.3-columns')
 					}
 				</script>
 			</template>

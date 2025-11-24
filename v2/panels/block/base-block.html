@@ -1,0 +1,28 @@
+<script>
+	const design = fanstatic.design;
+
+	return async function (roof, data = {}, url) {
+		const panelScope = data.panelScope || fanstatic.resolvePanelScope(url);
+		const scope = data.scope || panelScope;
+
+		roof.innerHTML = fanstatic.renderJhtm([
+			design.unit({data: { pn:  { scope: scope, panel: panelScope }}}, data)
+		]);
+
+		const panelElement = roof.children[0];
+
+		if (data.id) panelElement.id = data.id;
+
+		if (data.cap) panelElement.querySelector('[data-ds=cap]').dataset.pn = 'cap';
+		if (data.head) panelElement.querySelector('[data-ds=head]').dataset.pn = 'head';
+		if (data.body)panelElement.querySelector('[data-ds=body]').dataset.pn = 'body';
+		if (data.foot) panelElement.querySelector('[data-ds=foot]').dataset.pn = 'foot';
+
+		panelElement.querySelectorAll(':scope > [data-ds]').forEach(elem => elem.removeAttribute('data-ds'));
+		panelElement.removeAttribute('data-ds');
+
+		this.controller = {
+			panelElement: panelElement,
+		};
+	};
+</script>

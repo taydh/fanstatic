@@ -1,38 +1,28 @@
 <script>
 	const design = fanstatic.design;
-	const controller = {
-		panelElement: null,
-		itemControllers: [],
-	};
 
 	return async function (roof, data, url) {
-		const titles = data.titles || null
-		const scope = fanstatic.resolvePanelScope(url);
-		const panel = data.panel || 'block.basic-block';
+		const panelScope = data.panelScope || fanstatic.resolvePanelScope(url);
+		const scope = data.scope || panelScope;
+		const cellPanel = data.stackPanel || 'block.actionable-block';
 		const itemControllers = [];
-		const data2 = {
-			id: data.id || null,
-			scope: scope,
-			titles: data.titles || [],
-			content: design.placeholder('panels'),
-			ends: data.ends || [],
-		};
-		const tmpl1 = await fanstatic.insertPanel(roof, 'section.containerized', data2);
-		const panelElement = tmpl1.panelElement;
-
-		if (data.items) {
-			const tmpl2 = await fanstatic.replacePanel(panelElement.querySelector('[data-ds-placeholder=panels]'), 'block.grid-panels', {
+		
+		const sectionController = await fanstatic.insertPanel(roof, 'section.containerized-subpanel',
+			Object.assign({}, data, {
+				panelScope: panelScope,
 				scope: scope,
-				panel: panel,
-				items: data.items,
-			});
+				subPanel: {
+					panel: 'block.grid-blocks',
+					data: {
+						scope: scope,
+						items: data.gridPanels
+					}
+				}
+			})
+		);
 
-			itemControllers.push(...tmpl2.itemControllers);
-		}
+		sectionController.subPanelController.panelElement.dataset.pn = 'items';
 
-		controller.panelElement = panelElement;
-		controller.itemControllers = itemControllers;
-
-		this.controller = controller;
+		this.controller = sectionController;
 	}
 </script>

@@ -2,24 +2,29 @@
 	const design = fanstatic.design;
 
 	return async function(roof, data, url) {
-		const panelScope = fanstatic.resolvePanelScope(url);
-		const scope = data.scope;
+		const panelScope = data.panelScope || fanstatic.resolvePanelScope(url);
+		const outerScope = data.scope || panelScope;
 		const photoUrl = data.photo || '';
 		const tagFill = `img src="${photoUrl}"`;
 
-		roof.innerHTML = fanstatic.renderJhtm(design.unit({
-			figure: {[tagFill]: true},
-			subject: [design.div(data.name), design.div(data.title + ', ' + data.company)],
-			message: [data.quote],
-		}));
+		const baseBlockController = await fanstatic.appendPanel(roof, 'block.base-block', {
+			id: data.id,
+			panelScope: panelScope,
+			scope: outerScope,
+			cap: {[tagFill]: true},
+			head: [
+				design.div({ 'data-pn': 'name' }, data.name), 
+				design.wrap([
+					design.div({ 'data-pn': 'title' }, data.title),
+					design.div({ 'data-pn': 'company' }, data.company)
+				])
+			],
+			body: data.quote || true,
+		})
 
-		const panelElement = roof.children[0];
+		const panelElement = baseBlockController.panelElement;
 
-		panelElement.dataset.pnPanel = panelScope;
-		panelElement.dataset.pnScope = scope;
-		panelElement.querySelector(':scope > [data-ds=sub]').dataset.pnRole = 'person';
-		panelElement.querySelector(':scope > [data-ds=msg]').dataset.pnRole = 'quote';
-		roof.querySelectorAll('[data-ds]').forEach(elem => elem.removeAttribute('[data-ds]'));
+		panelElement.querySelector(':scope > [data-pn=body]').dataset.pn = 'quote';
 
 		this.controller = {
 			panelElement: panelElement,

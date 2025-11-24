@@ -6,7 +6,7 @@
 
 	return {
 		onload: function(root, data, url) {
-			const panelScope = fanstatic.resolvePanelScope(url);
+			const panelScope = data.panelScope || fanstatic.resolvePanelScope(url);
 			const scope = data.scope || panelScope;
 			const panelElement = root.children[0];
 
@@ -14,13 +14,13 @@
 			panelElement.setAttribute('data-pn-scope', scope);
 
 			panelElement.innerHTML = fanstatic.renderJhtm([
-				design.element('figure', {style:'display:none', data:{ pn: { role:'logo', }}}, design.element('img')),
-				design.div({style:'display:none', data:{ pn: { role:'name' }}}),
+				design.element('figure', {style:'display:none', data:{ pn: 'logo'}}, design.element('img')),
+				design.div({style:'display:none', data:{ pn: 'name'}}),
 			]);
 
 			controller.panelElement = panelElement;
-			controller.logoElement = panelElement.querySelector('[data-pn-role=logo]')
-			controller.nameElement = panelElement.querySelector('[data-pn-role=name]')
+			controller.logoElement = panelElement.querySelector('[data-pn=logo]')
+			controller.nameElement = panelElement.querySelector('[data-pn=name]')
 
 			if (data.logo) {
 				controller.logoElement.querySelector('img').setAttribute('src', data.logo)

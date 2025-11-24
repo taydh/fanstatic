@@ -260,7 +260,7 @@
 
 			return {[tagFill]: model};
 		},
-		placeholder: function(name, model = true) {
+		placeholder: function(name = "", model = true) {
 			let tagFill = `div data-ds-placeholder="${name}"`;
 			
 			return {[tagFill]: model}

@@ -1,23 +1,22 @@
 <script>
 	const design = fanstatic.design;
-	const controller = {};
 
-	return {
-		onload: async function (roof, data = {}, url) {
-			const scope = data.scope || fanstatic.resolvePanelScope(url);
-			const sectionController = await fanstatic.insertPanel(roof, 'section.containerized-panel', { 
-				id: data.id || null,
-				scope: scope,
-				panel: 'block.basic-block',
-				item: data.block,
-			});
-			const panelElement = sectionController.panelElement;
-			
-			panelElement.dataset.pnPanel = scope;
-			controller.panelElement = panelElement;
-			controller.blockElement = sectionController.itemElement;
-			controller.sectionController = sectionController;
-		},
-		controller: controller
+	return async function (roof, data = {}, url) {
+		const panelScope = data.panelScope || fanstatic.resolvePanelScope(url);
+		const scope = data.scope || panelScope;
+
+		const subPanelData = Object.assign(data, {
+			panelScope: panelScope,
+			scope: scope,
+			subPanel: {
+				panel: 'block.actionable-block',
+				data: data
+			}
+		});
+
+		const sectionController = await fanstatic.insertPanel(roof, 'section.containerized-subpanel', subPanelData);
+
+		sectionController.subPanelController.panelElement.dataset.pn = 'hero_block';
+		this.controller = sectionController;
 	};
 </script>

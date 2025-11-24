@@ -1,0 +1,31 @@
+<nav></nav>
+
+<script>
+	const design = fanstatic.design;
+
+	return async function(roof, data, url) {
+		const panelScope = data.panelScope || fanstatic.resolvePanelScope(url);
+		const outerScope = data.scope || panelScope;
+		const panelElement = roof.children[0];
+
+		panelElement.setAttribute('data-pn-panel', panelScope);
+		panelElement.setAttribute('data-pn-scope', outerScope);
+
+		panelElement.innerHTML = fanstatic.renderJhtm(design.axis(
+			data.chapters.map(chapter => design.wrap([
+				design.div({ 'data-pn': 'title' }, chapter.title),
+				design.list({ 'data-pn': 'nav_list' }, { 'data-pn': 'nav_item' },
+					chapter.links.map(link => {
+						const href = (link.url ? fanstatic.sanitizeAttribute(link.url) : null) || '#';
+						const tagFill = `a href="${href}" data-pn="nav_link"`;
+
+						return { [tagFill] : link.label }
+					}))
+			]))
+		));
+
+		this.controller = {
+			panelElement: panelElement,
+		};
+	}
+</script>

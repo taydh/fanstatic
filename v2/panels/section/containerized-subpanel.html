@@ -1,0 +1,30 @@
+<script>
+	const design = fanstatic.design;
+
+	return async function (roof, data = {}, url) {
+			const panelScope = data.panelScope || fanstatic.resolvePanelScope(url);
+			const scope = data.scope || panelScope;
+
+			const sectionController = await fanstatic.insertPanel(roof, 'section.containerized', 
+				Object.assign(data, {
+					panelScope: panelScope,
+					scope: scope,
+				})
+			);
+
+			if (!data.subPanel) data.subPanel = { panel: 'block.actionable-block', data: {} };
+
+			const subpanel = data.subPanel.panel;
+			const subPanelContainer = sectionController.contentBlockController.panelElement.querySelector('[data-pn=content]')
+			const subPanelController = await fanstatic.insertPanel(subPanelContainer, subpanel,
+				Object.assign(data.subPanel.data, {
+					panelScope: null,
+					scope:scope,
+				})
+			);
+
+			sectionController.subPanelController = subPanelController;
+			sectionController.subPanelController.panelElement.dataset.pn = 'subpanel';
+			this.controller = sectionController;
+	};
+</script>

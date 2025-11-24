@@ -1,0 +1,37 @@
+<script>
+	const design = fanstatic.design;
+
+	return async function (roof, data = {}, url) {
+		const panelScope = data.panelScope || fanstatic.resolvePanelScope(url);
+		const scope = data.scope || panelScope;
+
+		await fanstatic.appendPanel(roof, 'block.base-block', {
+			id: data.id,
+			panelScope: panelScope,
+			scope: scope,
+			body: data.content || true,
+			foot: data.footnote || true,
+		})
+		
+		const panelElement = roof.children[0];
+		
+		panelElement.insertAdjacentHTML('afterbegin', fanstatic.renderJhtm(
+			design.div({ 'data-pn': 'header'}, [
+				design.div({'data-pn':'context'}, data.context || true),
+				design.div({'data-pn':'title'}, data.title || true),
+				design.div({'data-pn':'subtitle'}, data.subtitle || true),
+				design.div({'data-pn':'caption'}, data.caption || true),
+			])
+		));
+
+		const body = panelElement.querySelector('[data-pn=body]');
+		const foot = panelElement.querySelector('[data-pn=foot]');
+
+		if (body) body.dataset.pn = 'content';
+		if (foot) foot.dataset.pn = 'footnote';
+
+		this.controller = {
+			panelElement: panelElement,
+		};
+	};
+</script>
