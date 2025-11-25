@@ -230,11 +230,11 @@
 </template>
 
 <template data-url="./content/services3.html">
-- h2 data-template-onrender="viewport-enter-animate" data-visual-hidden data-visual-animation="slideInUp": OUR SERVICES
+- h2 data-template-onplace="viewport-enter-animate" data-visual-hidden data-visual-animation="slideInUp": OUR SERVICES
 - div class="row":
 {{#items}}
   - div class="col-md-4":
-    - div class="card card-body mb-3" data-template-onrender="viewport-enter-animate" data-visual-hidden data-visual-animation="slideInUp":
+    - div class="card card-body mb-3" data-template-onplace="viewport-enter-animate" data-visual-hidden data-visual-animation="slideInUp":
       - div class="text-center":
         - img style="width:60px" class="mb-3" src="https://park.annexdesk.com/resources/svgrepo/{{img}}": 
         - h3 class="mb-3": {{title}}
@@ -293,7 +293,7 @@ We try to make this engine scalable for typical frontend use cases like cms webs
 		roof.querySelectorAll('img').forEach(n => n.style.width = '30px')
 		var newHomes = fanstatic.adoptSiblings(
 			roof.querySelectorAll('p'),
-			function(){ return fanstatic.parseHTML('<div data-adoption="parent" class="card p-3 mb-3" data-template-onrender="viewport-enter-animate" data-visual-hidden data-visual-animation="fadeInRightBig"></div>', true) },
+			function(){ return fanstatic.parseHTML('<div data-adoption="parent" class="card p-3 mb-3" data-template-onplace="viewport-enter-animate" data-visual-hidden data-visual-animation="fadeInRightBig"></div>', true) },
 			function(){ return fanstatic.parseHTML('<div data-adoption="grandparent"></div>', true) })
 		roof.append(newHomes)
 		console.log(roof.innerHTML)
@@ -340,12 +340,12 @@ Quick and ready to use templates for your page, such as adding back-to-top butto
 			
 <script>
 	return async function (roof, nodes) {
-		roof.querySelector('h2').setAttribute('data-template-onrender', 'viewport-enter-animate')
+		roof.querySelector('h2').setAttribute('data-template-onplace', 'viewport-enter-animate')
 		roof.querySelector('h2').setAttribute('data-visual-animation', 'slideInUp')
 		roof.querySelector('h2').setAttribute('data-visual-hidden', '')
 		var newHomes = fanstatic.adoptSiblings(
 			roof.querySelectorAll('h3'),
-			function(){ return fanstatic.parseHTML('<div class="card card-body mb-3" data-template-onrender="viewport-enter-animate" data-visual-hidden data-visual-animation="fadeInRightBig"></div>', true) },
+			function(){ return fanstatic.parseHTML('<div class="card card-body mb-3" data-template-onplace="viewport-enter-animate" data-visual-hidden data-visual-animation="fadeInRightBig"></div>', true) },
 			function(){ return fanstatic.parseHTML('<div class=""></div>', true) })
 		roof.append(newHomes)
 		roof.querySelector('p').classList.add('text-center')
