@@ -1,10 +1,10 @@
 <div>
 	<header></header>
-	<main>
-		<div></div>
-		<div></div>
-		<div></div>
-	</main>
+	<div data-pn="columns">
+		<div data-pn="startColumn"></div>
+		<main data-pn="mainColumn"></main>
+		<div data-pn="endColumn"></div>
+	</div>
 	<footer></footer>
 </div>
 
@@ -12,42 +12,48 @@
 	const design = fanstatic.design;
 
 	return async function(roof, data = {}, url) {
-		const scope = data.scope || fanstatic.resolvePanelScope(url);
+		const panelScope = data.panelScope || fanstatic.resolvePanelScope(url)
+		const scope = data.scope || panelScope;
 		
 		const panelElement = roof.children[0];
-		const topElement = panelElement.children[0];
-		const middleElement = panelElement.children[1];
-		const bottomElement = panelElement.children[2];
-		const columnsElement = middleElement.children[0];
+		const headerElement = panelElement.children[0];
+		const columnsElement = panelElement.children[1];
+		const footerElement = panelElement.children[2];
 
-		if (data.top) {
-			topElement.innerHTML = fanstatic.renderJhtm(data.top);
-		}
+		panelElement.dataset.pnPanel = panelScope;
+		panelElement.dataset.pnScope = scope;
 
-		if (data.startColumn) {
-			columnsElement.children[0].innerHTML = fanstatic.renderJhtm(data.startColumn);
-		}
-
-		if (data.mainColumn) {
-			columnsElement.children[1].innerHTML = fanstatic.renderJhtm(data.mainColumn);
-		}
-
-		if (data.endColumn) {
-			columnsElement.children[2].innerHTML = fanstatic.renderJhtm(data.endColumn);
-		}
-
-		if (data.bottom) {
-			bottomElement.innerHTML = fanstatic.renderJhtm(data.bottom);
-		}
-
-		panelElement.dataset.pnPanel = scope;
-		
 		this.controller = {
 			panelElement: panelElement,
-			topElement: topElement,
-			middleElement: middleElement,
-			bottomElement: bottomElement,
-			columnsElement: columnsElement,
+			headeElement: headerElement,
+			startColumnElement: columnsElement.children[0],
+			mainColumnElement: columnsElement.children[1],
+			endColumnElement: columnsElement.children[2],
+			footerElement: footerElement,
 		}
+
+		const headerProm = data.headerPanel 
+			? fanstatic.appendPanel(headerElement, data.headerPanel.panel, data.headerPanel.data)
+			: new Promise(resolve => resolve(null));
+		const startProm = data.startColumnPanel
+			? fanstatic.appendPanel(this.controller.startColumnElement, data.startColumnPanel.panel, data.startColumnPanel.data)
+			: new Promise(resolve => resolve(null));
+		const mainProm = data.mainColumnPanel
+			? fanstatic.appendPanel(this.controller.mainColumnElement, data.mainColumnPanel.panel, data.mainColumnPanel.data)
+			: new Promise(resolve => resolve(null));
+		const endProm = data.endColumnPanel
+			? fanstatic.appendPanel(this.controller.endColumnElement, data.endColumnPanel.panel, data.endColumnPanel.data)
+			: new Promise(resolve => resolve(null));
+		const footerProm = data.footerPanel
+			? fanstatic.appendPanel(footerElement, data.footerPanel.panel, data.footerPanel.data)
+			: new Promise(resolve => resolve(null));
+
+		const resolves = await Promise.all([headerProm, startProm, mainProm, endProm, footerProm]);
+
+		this.controller.headerController = resolves[0];
+		this.controller.startColumnController = resolves[1];
+		this.controller.mainColumnController = resolves[2];
+		this.controller.endColumnController = resolves[3];
+		this.controller.footerColumnController = resolves[4];
 	}
 </script>

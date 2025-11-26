@@ -2,9 +2,6 @@
 	const design = fanstatic.design;
 
 	return async function(roof, data = {}, url) {
-		const panelScope = fanstatic.resolvePanelScope(url)
-		const scope = data.scope || panelScope;
-		
 		roof.innerHTML = fanstatic.renderJhtm(design.wrap([
 			design.element('header'), design.element('main'), design.element('footer'),
 		]))
@@ -14,25 +11,35 @@
 		const mainElement = panelElement.children[1];
 		const footerElement = panelElement.children[2];
 
-		panelElement.dataset['panel'] = scope;
-
-		if (data.header) {
-			headerElement.innerHTML = fanstatic.renderJhtm(data.header);
-		}
-
-		if (data.main) {
-			mainElement.innerHTML = fanstatic.renderJhtm(data.main);
-		}
-
-		if (data.footer) {
-			footerElement.innerHTML = fanstatic.renderJhtm(data.footer);
-		}
-
 		this.controller = {
 			panelElement: panelElement,
 			headerElement: headerElement,
 			mainElement: mainElement,
-			footerElement: footerElement,
+			footerElement: footerElement
 		};
+
+		const panelScope = data.panelScope || fanstatic.resolvePanelScope(url)
+		const scope = data.scope || panelScope;
+
+		panelElement.dataset.pnPanel = panelScope;
+		panelElement.dataset.pnScope = scope;
+
+		const headerProm = data.headerPanel
+			? fanstatic.appendPanel(headerElement, data.headerPanel.panel, Object.assign({}, data.headerPanel.data, { scope: scope }))
+			: new Promise(rs => rs(null));
+		const mainProm = data.mainPanel
+			? fanstatic.appendPanel(mainElement, data.mainPanel.panel, Object.assign({}, data.mainPanel.data, { scope: scope }))
+			: new Promise(rs => rs(null));
+		const footerProm = data.footerPanel
+			? fanstatic.appendPanel(footerElement, data.footerPanel.panel, Object.assign({}, data.footerPanel.data, { scope: scope }))
+			: new Promise(rs => rs(null));
+			
+		const resolves = await Promise.all([headerProm, mainProm, footerProm]);
+
+		console.log(resolves)
+
+		this.controller.headerController = resolves[0];
+		this.controller.mainController = resolves[1];
+		this.controller.footerController = resolves[2];
 	}
 </script>

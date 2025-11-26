@@ -22,11 +22,9 @@
 		<script>
 			{
                 let fanstaticVersion = 'v2';
-				let fanstaticBaseUrl = '';
-				let fanstaticVersionBaseUrl = '';
                 let origin = window.location.origin;
 				let hostEnv = null;
-                let searchParams = new window.URLSearchParams(window.location.search);
+				const usp = new URLSearchParams(window.location.search);
 
 				const resolveOriginAndLoadModel = async function(){
 					// resolve origin
@@ -50,8 +48,17 @@
                         fanstatic.fetchJson(hostEnvPath)
                         .then(data => {
                             hostEnv = data;
-                            fanstaticBaseUrl = hostEnv.fanstatic_base_url;
-							fanstaticVersionBaseUrl = fanstaticBaseUrl + fanstaticVersion + '/';
+
+							Object.assign(fanstatic.settings, {
+								base_url: hostEnv.fanstatic_base_url,
+								version: fanstaticVersion,
+								theme_framework: usp.get('framework') || 'bulma',
+								theme_style: usp.get('style') || 'earth',
+								theme_mode: 'less',
+								library_less_url: 'https://cdn.jsdelivr.net/npm/less',
+								trail_span: hostEnv.trail_span,
+								log_render: false,
+							})
 
                             asyncCounter.done();
                         })
@@ -60,30 +67,17 @@
 
 				const loadExtensions = async function(asyncCounter) {
 					await fanstatic.insertScripts([
-						fanstaticVersionBaseUrl + 'ext.tools.js?' + fanstatic.tail(),
-						fanstaticVersionBaseUrl + 'ext.visual.js?' + fanstatic.tail(),
-						fanstaticVersionBaseUrl + 'ext.design.js?' + fanstatic.tail(),
-						fanstaticVersionBaseUrl + 'ext.template.js?' + fanstatic.tail(),
-						fanstaticVersionBaseUrl + 'ext.style.js?' + fanstatic.tail(),
+						fanstatic.getVersionedBaseUrl() + 'ext.tools.js?' + fanstatic.tail(),
+						fanstatic.getVersionedBaseUrl() + 'ext.visual.js?' + fanstatic.tail(),
+						fanstatic.getVersionedBaseUrl() + 'ext.design.js?' + fanstatic.tail(),
+						fanstatic.getVersionedBaseUrl() + 'ext.template.js?' + fanstatic.tail(),
+						fanstatic.getVersionedBaseUrl() + 'ext.style.js?' + fanstatic.tail(),
 					]);
 				}
 				
 				const init = async function(){
                     await resolveOriginAndLoadModel();
 					await loadExtensions()
-
-					const usp = new URLSearchParams(window.location.search);
-                    
-					Object.assign(fanstatic.settings, {
-						base_url: fanstaticBaseUrl,
-						version: fanstaticVersion,
-						theme_framework: usp.get('framework') || 'bulma',
-						theme_style: usp.get('style') || 'earth',
-						theme_mode: 'less',
-						library_less_url: 'https://cdn.jsdelivr.net/npm/less',
-						trail_span: hostEnv.trail_span,
-						log_render: false,
-					})
 
 					const themingPromises = [];
 
@@ -105,7 +99,7 @@
 							// that rely on the final CSS being loaded.
 
 							const main = document.body.querySelector('main');
-							const panelInfo = searchParams.get('panel');
+							const panelInfo = usp.get('panel');
 							const prefixSafeList = ['card.', 'block.', 'nav.', 'section.', 'layout.'];
 							const selector = prefixSafeList.map(val => `template[data-url*="${val}"]`).join(',');
 							const safeList = Array.from(document.querySelectorAll(selector)).map(elem => elem.dataset.url);
@@ -592,7 +586,26 @@
 			<template data-url="layout.1-column">
 				<script>
 					return async function(roof, data) {
-						await fanstatic.appendPanel(roof, 'layout.1-column')
+						await fanstatic.appendPanel(roof, 'layout.1-column', {
+							headerPanel: {
+								panel: 'block.base-block',
+								data: {
+									head: 'Header Panel'
+								}
+							},
+							mainPanel: {
+								panel: 'block.base-block',
+								data: {
+									body: 'Main Panel'
+								}
+							},
+							footerPanel: {
+								panel: 'block.base-block',
+								data: {
+									foot: 'Footer Panel'
+								}
+							}
+						})
 					}
 				</script>
 			</template>
@@ -600,7 +613,38 @@
 			<template data-url="layout.3-columns">
 				<script>
 					return async function(roof, data) {
-						await fanstatic.appendPanel(roof, 'layout.3-columns')
+						await fanstatic.appendPanel(roof, 'layout.3-columns', {
+							headerPanel: {
+								panel: 'block.base-block',
+								data: {
+									head: 'Header Panel'
+								}
+							},
+							startColumnPanel: {
+								panel: 'block.base-block',
+								data: {
+									body: 'Start Panel'
+								}
+							},
+							mainColumnPanel: {
+								panel: 'block.base-block',
+								data: {
+									body: 'Main Panel'
+								}
+							},
+							endColumnPanel: {
+								panel: 'block.base-block',
+								data: {
+									body: 'End Panel'
+								}
+							},
+							footerPanel: {
+								panel: 'block.base-block',
+								data: {
+									foot: 'Footer Panel'
+								}
+							}
+						})
 					}
 				</script>
 			</template>
