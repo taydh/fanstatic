@@ -13,20 +13,20 @@
 
 		panelElement.innerHTML = fanstatic.renderJhtm([
 			design.wrap(
-				{data: {pn: {role: 'container'}}},
+				{data: {pn: 'container'}},
 				[ 
-					design.wrap({data: {pn: {role: 'identity'}}}),
-					design.wrap({data: {pn: {role: 'navigation'}}}),
-					design.wrap({data: {pn: {role: 'actions'}}}),
+					design.wrap({data: {pn:'identity'}}),
+					design.wrap({data: {pn:'navigation'}}),
+					design.wrap({data: {pn:'actions'}}),
 				],
 			)
 		]);
 
 		const controller = {
 			panelElement: panelElement,
-			identityElement: panelElement.querySelector(`:scope > [data-pn-role=container] > [data-pn-role=identity]`),
-			navigationElement: panelElement.querySelector(`:scope > [data-pn-role=container] > [data-pn-role=navigation]`),
-			actionsElement: panelElement.querySelector(`:scope > [data-pn-role=container] > [data-pn-role=navigation]`)
+			identityElement: panelElement.querySelector(`:scope > [data-pn=container] > [data-pn=identity]`),
+			navigationElement: panelElement.querySelector(`:scope > [data-pn=container] > [data-pn=navigation]`),
+			actionsElement: panelElement.querySelector(`:scope > [data-pn=container] > [data-pn=actions]`)
 		}
 
 		if (data.identity)
