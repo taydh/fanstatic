@@ -96,6 +96,9 @@
 
 			return { [tagFill]: items };
 		},
+		tag: function() {
+			return this.element(...arguments);
+		},
 		div: function(attributes = {}, items = true) {
 			if (('object' != typeof attributes) || Array.isArray(attributes)) {
 				items = attributes;
