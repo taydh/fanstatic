@@ -5,7 +5,7 @@
 		const panelScope = data.panelScope || fanstatic.resolvePanelScope(url);
 		const outerScope = data.scope || panelScope;
 
-		const basicUnitController = await fanstatic.insertPanel(roof, 'block.base-block', {
+		const basicUnitController = await fanstatic.insertPanel(roof, 'block.unit', {
 			panelScope: panelScope,
 			scope: outerScope,
 			cap: design.element('img', {src: data.icon}),

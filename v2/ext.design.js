@@ -33,6 +33,8 @@
 		renderJhtm: function(arr) {
 			var html = '';
 			
+			if ('boolean' == typeof(arr)) return html;
+			if ('number' == typeof(arr)) return String(arr);
 			if (!Array.isArray(arr) && typeof arr === 'object') arr = [arr];
 			if (1 == arr.length && null == arr[0]) return html;
 			
