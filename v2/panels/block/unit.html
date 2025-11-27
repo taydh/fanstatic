@@ -1,0 +1,102 @@
+<script>
+	const design = fanstatic.design;
+
+	return async function (roof, data = {}, url) {
+		const panelScope = data.panelScope || fanstatic.resolvePanelScope(url);
+		const scope = data.scope || panelScope;
+
+		roof.innerHTML = fanstatic.renderJhtm([
+			design.unit({data: { pn:  { scope: scope, panel: panelScope }}}, {
+				mode: data.mode,
+				cap: !!data.cap,
+				head: !!data.head,
+				body: !!data.body,
+				foot: !!data.foot,
+			})
+		]);
+
+		const panelElement = roof.children[0];
+
+		if (data.id) panelElement.id = data.id;
+
+		let capProm, headProm, bodyProm, footProm;
+		
+		if (data.cap) {
+			const target = panelElement.querySelector('[data-ds=cap]')
+			target.dataset.pn = 'cap';
+
+			if (data.cap instanceof fanstatic.panel) {
+				capProm = fanstatic.appendPanel(target, data.cap.panelScope, data.cap.options, data.cap.optMode);
+			}
+			else if (data.cap instanceof fanstatic.template) {
+				capProm = fanstatic.appendPanel(target, data.cap.url, data.cap.options, data.cap.optMode);
+			}
+			else {
+				target.innerHTML = fanstatic.renderJhtm(data.cap);
+			}
+		}
+		
+		if (data.head) {
+			const target = panelElement.querySelector('[data-ds=head]');
+			target.dataset.pn = 'head';
+			
+			if (data.head instanceof fanstatic.panel) {
+				headProm = fanstatic.appendPanel(target, data.head.panelScope, data.head.options, data.head.optMode);
+			}
+			else if (data.head instanceof fanstatic.template) {
+				headProm = fanstatic.appendPanel(target, data.head.url, data.head.options, data.head.optMode);
+			}
+			else {
+				target.innerHTML = fanstatic.renderJhtm(data.head);
+			}
+		}
+
+		if (data.body) {
+			const target = panelElement.querySelector('[data-ds=body]');
+			target.dataset.pn = 'body';
+
+			if (data.body instanceof fanstatic.panel) {
+				bodyProm = fanstatic.appendPanel(target, data.body.panelScope, data.body.options, data.body.optMode);
+			}
+			else if (data.body instanceof fanstatic.template) {
+				bodyProm = fanstatic.appendPanel(target, data.body.url, data.body.options, data.body.optMode);
+			}
+			else {
+				target.innerHTML = fanstatic.renderJhtm(data.body);
+			}
+		}
+
+		if (data.foot) {
+			const target = panelElement.querySelector('[data-ds=foot]')
+			target.dataset.pn = 'foot';
+
+			if (data.foot instanceof fanstatic.panel) {
+				footProm = fanstatic.appendPanel(target, data.foot.panelScope, data.foot.options, data.foot.optMode);
+			}
+			else if (data.foot instanceof fanstatic.template) {
+				footProm = fanstatic.appendPanel(target, data.foot.url, data.foot.options, data.foot.optMode);
+			}
+			else {
+				target.innerHTML = fanstatic.renderJhtm(data.foot);
+			}
+		}
+
+		panelElement.querySelectorAll(':scope > [data-ds]').forEach(elem => elem.removeAttribute('data-ds'));
+		panelElement.removeAttribute('data-ds');
+
+		if (!capProm) capProm = new Promise(rs => rs(null));
+		if (!headProm) headProm = new Promise(rs => rs(null));
+		if (!bodyProm) bodyProm = new Promise(rs => rs(null));
+		if (!footProm) footProm = new Promise(rs => rs(null));
+
+		const resolves = await Promise.all([capProm, headProm, bodyProm, footProm]);
+
+		this.controller = {
+			panelElement: panelElement,
+			capController: resolves[0],
+			headController: resolves[1],
+			bodyController: resolves[2],
+			footController: resolves[3],
+		};
+	};
+</script>

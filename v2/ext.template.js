@@ -128,36 +128,57 @@
 			return document.getElementById(this.settings.local_area_id)?.querySelector(`template[data-url="${url}"]`)
 		},
 
+		_templateCustomerMap: new Map(),
+
 		_loadTemplate: async function(urlRel, opt){
 			let hasError = false
 			let tpl = this._getTemplateElement(urlRel)
+			
+			if (!tpl) {
+				const templateCustomerMap = fanstatic._templateCustomerMap;
 
-			try {
-				if (!tpl) {
-					/* fetch external template */
-					const text = await this.fetchText(urlRel, opt)
-					
-					tpl = document.createElement('template')
-					tpl.innerHTML = text
-					tpl.setAttribute('data-url', urlRel)
+				return new Promise(resolve => {
+					window.addEventListener('fanstatic.template_loaded:' + urlRel, () => {
+						templateCustomerMap.get(urlRel).count--;
+						
+						resolve(this._getTemplateElement(urlRel));
+					});
 
-					let fanArea = document.getElementById(this.settings.local_area_id)
+					if (!templateCustomerMap.has(urlRel)) {
+						templateCustomerMap.set(urlRel, { count: 1 });
 
-					if (!fanArea) {
-						fanArea = document.createElement('div')
-						fanArea.id = this.settings.local_area_id
-						document.body.append(fanArea)
+						try {
+							/* fetch external template */
+							this.fetchText(urlRel, opt).then(text => {
+								tpl = document.createElement('template')
+								tpl.innerHTML = text
+								tpl.setAttribute('data-url', urlRel)
+
+								let fanArea = document.getElementById(this.settings.local_area_id)
+
+								if (!fanArea) {
+									fanArea = document.createElement('div')
+									fanArea.id = this.settings.local_area_id
+									document.body.append(fanArea)
+								}
+
+								fanArea.appendChild(tpl)
+								window.dispatchEvent(new CustomEvent('fanstatic.template_loaded:' + urlRel));
+							})
+						} catch (error) {
+							hasError = error
+							if (error._part) throw error
+							else console.error(error.message, urlRel);
+						}
 					}
-
-					fanArea.appendChild(tpl)
-				}
-			} catch (error) {
-				hasError = error
-				if (error._part) throw error
-				else console.error(error.message, urlRel);
+					else {
+						templateCustomerMap.get(urlRel).count++;
+					}
+				});
 			}
-
-			return tpl
+			else {
+				return tpl;	
+			}
 		},
 
 		_resolvePartial: function(tplOrUrl, isMustache = false) {
@@ -457,6 +478,12 @@
 		insertTemplate: function(...args){ return this.insert(...args); },
 		replaceTemplate: function(...args){ return this.replace(...args); },
 
+		template: function(url, opt, optMode = 0) {
+			this.url = url;
+			this.options = opt;
+			this.optMode = optMode;
+		},
+
 		/* panel */
 
 		resolvePanelScope: function(path) {
@@ -486,6 +513,12 @@
 		},
 		afterPanel: async function(el, panelScope, opt, optMode = 2) {
 			return await fanstatic.after(el, this.resolvePanelPath(panelScope), opt, optMode);
+		},
+
+		panel: function(panelScope, opt, optMode = 2) {
+			this.panelScope = panelScope;
+			this.options = opt;
+			this.optMode = optMode;
 		},
 
 		removeLocalizedTemplates: function() {
