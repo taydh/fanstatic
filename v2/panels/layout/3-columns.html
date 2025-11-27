@@ -25,28 +25,50 @@
 
 		this.controller = {
 			panelElement: panelElement,
-			headeElement: headerElement,
+			headerElement: headerElement,
 			startColumnElement: columnsElement.children[0],
 			mainColumnElement: columnsElement.children[1],
 			endColumnElement: columnsElement.children[2],
 			footerElement: footerElement,
 		}
 
-		const headerProm = data.headerPanel 
-			? fanstatic.appendPanel(headerElement, data.headerPanel.panel, data.headerPanel.data)
-			: new Promise(resolve => resolve(null));
-		const startProm = data.startColumnPanel
-			? fanstatic.appendPanel(this.controller.startColumnElement, data.startColumnPanel.panel, data.startColumnPanel.data)
-			: new Promise(resolve => resolve(null));
-		const mainProm = data.mainColumnPanel
-			? fanstatic.appendPanel(this.controller.mainColumnElement, data.mainColumnPanel.panel, data.mainColumnPanel.data)
-			: new Promise(resolve => resolve(null));
-		const endProm = data.endColumnPanel
-			? fanstatic.appendPanel(this.controller.endColumnElement, data.endColumnPanel.panel, data.endColumnPanel.data)
-			: new Promise(resolve => resolve(null));
-		const footerProm = data.footerPanel
-			? fanstatic.appendPanel(footerElement, data.footerPanel.panel, data.footerPanel.data)
-			: new Promise(resolve => resolve(null));
+		let headerProm, startProm, mainProm, endProm, footerProm;
+
+		if (data.header) {
+			if (data.header instanceof fanstatic.panel) {
+				headerProm = fanstatic.appendPanel(headerElement, data.header.panelScope, data.header.options, data.header.optMode); 
+			}
+		}
+
+		if (data.startColumn) {
+			if (data.header instanceof fanstatic.panel) {
+				startProm = fanstatic.appendPanel(headerElement, data.startColumn.panelScope, data.startColumn.options, data.startColumn.optMode); 
+			}
+		}
+
+		if (data.mainColumn) {
+			if (data.header instanceof fanstatic.panel) {
+				mainProm = fanstatic.appendPanel(headerElement, data.mainColumn.panelScope, data.mainColumn.options, data.mainColumn.optMode); 
+			}
+		}
+
+		if (data.endColumn) {
+			if (data.header instanceof fanstatic.panel) {
+				endProm = fanstatic.appendPanel(headerElement, data.endColumn.panelScope, data.endColumn.options, data.endColumn.optMode); 
+			}
+		}
+
+		if (data.footer) {
+			if (data.header instanceof fanstatic.panel) {
+				footerProm = fanstatic.appendPanel(headerElement, data.footer.panelScope, data.footer.options, data.footer.optMode); 
+			}
+		}
+
+		if (!headerProm) headerProm = new Promise(resolve => resolve(null));
+		if (!startProm) startProm = new Promise(resolve => resolve(null));
+		if (!mainProm) mainProm = new Promise(resolve => resolve(null));
+		if (!endProm) endProm = new Promise(resolve => resolve(null));
+		if (!footerProm) footerProm = new Promise(resolve => resolve(null));
 
 		const resolves = await Promise.all([headerProm, startProm, mainProm, endProm, footerProm]);
 

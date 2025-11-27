@@ -1,40 +1,39 @@
 <script>
 	const design = fanstatic.design;
-	const controller = {};
 
 	return async function (roof, data = {}, url) {
 		const panelScope = data.panelScope || fanstatic.resolvePanelScope(url);
 		const scope = data.scope || panelScope;
-		const mode = data.mode || 0;
+		// const mode = data.mode || 0;
 
-		if (1 == mode) { // all
-			if (!data.actions) data.actions = [];
-			if (!data.image) data.image = [];
-		}
-		else if (2 == mode) { // head and body only
-			data.image = false;
-			data.actions = false;
-		}
-		else if (3 == mode) { // head, body, foot
-			if (!data.actions) data.actions = [];
-			data.image = false;
-		}
-		else if (4 == mode) { // cap, head, body
-			if (!data.image) data.image = [];
-			data.actions = false;
-		}
+		// if (1 == mode) { // all
+		// 	if (!data.actions) data.actions = [];
+		// 	if (!data.image) data.image = [];
+		// }
+		// else if (2 == mode) { // head and body only
+		// 	data.image = false;
+		// 	data.actions = false;
+		// }
+		// else if (3 == mode) { // head, body, foot
+		// 	if (!data.actions) data.actions = [];
+		// 	data.image = false;
+		// }
+		// else if (4 == mode) { // cap, head, body
+		// 	if (!data.image) data.image = [];
+		// 	data.actions = false;
+		// }
 
 		if (data.subjects && !Array.isArray(data.subjects)) data.subjects = [data.subjects];
 		if (data.actions && !Array.isArray(data.actions)) data.actions = [data.actions];
 
-		await fanstatic.insertPanel(roof, 'block.base-block', {
+		await fanstatic.insertPanel(roof, 'block.unit', {
 				id: data.id,
 				scope: scope,
 				panelScope: panelScope,
-				mode: mode,
+				mode: data.mode,
 				cap: data.image ? design.element('img', {src: data.image}) : false,
 				head: data.subjects ? data.subjects.map(jhtm => design.div([jhtm])) : false,
-				body: data.message ? data.message : false,
+				body: !!data.message,
 				foot: data.actions ? data.actions.map(jhtm => design.div([jhtm])) : false,
 			}
 		);
@@ -47,9 +46,10 @@
 		if (data.actions) panelElement.querySelector(':scope > [data-pn=foot]').dataset.pn = 'actions';
 
 		panelElement.dataset.pnPanel = panelScope;
+		panelElement.dataset.pnScope = scope;
 
-		controller.panelElement = panelElement;
-
-		this.controller = controller;
+		this.controller = {
+			panelElement: panelElement,
+		};
 	};
 </script>

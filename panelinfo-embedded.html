@@ -635,36 +635,21 @@
 				<script>
 					return async function(roof, data) {
 						await fanstatic.appendPanel(roof, 'layout.3-columns', {
-							headerPanel: {
-								panel: 'block.base-block',
-								data: {
-									head: 'Header Panel'
-								}
-							},
-							startColumnPanel: {
-								panel: 'block.base-block',
-								data: {
-									body: 'Start Panel'
-								}
-							},
-							mainColumnPanel: {
-								panel: 'block.base-block',
-								data: {
-									body: 'Main Panel'
-								}
-							},
-							endColumnPanel: {
-								panel: 'block.base-block',
-								data: {
-									body: 'End Panel'
-								}
-							},
-							footerPanel: {
-								panel: 'block.base-block',
-								data: {
-									foot: 'Footer Panel'
-								}
-							}
+							header: new fanstatic.panel('block.unit', {
+								head: 'Header Panel'
+							}),
+							startColumn: new fanstatic.panel('block.unit', {
+								body: 'Start Panel'
+							}),
+							mainColumn: new fanstatic.panel('block.unit', {
+								body: 'Main Panel'
+							}),
+							endColumn: new fanstatic.panel('block.unit', {
+								body: 'End Panel'
+							}),
+							footer: new fanstatic.panel('block.unit', {
+								foot: 'Footer Panel'
+							}),
 						})
 					}
 				</script>
