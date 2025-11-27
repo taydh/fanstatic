@@ -41,26 +41,26 @@
 		}
 
 		if (data.startColumn) {
-			if (data.header instanceof fanstatic.panel) {
-				startProm = fanstatic.appendPanel(headerElement, data.startColumn.panelScope, data.startColumn.options, data.startColumn.optMode); 
+			if (data.startColumn instanceof fanstatic.panel) {
+				startProm = fanstatic.appendPanel(this.controller.startColumnElement, data.startColumn.panelScope, data.startColumn.options, data.startColumn.optMode); 
 			}
 		}
 
 		if (data.mainColumn) {
-			if (data.header instanceof fanstatic.panel) {
-				mainProm = fanstatic.appendPanel(headerElement, data.mainColumn.panelScope, data.mainColumn.options, data.mainColumn.optMode); 
+			if (data.mainColumn instanceof fanstatic.panel) {
+				mainProm = fanstatic.appendPanel(this.controller.mainColumnElement, data.mainColumn.panelScope, data.mainColumn.options, data.mainColumn.optMode); 
 			}
 		}
 
 		if (data.endColumn) {
-			if (data.header instanceof fanstatic.panel) {
-				endProm = fanstatic.appendPanel(headerElement, data.endColumn.panelScope, data.endColumn.options, data.endColumn.optMode); 
+			if (data.endColumn instanceof fanstatic.panel) {
+				endProm = fanstatic.appendPanel(this.controller.endColumnElement, data.endColumn.panelScope, data.endColumn.options, data.endColumn.optMode); 
 			}
 		}
 
 		if (data.footer) {
-			if (data.header instanceof fanstatic.panel) {
-				footerProm = fanstatic.appendPanel(headerElement, data.footer.panelScope, data.footer.options, data.footer.optMode); 
+			if (data.footer instanceof fanstatic.panel) {
+				footerProm = fanstatic.appendPanel(footerElement, data.footer.panelScope, data.footer.options, data.footer.optMode); 
 			}
 		}
 
