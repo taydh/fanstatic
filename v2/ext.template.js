@@ -139,12 +139,15 @@
 
 				return new Promise(resolve => {
 					window.addEventListener('fanstatic.template_loaded:' + urlRel, () => {
-						templateCustomerMap.get(urlRel).count--;
+						if (!tpl) {
+							tpl = this._getTemplateElement(urlRel);
+							templateCustomerMap.get(urlRel).count--;
+						}
 						
-						resolve(this._getTemplateElement(urlRel));
+						resolve(tpl);
 					});
 
-					if (!templateCustomerMap.has(urlRel)) {
+					if (!templateCustomerMap.has(urlRel) || 0 == templateCustomerMap.get(urlRel).count) {
 						templateCustomerMap.set(urlRel, { count: 1 });
 
 						try {
@@ -521,10 +524,25 @@
 			this.optMode = optMode;
 		},
 
+		applyTemplate: async function(target, obj, insertFn) {
+			if (obj instanceof fanstatic.panel) {
+				insertFn = (insertFn || 'append') + 'Panel';
+				return fanstatic[insertFn](target, obj.panelScope, obj.options, obj.optMode);
+			}
+			else if (obj instanceof fanstatic.template) {
+				insertFn = (insertFn || 'append') + 'Template';
+				return fanstatic[insertFn](target, obj.url, obj.options, obj.optMode);
+			}
+
+			return false;
+		},
+
 		removeLocalizedTemplates: function() {
 			const localArea = document.getElementById(this.settings.local_area_id);
 			
 			if (localArea) localArea.remove();
+
+			this._templateCustomerMap.clear();
 		},
 	})
 		

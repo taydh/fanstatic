@@ -23,60 +23,44 @@
 		
 		if (data.cap) {
 			const target = panelElement.querySelector('[data-ds=cap]')
-			target.dataset.pn = 'cap';
 
-			if (data.cap instanceof fanstatic.panel) {
-				capProm = fanstatic.appendPanel(target, data.cap.panelScope, data.cap.options, data.cap.optMode);
-			}
-			else if (data.cap instanceof fanstatic.template) {
-				capProm = fanstatic.appendPanel(target, data.cap.url, data.cap.options, data.cap.optMode);
-			}
-			else {
+			target.dataset.pn = 'cap';
+			capProm = fanstatic.applyTemplate(target, data.cap);
+
+			if (!capProm) {
 				target.innerHTML = fanstatic.renderJhtm(data.cap);
 			}
 		}
 		
 		if (data.head) {
 			const target = panelElement.querySelector('[data-ds=head]');
+
 			target.dataset.pn = 'head';
-			
-			if (data.head instanceof fanstatic.panel) {
-				headProm = fanstatic.appendPanel(target, data.head.panelScope, data.head.options, data.head.optMode);
-			}
-			else if (data.head instanceof fanstatic.template) {
-				headProm = fanstatic.appendPanel(target, data.head.url, data.head.options, data.head.optMode);
-			}
-			else {
+			headProm = fanstatic.applyTemplate(target, data.head);
+
+			if (!headProm) {
 				target.innerHTML = fanstatic.renderJhtm(data.head);
 			}
 		}
 
 		if (data.body) {
 			const target = panelElement.querySelector('[data-ds=body]');
-			target.dataset.pn = 'body';
 
-			if (data.body instanceof fanstatic.panel) {
-				bodyProm = fanstatic.appendPanel(target, data.body.panelScope, data.body.options, data.body.optMode);
-			}
-			else if (data.body instanceof fanstatic.template) {
-				bodyProm = fanstatic.appendPanel(target, data.body.url, data.body.options, data.body.optMode);
-			}
-			else {
+			target.dataset.pn = 'body';
+			bodyProm = fanstatic.applyTemplate(target, data.body);
+
+			if (!bodyProm) {
 				target.innerHTML = fanstatic.renderJhtm(data.body);
 			}
 		}
 
 		if (data.foot) {
 			const target = panelElement.querySelector('[data-ds=foot]')
-			target.dataset.pn = 'foot';
 
-			if (data.foot instanceof fanstatic.panel) {
-				footProm = fanstatic.appendPanel(target, data.foot.panelScope, data.foot.options, data.foot.optMode);
-			}
-			else if (data.foot instanceof fanstatic.template) {
-				footProm = fanstatic.appendPanel(target, data.foot.url, data.foot.options, data.foot.optMode);
-			}
-			else {
+			target.dataset.pn = 'foot';
+			footProm = fanstatic.applyTemplate(target, data.foot);
+
+			if (!footProm) {
 				target.innerHTML = fanstatic.renderJhtm(data.foot);
 			}
 		}
