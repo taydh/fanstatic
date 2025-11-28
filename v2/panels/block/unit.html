@@ -25,44 +25,44 @@
 			const target = panelElement.querySelector('[data-ds=cap]')
 
 			target.dataset.pn = 'cap';
-			capProm = fanstatic.applyTemplate(target, data.cap);
 
-			if (!capProm) {
+			if (fanstatic.instanceOfTemplate(data.cap))
+				capProm = fanstatic.applyTemplate(target, data.cap);
+			else
 				target.innerHTML = fanstatic.renderJhtm(data.cap);
-			}
 		}
 		
 		if (data.head) {
 			const target = panelElement.querySelector('[data-ds=head]');
 
 			target.dataset.pn = 'head';
-			headProm = fanstatic.applyTemplate(target, data.head);
 
-			if (!headProm) {
+			if (fanstatic.instanceOfTemplate(data.head))
+				headProm = fanstatic.applyTemplate(target, data.head);
+			else
 				target.innerHTML = fanstatic.renderJhtm(data.head);
-			}
 		}
 
 		if (data.body) {
 			const target = panelElement.querySelector('[data-ds=body]');
 
 			target.dataset.pn = 'body';
-			bodyProm = fanstatic.applyTemplate(target, data.body);
 
-			if (!bodyProm) {
+			if (fanstatic.instanceOfTemplate(data.body))
+				bodyProm = fanstatic.applyTemplate(target, data.body);
+			else
 				target.innerHTML = fanstatic.renderJhtm(data.body);
-			}
 		}
 
 		if (data.foot) {
 			const target = panelElement.querySelector('[data-ds=foot]')
 
 			target.dataset.pn = 'foot';
-			footProm = fanstatic.applyTemplate(target, data.foot);
 
-			if (!footProm) {
+			if (fanstatic.instanceOfTemplate(data.foot))
+				footProm = fanstatic.applyTemplate(target, data.foot);
+			else
 				target.innerHTML = fanstatic.renderJhtm(data.foot);
-			}
 		}
 
 		panelElement.querySelectorAll(':scope > [data-ds]').forEach(elem => elem.removeAttribute('data-ds'));

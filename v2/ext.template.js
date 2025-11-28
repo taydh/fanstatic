@@ -524,6 +524,10 @@
 			this.optMode = optMode;
 		},
 
+		instanceOfTemplate: function(obj) {
+			return (obj instanceof fanstatic.template) || (obj instanceof fanstatic.panel);
+		},
+
 		applyTemplate: async function(target, obj, insertFn) {
 			if (obj instanceof fanstatic.panel) {
 				insertFn = (insertFn || 'append') + 'Panel';
