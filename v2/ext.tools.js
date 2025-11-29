@@ -41,19 +41,33 @@
 
 		/* classfix */
 
-		assignClassfix: function(obj) {
-			if (!this._classfix) this._classfix = {};
-
-			Object.assign(this._classfix, obj);
+		_classfixes: {
+			general: {}
 		},
 
-		getClassfix: function() {
-			return this._classfix;
+		assignClassfix: function(obj, name="general") {
+			Object.assign(this._classfixes[name], obj);
 		},
 
-		applyClassfix: function(roof, source = null, name = null) {
-			source = source || this.getClassfix();
+		setClassfix: function(name, obj) {
+			this._classfixes[name] = obj;
+		},
 
+		getClassfix: function(name="general") {
+			return this._classfixes[name];
+		},
+
+		removeClassfix: function(name) {
+			delete this._classfixes[name];
+		},
+
+		applyClassfixes: function(roof, label) {
+			Object.entries(this._classfixes).forEach(([k,o]) => {
+				this.applyClassfix(roof, o, `(${k}) ` + label);
+			});
+		},
+
+		applyClassfix: function(roof, source, label="") {
 			const elems = []
 			const sourceArr = source ? Object.entries(source) : null;
 
@@ -78,11 +92,11 @@
 				// }
 
 				if (this.settings.log_render) 
-					console.log(`🎨 classfix evaluated at ${name}:`, sourceArr.length, 'applied:', elems.length);
+					console.log(`🎨 classfix evaluated at ${label}:`, sourceArr.length, 'applied:', elems.length);
 			}
 			else {
 				if (this.settings.log_render) 
-					console.log(`🎨 no classfix evaluated at ${name}`);
+					console.log(`🎨 no classfix evaluated at ${label}`);
 			}
 		},
 

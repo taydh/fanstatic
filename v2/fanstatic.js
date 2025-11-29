@@ -275,6 +275,14 @@
 			return isArray ? result : result[0];
 		},
 
+		fetchYaml: async function(urlRel, opt = {}) {
+			let isArray = Array.isArray(urlRel)
+			let result = await this.fetchUrls(isArray ? urlRel : [urlRel], Object.assign(opt, { type: 'text' }))
+			result = result.map(text => jsyaml.load(text));
+
+			return isArray ? result : result[0];
+		},
+
 		/* url */
 
 		getLandingPath: function(appendSlash = false) {

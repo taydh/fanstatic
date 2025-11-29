@@ -331,9 +331,11 @@
 			if (scriptOpt.classfix) this.applyClassfix(roof, scriptOpt.classfix, url);
 
 			/* 3rd step: oninsert and postinsert */
+			let targetParentElement = null;
 
 			if (insertFn === 'replaceElement') {
 				target['after'](...tmp.childNodes);
+				targetParentElement = target.parentElement;
 				target.remove();
 			}
 			else {
@@ -344,7 +346,7 @@
 			
 			/* roof changed after insert */
 
-			roof = ['after','before','replaceElement'].includes(insertFn) ? target.parentElement : target
+			roof = ['after','before','replaceElement'].includes(insertFn) ? (targetParentElement || target.parentElement) : target
 
 			if (scriptOpt.oninsert) {
 				await scriptOpt.oninsert(nodes, opt.data, part.url);
@@ -368,12 +370,12 @@
 
 			if (document.body.contains(roof)) {
 				/* run commands */
-				await this.searchOnPlaceAndRun(document.body)
+				await this.searchOnPlaceAndRun(roof)
 
 				if (this.settings.log_process) console.log('🎬 placed:', part.url)
 
 				/* apply global classfix before onplace method called */
-				this.applyClassfix(document.body);
+				this.applyClassfixes(roof, url);
 
 				/* execute onplace queue, this allow override global classfix when necessary */
 				if (this._onplaceQueue.length > 0) {
