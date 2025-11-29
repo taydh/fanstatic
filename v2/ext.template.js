@@ -541,6 +541,15 @@
 			return false;
 		},
 
+		applyContent: function(target, content) {
+			if (fanstatic.instanceOfTemplate(content)){
+				return fanstatic.applyTemplate(target, content);
+			} else {
+				target.innerHTML = fanstatic.renderJhtm ? fanstatic.renderJhtm(content) : content;
+				return new Promise(rs => rs(null));
+			}
+		},
+
 		removeLocalizedTemplates: function() {
 			const localArea = document.getElementById(this.settings.local_area_id);
 			

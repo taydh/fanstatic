@@ -229,8 +229,9 @@
 					url = urlOpt.url
 				}
 
+				/* simple filename is an invalid url, assign base URI instead */
 				if (!url.startsWith('http') && url[0] != '/') {
-					url = this.settings.base_url + url
+					url = document.baseURI + url
 				}
 
 				/* resolve trail */

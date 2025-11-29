@@ -13,6 +13,9 @@
 		));
 
 		const panelElement = roof.children[0];
+
+		if (data.id) panelElement.id = data.id;
+
 		const itemNodes = panelElement.querySelectorAll('[data-ds=item]');
 		const placeholderNodes = panelElement.querySelectorAll('[data-ds-placeholder]');
 		

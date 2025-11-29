@@ -47,6 +47,7 @@
 					html += String(entry);  /* sanitize html or object in user data orchestration level */
 					continue;
 				}
+
 				if (false === !!entry) {
 					continue;
 				}
