@@ -4,10 +4,10 @@
 	return async function (roof, data = {}, url) {
 		const panelScope = data.panelScope || fanstatic.resolvePanelScope(url);
 		const scope = data.scope || panelScope;
-		const panel = data.panel || 'block.actionable-block';
+		const itemControllers = [];
 
 		roof.innerHTML = fanstatic.renderJhtm(design.grid(
-			{data: {pn: {scope:scope, panel:panelScope, role:'items'}}},
+			{data: {pn: {scope:scope, panel:panelScope}}, 'data-pn': 'items'},
 			{},
 			data.items ? data.items.map(item => design.placeholder()) : []
 		));
@@ -22,22 +22,19 @@
 		panelElement.removeAttribute('data-ds');
 
 		for (const i in data.items) {
-			itemNodes[i].dataset.pnRole = 'item';
+			itemNodes[i].dataset.pn = 'item';
 			itemNodes[i].removeAttribute('data-ds');
 
-			const itemData = (data.items[i].optMode == 2) 
-				? data.items[i].options 
-				: ( data.items[i].optMode == 0 
-					? data.items[i].data || {} 
-					: {} );
+			const template = data.items[i];
+			
+			template.assignData({ panelScope: null, scope: scope });
 
-			Object.assign(itemData, { panelScope: null, scope: scope });
-
-			await fanstatic.applyTemplate(placeholderNodes[i], data.items[i], 'replace');
+			itemControllers.push(await fanstatic.applyTemplate(placeholderNodes[i], template, 'replace'));
 		}
 
 		this.controller = {
 			panelElement: panelElement,
+			itemControllers: itemControllers,
 		};
 	};
 </script>

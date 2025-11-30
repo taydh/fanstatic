@@ -124,6 +124,12 @@
 	});
 
 	Object.assign(fanstatic, {
+		TEMPLATE_OPTMODE: {
+			default: 0,
+			model: 1,
+			data: 2,
+		},
+		
 		_getTemplateElement: function(url) {
 			return document.getElementById(this.settings.local_area_id)?.querySelector(`template[data-url="${url}"]`)
 		},
@@ -485,8 +491,17 @@
 
 		template: function(url, opt, optMode = 0) {
 			this.url = url;
-			this.options = opt;
+			this.options = opt || {};
 			this.optMode = optMode;
+
+			this.assignData = function(assignment) {
+				if (fanstatic.TEMPLATE_OPTMODE.data == this.optMode) {
+					Object.assign(this.options, assignment);
+				}
+				if (fanstatic.TEMPLATE_OPTMODE.default == this.optMode) {
+					this.options.data = Object.assign(this.options.data || {}, assignment);
+				}
+			};
 		},
 
 		/* panel */
@@ -522,8 +537,17 @@
 
 		panel: function(panelScope, opt, optMode = 2) {
 			this.panelScope = panelScope;
-			this.options = opt;
+			this.options = opt || {};
 			this.optMode = optMode;
+
+			this.assignData = function(assignment) {
+				if (fanstatic.TEMPLATE_OPTMODE.data == this.optMode) {
+					Object.assign(this.options, assignment);
+				}
+				if (fanstatic.TEMPLATE_OPTMODE.default == this.optMode) {
+					this.options.data = Object.assign(this.options.data || {}, assignment);
+				}
+			};
 		},
 
 		instanceOfTemplate: function(obj) {

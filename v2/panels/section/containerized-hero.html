@@ -5,16 +5,13 @@
 		const panelScope = data.panelScope || fanstatic.resolvePanelScope(url);
 		const scope = data.scope || panelScope;
 
-		const subPanelData = Object.assign(data, {
+		const subContentData = Object.assign(data, {
 			panelScope: panelScope,
 			scope: scope,
-			subPanel: {
-				panel: 'block.actionable-block',
-				data: data
-			}
+			subContent: new fanstatic.panel('block.actionable', data)
 		});
 
-		const sectionController = await fanstatic.insertPanel(roof, 'section.containerized-subpanel', subPanelData);
+		const sectionController = await fanstatic.insertPanel(roof, 'section.containerized-subcontent', subContentData);
 
 		sectionController.subPanelController.panelElement.dataset.pn = 'hero_block';
 		this.controller = sectionController;

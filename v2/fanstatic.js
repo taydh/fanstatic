@@ -30,7 +30,8 @@
 	
 	var fanstatic = {
 		settings: {
-			base_url: 'https://fanstatic.annexdesk.com/',
+			current_script: document.currentScript,
+			base_url: document.currentScript.dataset.baseUrl ? document.currentScript.dataset.baseUrl : 'https://fanstatic.annexdesk.com/',
 			version: 'v2',
 			trail_key: '_',
 			trail_span: '1d', //dhms

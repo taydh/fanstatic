@@ -4,23 +4,27 @@
 	return async function (roof, data = {}, url) {
 		const panelScope = data.panelScope || fanstatic.resolvePanelScope(url);
 		const scope = data.scope || panelScope;
-		const stackPanel = data.stackPanel || 'block.actionable-block';
 		const itemControllers = [];
 
-		roof.innerHTML = fanstatic.renderJhtm(design.axis(
-			{data: {pn: {scope:scope, panel:panelScope }}, 'data-pn': 'items'}, 
+		roof.innerHTML = fanstatic.renderJhtm(design.stack(
+			{data: {pn: {scope:scope, panel:panelScope }}, 'data-pn': 'items'},
+			{}, 
 			data.items ? data.items.map(item => design.placeholder('panel')) : [],
 		));
 
 		const panelElement = roof.children[0];
 
+		if (data.id) panelElement.id = data.id;
+
 		const placeholders = roof.querySelectorAll('[data-ds-placeholder=panel]')
 
 		if (data.items) {
 			for (let i=0; i<data.items.length; i++) {
-				itemControllers.push(await fanstatic.replacePanel(placeholders[i], stackPanel, 
-					Object.assign(data.items[i], { scope: scope })
-				));
+				const template = data.items[i];
+
+				template.assignData({ panelScope: null, scope: scope });
+
+				itemControllers.push(await fanstatic.applyTemplate(placeholders[i], template, 'replace'));
 			}
 		}
 

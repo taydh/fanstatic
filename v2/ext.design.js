@@ -158,6 +158,19 @@
 
 			return result;
 		},
+		wrap: function(attributes = {}, item = true) {
+			if (('object' != typeof attributes) || Array.isArray(attributes)) {
+				item = attributes;
+				attributes = {};
+			}
+
+			let tagFill = ('div data-ds="wrap" ' +  _toAttributesString(attributes));
+			let result = {};
+
+			result[tagFill] = item;
+
+			return result;
+		},
 		axis: function(attributes = {}, model) {
 			if (Array.isArray(attributes)) {
 				model = attributes;
@@ -170,19 +183,6 @@
 
 			result[tagFill] = items;
 			
-			return result;
-		},
-		wrap: function(attributes = {}, item = true) {
-			if (('object' != typeof attributes) || Array.isArray(attributes)) {
-				item = attributes;
-				attributes = {};
-			}
-
-			let tagFill = ('div data-ds="wrap" ' +  _toAttributesString(attributes));
-			let result = {};
-
-			result[tagFill] = item;
-
 			return result;
 		},
 		list: function(attributes = {}, secondaryAttributes = {}, model) {
@@ -200,6 +200,25 @@
 			result[tagFill] = items.map(item => {
 				let obj = {};
 				obj[itemTag + ' data-ds="item" ' +  _toAttributesString(secondaryAttributes)] = item;
+
+				return obj;
+			});
+
+			return result;
+		},
+		stack: function(attributes = {}, secondaryAttributes = {}, model) {
+			if (Array.isArray(attributes)) {
+				model = attributes;
+				attributes = {};
+			}
+
+			let tagFill = ('div data-ds="stack" ' +  _toAttributesString(attributes));
+			let result = {};
+			let items = (Array.isArray(model) ? model : model.items) || [];
+
+			result[tagFill] = items.map(item => {
+				let obj = {};
+				obj['div data-ds="item" ' +  _toAttributesString(secondaryAttributes)] = item;
 
 				return obj;
 			});

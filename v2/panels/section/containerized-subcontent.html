@@ -1,0 +1,33 @@
+<script>
+	const design = fanstatic.design;
+
+	return async function (roof, data = {}, url) {
+			const panelScope = data.panelScope || fanstatic.resolvePanelScope(url);
+			const scope = data.scope || panelScope;
+
+			const sectionController = await fanstatic.insertPanel(roof, 'section.containerized', 
+				Object.assign(data, {
+					panelScope: panelScope,
+					scope: scope,
+				})
+			);
+
+			if (fanstatic.instanceOfTemplate(data.subContent)) {
+				data.subContent.assignData({ panelScope: null, scope: scope });
+			}
+
+			const subContentTarget = sectionController.contentBlockController.panelElement.querySelector('[data-pn=content]')
+			const subContentController = await fanstatic.applyContent(subContentTarget, data.subContent);
+			
+			// await fanstatic.insertPanel(subContentTarget, subContent,
+			// 	Object.assign(data.subPanel.data, {
+			// 		panelScope: null,
+			// 		scope:scope,
+			// 	})
+			// );
+
+			sectionController.subPanelController = subContentController;
+			sectionController.subPanelController.panelElement.dataset.pn = 'subcontent';
+			this.controller = sectionController;
+	};
+</script>

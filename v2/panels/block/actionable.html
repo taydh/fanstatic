@@ -33,7 +33,7 @@
 				mode: data.mode,
 				cap: data.image ? design.element('img', {src: data.image}) : false,
 				head: data.subjects ? data.subjects.map(jhtm => design.div([jhtm])) : false,
-				body: !!data.message,
+				body: data.message ? data.message : false,
 				foot: data.actions ? data.actions.map(jhtm => design.div([jhtm])) : false,
 			}
 		);
@@ -50,6 +50,8 @@
 
 		this.controller = {
 			panelElement: panelElement,
+			panelScope: panelScope,
+			scope: scope,
 		};
 	};
 </script>

@@ -100,13 +100,13 @@
 
 							const main = document.body.querySelector('main');
 							const panelInfo = usp.get('panel');
-							const prefixSafeList = ['base.', 'block.', 'card.',  'nav.', 'section.', 'layout.'];
+							const prefixSafeList = ['base.', 'block.', 'cluster.', 'card.',  'nav.', 'section.', 'layout.'];
 							const selector = prefixSafeList.map(val => `template[data-url*="${val}"]`).join(',');
 							const safeList = Array.from(document.querySelectorAll(selector)).map(elem => elem.dataset.url);
 
 							if (!safeList.includes(panelInfo)) {
 								// not run
-								console.log('Not in safelist');
+								console.log('Not in safelist or sample not exists');
 							}
 							else {
 								main.dataset.templateUrl = 'panel-info';
@@ -240,74 +240,96 @@
 			<template data-url="block.unit">
 				<script>
 					return async function(roof, data) {
-						await fanstatic.appendPanel(roof, 'block.unit', {
+						const controller = await fanstatic.appendPanel(roof, 'block.unit', {
 							cap: new fanstatic.panel('base.element', fanstatic.design.tag('img', {src: 'https://dummyimage.com/60x60/eee/fff&text=cap'})),
 							head: new fanstatic.panel('base.text', '(head element)'),
 							body: new fanstatic.panel('base.text', '(body element)'),
 							foot: new fanstatic.panel('base.text', '(foot element)'),
 						})
+
+						console.log('block.unit', controller);
 					}
 				</script>
 			</template>
 
-			<template data-url="block.content-block">
+			<template data-url="block.content">
 				<script>
 					return async function(roof, data) {
-						await fanstatic.appendPanel(roof, 'block.content-block', {
-							context: 'block',
+						const controller = await fanstatic.appendPanel(roof, 'block.content', {
+							category: 'block',
 							title: 'CONTENT BLOCK',
 							subtitle: 'This is the content block',
 							caption: 'The content block is heavy on subjects',
 							content: 'This is content',
 							footnote: 'What a content',
 						})
+
+						console.log('block.content', controller);
 					}
 				</script>
 			</template>
 
-			<template data-url="block.actionable-block">
+			<template data-url="block.actionable">
 				<script>
 					return async function(roof, data) {
-						await fanstatic.appendPanel(roof, 'block.actionable-block', {
+						const controller = await fanstatic.appendPanel(roof, 'block.actionable', {
 							image: 'https://dummyimage.com/60x60/eee/fff&text=image',
 							subjects: ['Subject 1', 'Subject 2'],
 							message: 'Message area',
 							actions: ['Action 1', 'Action 2'],
 						})
+
+						console.log('block.actionable', controller);
 					}
 				</script>
 			</template>
 
-			<template data-url="block.stack-blocks">
+			<template data-url="block.identity">
 				<script>
 					return async function(roof, data) {
-						await fanstatic.appendPanel(roof, 'block.stack-blocks', {
-							panel: 'block.actionable-block',
+						const controller = await fanstatic.appendPanel(roof, 'block.identity', {
+							logo: 'https://dummyimage.com/100x100/fff/000&text=image',
+							name: 'Fanstatic',
+						})
+
+						console.log('block.identity', controller);
+					}
+				</script>
+			</template>
+
+			<!-- CLUSTERS -->
+
+			<template data-url="cluster.stack">
+				<script>
+					return async function(roof, data) {
+						const controller = await fanstatic.appendPanel(roof, 'cluster.stack', {
 							items: [
-								{
+								new fanstatic.panel('block.actionable', {
 									image: 'https://dummyimage.com/60x60/eee/fff&text=image',
 									subjects: ['Subject 1', 'Subject 2'],
 									message: 'Message area',
 									actions: ['Action 1', 'Action 2'],
-								},
-								{
+								}),
+								new fanstatic.panel('block.actionable', {
 									image: 'https://dummyimage.com/60x60/eee/fff&text=image',
 									subjects: ['Subject 1', 'Subject 2'],
 									message: 'Message area',
 									actions: ['Action 1', 'Action 2'],
-								},
+								}),
 							]
 						})
+
+						console.log('cluster.stack', controller);
 					}
 				</script>
 			</template>
 
-			<template data-url="block.grid-blocks">
+			<template data-url="cluster.grid">
 				<script>
 					return async function(roof, data) {
-						await fanstatic.appendPanel(roof, 'block.grid-blocks', {
+						const controller = await fanstatic.appendPanel(roof, 'cluster.grid', {
 							items: [
-								new fanstatic.panel('block.actionable-block', {
+								new fanstatic.panel('block.actionable', {
 									image: 'https://dummyimage.com/240x240/eee/fff&text=image',
 									subjects: ['Subject 1', 'Subject 2'],
 									message: 'Message area',
@@ -319,20 +341,13 @@
 								}),
 							]
 						})
+
+						console.log('cluster.grid', controller);
 					}
 				</script>
 			</template>
 
-			<template data-url="block.identity">
-				<script>
-					return async function(roof, data) {
-						await fanstatic.appendPanel(roof, 'block.identity', {
-							logo: 'https://dummyimage.com/100x100/fff/000&text=image',
-							name: 'Fanstatic',
-						})
-					}
-				</script>
-			</template>
+			<!-- CARDS -->
 
 			<template data-url="card.rating">
 				<script>
@@ -483,20 +498,17 @@
 				</script>
 			</template>
 
-			<template data-url="section.containerized-subpanel">
+			<template data-url="section.containerized-subcontent">
 				<script>
 					return async function(roof, data) {
-						await fanstatic.appendPanel(roof, 'section.containerized-subpanel', {
+						await fanstatic.appendPanel(roof, 'section.containerized-subcontent', {
 							title: 'Section Title',
-							subPanel: {
-								panel: 'block.actionable-block',
-								data: {
-									image: 'https://dummyimage.com/60x60/eee/fff&text=image',
-									subjects: ['Subject 1', 'Subject 2'],
-									message: 'Message area',
-									actions: ['Action 1', 'Action 2'],
-								}
-							}
+							subContent: new fanstatic.panel('block.actionable', {
+								image: 'https://dummyimage.com/60x60/eee/fff&text=image',
+								subjects: ['Subject 1', 'Subject 2'],
+								message: 'Message area',
+								actions: ['Action 1', 'Action 2'],
+							}),
 						})
 					}
 				</script>
@@ -521,23 +533,20 @@
 					return async function(roof, data) {
 						await fanstatic.appendPanel(roof, 'section.containerized-stack', {
 							title: 'Section Title',
-							stackPanels: {
-								panel: 'block.actionable-block',
-								items: [
-									{
-										image: 'https://dummyimage.com/60x60/eee/fff&text=image',
-										subjects: ['Subject 1', 'Subject 2'],
-										message: 'Message area',
-										actions: ['Action 1', 'Action 2'],
-									},
-									{
-										image: 'https://dummyimage.com/60x60/eee/fff&text=image',
-										subjects: ['Subject 1', 'Subject 2'],
-										message: 'Message area',
-										actions: ['Action 1', 'Action 2'],
-									},
-								]
-							}
+							subContents: [
+								new fanstatic.panel('block.actionable', {
+									image: 'https://dummyimage.com/60x60/eee/fff&text=image',
+									subjects: ['Subject 1', 'Subject 2'],
+									message: 'Message area',
+									actions: ['Action 1', 'Action 2'],
+								}),
+								new fanstatic.panel('block.actionable', {
+									image: 'https://dummyimage.com/60x60/eee/fff&text=image',
+									subjects: ['Subject 1', 'Subject 2'],
+									message: 'Message area',
+									actions: ['Action 1', 'Action 2'],
+								}),
+							]
 						})
 					}
 				</script>
@@ -547,23 +556,18 @@
 				<script>
 					return async function(roof, data) {
 						await fanstatic.appendPanel(roof, 'section.containerized-grid', {
-							gridPanels: [
-								{
-									panel: 'block.actionable-block',
-									data: {
-										image: 'https://dummyimage.com/240x240/eee/fff&text=image',
-										subjects: ['Subject 1', 'Subject 2'],
-										message: 'Message area',
-										actions: ['Action 1', 'Action 2'],
-									}
-								},
-								{
-									panel: 'block.identity',
-									data: {
-										logo: 'https://dummyimage.com/120x120/eee/fff&text=LOGO',
-										name: 'LOGO'
-									}
-								}
+							title: 'Section Title',
+							subContents: [
+								new fanstatic.panel('block.actionable', {
+									image: 'https://dummyimage.com/240x240/eee/fff&text=image',
+									subjects: ['Subject 1', 'Subject 2'],
+									message: 'Message area',
+									actions: ['Action 1', 'Action 2'],
+								}),
+								new fanstatic.panel('block.identity', {
+									logo: 'https://dummyimage.com/120x120/eee/fff&text=LOGO',
+									name: 'LOGO'
+								})
 							]
 						})
 					}

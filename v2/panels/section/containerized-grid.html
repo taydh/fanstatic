@@ -4,20 +4,16 @@
 	return async function (roof, data, url) {
 		const panelScope = data.panelScope || fanstatic.resolvePanelScope(url);
 		const scope = data.scope || panelScope;
-		const cellPanel = data.stackPanel || 'block.actionable-block';
 		const itemControllers = [];
 		
-		const sectionController = await fanstatic.insertPanel(roof, 'section.containerized-subpanel',
+		const sectionController = await fanstatic.insertPanel(roof, 'section.containerized-subcontent', 
 			Object.assign({}, data, {
 				panelScope: panelScope,
 				scope: scope,
-				subPanel: {
-					panel: 'block.grid-blocks',
-					data: {
-						scope: scope,
-						items: data.gridPanels
-					}
-				}
+				subContent: new fanstatic.panel('cluster.grid', {
+					scope: scope,
+					items: data.subContents
+				})
 			})
 		);
 

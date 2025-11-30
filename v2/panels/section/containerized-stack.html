@@ -4,23 +4,21 @@
 	return async function (roof, data, url) {
 		const panelScope = data.panelScope || fanstatic.resolvePanelScope(url);
 		const scope = data.scope || panelScope;
-		const stackPanel = (data.stackPanels 
-			? data.stackPanels.panel 
-			: { stackPanel: { panel: 'block.actionable-block', items: [] }}
-		) || 'block.actionable-block';
+
+		// const stackPanel = (data.stackPanels 
+		// 	? data.stackPanels.panel 
+		// 	: { stackPanel: { panel: 'block.actionable-block', items: [] }}
+		// ) || 'block.actionable-block';
 
 		const itemControllers = [];
 		
-		const sectionController = await fanstatic.insertPanel(roof, 'section.containerized-subpanel',
+		const sectionController = await fanstatic.insertPanel(roof, 'section.containerized-subcontent',
 			Object.assign(data, {
 				panelScope: panelScope,
 				scope: scope,
-				subPanel: {
-					panel: 'block.stack-blocks',
-					data: {
-						items: data.stackPanels.items
-					}
-				}
+				subContent: new fanstatic.panel('cluster.stack', {
+					items: data.subContents
+				}),
 			})
 		);
 

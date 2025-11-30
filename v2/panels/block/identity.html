@@ -5,7 +5,7 @@
 	const design = fanstatic.design;
 
 	return {
-		onload: function(root, data, url) {
+		onload: async function(root, data, url) {
 			const panelScope = data.panelScope || fanstatic.resolvePanelScope(url);
 			const scope = data.scope || panelScope;
 			const panelElement = root.children[0];
@@ -14,24 +14,34 @@
 			panelElement.setAttribute('data-pn-scope', scope);
 
 			panelElement.innerHTML = fanstatic.renderJhtm([
-				design.element('figure', {style:'display:none', data:{ pn: 'logo'}}, design.element('img')),
+				design.element('figure', {style:'display:none', data:{ pn: 'logo'}}),
 				design.div({style:'display:none', data:{ pn: 'name'}}),
 			]);
 
 			controller.panelElement = panelElement;
-			controller.logoElement = panelElement.querySelector('[data-pn=logo]')
-			controller.nameElement = panelElement.querySelector('[data-pn=name]')
+			controller.logoElement = panelElement.querySelector('[data-pn=logo]');
+			controller.nameElement = panelElement.querySelector('[data-pn=name]');
+			controller.panelScope = panelScope;
+			controller.scope = scope;
+
+			let imgProm, nameProm;
 
 			if (data.logo) {
-				controller.logoElement.querySelector('img').setAttribute('src', data.logo)
+				// controller.logoElement.querySelector('img').setAttribute('src', data.logo)
+				imgProm = fanstatic.applyTemplate(controller.logoElement, new fanstatic.panel('base.image', { src: data.logo }));
 				controller.logoElement.style.display = 'block';
 			}
 
 			if (data.name) {
-				controller.nameElement.innerHTML = data.name
+				nameProm = fanstatic.applyTemplate(controller.nameElement, new fanstatic.panel('base.text', data.name));
 				controller.nameElement.style.display = 'block';
 			}
+
+			const resolves = await Promise.all([imgProm, nameProm]);
+
+			controller.logoImageController = resolves[0];
 		},
+
 		controller: controller
 	}
 </script>

@@ -1,0 +1,12 @@
+<img>
+<script>
+	return function(roof, data) {
+		const imgElement = roof.children[0];
+
+		imgElement.src = fanstatic.sanitizeAttribute(data.src);
+
+		this.controller = {
+			panelElement: imgElement
+		}
+	}
+</script>

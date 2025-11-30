@@ -35,40 +35,24 @@
 		let headerProm, startProm, mainProm, endProm, footerProm;
 
 		if (data.header) {
-			if (data.header instanceof fanstatic.panel) {
-				headerProm = fanstatic.appendPanel(headerElement, data.header.panelScope, data.header.options, data.header.optMode); 
-			}
+			headerProm = fanstatic.applyContent(headerElement, data.header);
 		}
 
 		if (data.startColumn) {
-			if (data.startColumn instanceof fanstatic.panel) {
-				startProm = fanstatic.appendPanel(this.controller.startColumnElement, data.startColumn.panelScope, data.startColumn.options, data.startColumn.optMode); 
-			}
+			startProm = fanstatic.applyContent(this.controller.startColumnElement, data.startColumn);
 		}
 
 		if (data.mainColumn) {
-			if (data.mainColumn instanceof fanstatic.panel) {
-				mainProm = fanstatic.appendPanel(this.controller.mainColumnElement, data.mainColumn.panelScope, data.mainColumn.options, data.mainColumn.optMode); 
-			}
+			mainProm = fanstatic.applyContent(this.controller.mainColumnElement, data.mainColumn);
 		}
 
 		if (data.endColumn) {
-			if (data.endColumn instanceof fanstatic.panel) {
-				endProm = fanstatic.appendPanel(this.controller.endColumnElement, data.endColumn.panelScope, data.endColumn.options, data.endColumn.optMode); 
-			}
+			endProm = fanstatic.applyContent(this.controller.endColumnElement, data.endColumn);
 		}
 
 		if (data.footer) {
-			if (data.footer instanceof fanstatic.panel) {
-				footerProm = fanstatic.appendPanel(footerElement, data.footer.panelScope, data.footer.options, data.footer.optMode); 
-			}
+			footerProm = fanstatic.applyContent(footerElement, data.footer);
 		}
-
-		if (!headerProm) headerProm = new Promise(resolve => resolve(null));
-		if (!startProm) startProm = new Promise(resolve => resolve(null));
-		if (!mainProm) mainProm = new Promise(resolve => resolve(null));
-		if (!endProm) endProm = new Promise(resolve => resolve(null));
-		if (!footerProm) footerProm = new Promise(resolve => resolve(null));
 
 		const resolves = await Promise.all([headerProm, startProm, mainProm, endProm, footerProm]);
 
