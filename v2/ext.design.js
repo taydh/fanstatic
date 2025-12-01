@@ -1,6 +1,6 @@
 {
 	const _toStyleAttributesString = function(attributes) {
-		return Object.entries(attributes).map(([k,v]) => `${k}:${fanstatic.sanitizeAttribute(v)}`).join(';');
+		return Object.entries(attributes).map(([k,v]) => `${k}:${fanstatic.sanitizeAttrValue(v)}`).join(';');
 	}
 
 	const _toDataAttributesString = function(attributes, suffix = '') {
@@ -9,7 +9,7 @@
 				return _toDataAttributesString(v, suffix + k + '-');
 			}
 
-			return suffix + `${k}="${fanstatic.sanitizeAttribute(v)}"`
+			return suffix + `${k}="${fanstatic.sanitizeAttrValue(v)}"`
 		}).join(' ');
 	}
 
@@ -290,10 +290,10 @@
 			
 			return {[tagFill]: model}
 		},
-		sanitize: function(val, rules = null) {
+		escapeHtml: function(val, rules = null) {
 			if (Array.isArray(val)) {
 				for (let i in val) {
-					this.sanitize(val[i], rules);
+					this.escapeHtml(val[i], rules);
 				}
 			}
 			else if (val !== null && typeof val == 'object') {
@@ -303,10 +303,10 @@
 					if (typeof val[k] == 'string') {
 						const ruled = rules ? rules(k, val[k]) : false;
 
-						val[k] = ruled || fanstatic.sanitizeHtml(val[k]);
+						val[k] = ruled || fanstatic.escapeHtml(val[k]);
 					}
 					else {
-						this.sanitize(val[k], rules);
+						this.escapeHtml(val[k], rules);
 					}
 				}
 			}

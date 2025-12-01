@@ -199,13 +199,13 @@
 
 		/* sanitizer */
 
-		sanitizeHtml: function(text) {
+		escapeHtml: function(text) {
 			const element = document.createElement('div');
 			element.innerText = text; // Escapes HTML tags and special characters
 			return element.innerHTML;
 		},
 
-		sanitizeAttribute: function(value) {
+		sanitizeAttrValue: function(value) {
 			return value
 				.replace(/&/g, '&amp;')
 				.replace(/"/g, '&quot;')
