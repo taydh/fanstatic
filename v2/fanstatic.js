@@ -190,6 +190,10 @@
 			}
 		},
 
+		removeTrailingSlash : function (str) {
+			return str.replace(/\/+$/, '');
+		},
+
 		/* trail */
 
 		tail: function(asObject = false) { return this.trail(asObject); },

@@ -53,7 +53,7 @@
 	return {
 		renderer: 'mustache',
 		onload: function(roof, data) {
-			const template = roof.querySelector("script").innerText
+			const template = roof.querySelector("script").textContent
 
 			roof.innerHTML = Mustache.render(template, data)
 

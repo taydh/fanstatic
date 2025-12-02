@@ -16,8 +16,8 @@
         <script defer src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
 		<script defer src="https://cdn.jsdelivr.net/npm/mustache@4.2.0/mustache.min.js"></script>
 		
-		<!-- script defer src="https://fanstatic.annexdesk.com/v2/fanstatic-combined.min.js"></script -->
-        <script defer src="http://localhost:8080/v2/fanstatic.js"></script>
+		<script defer src="https://fanstatic.annexdesk.com/v2/fanstatic-combined.min.js"></script>
+        <!-- script defer src="http://localhost:8080/v2/fanstatic.js"></script-->
 		<script>
 			{
                 let origin = window.location.origin;
@@ -36,7 +36,7 @@
                     document.head.querySelector('base').href = origin  + '/'; // make base URI absolute
                     
                     return new Promise(resolve => {
-						const hostEnvPath = origin + '/env.' + origin.replace(/[:/]/g, "_") + '.json'
+						const hostEnvPath = origin + 'env.' + origin.replace(/[:/]/g, "_") + '.json'
                         const asyncCounter = fanstatic.asyncCounter(1, () => {
                             resolve();
                         })
@@ -106,7 +106,7 @@
 							header.querySelector('.title').innerHTML = panel;
 
 							if (panel) {
-								const url = new URL(document.baseURI + 'panelinfo-embedded.html');
+								const url = new URL(document.baseURI + 'panel-info.html');
 								url.searchParams.set('panel', panel);
 								url.searchParams.set('framework', selFramework.value);
 								url.searchParams.set('style', selStyle.value);

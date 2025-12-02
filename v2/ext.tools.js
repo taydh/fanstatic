@@ -201,7 +201,7 @@
 
 		escapeHtml: function(text) {
 			const element = document.createElement('div');
-			element.innerText = text; // Escapes HTML tags and special characters
+			element.textContent = text; // Escapes HTML tags and special characters
 			return element.innerHTML;
 		},
 

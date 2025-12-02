@@ -464,11 +464,16 @@
 						await fanstatic.appendPanel(roof, 'nav.toc', {
 							chapters: [
 								{
-									title: 'Chapter 1',
+									title: 'Part 1',
+									url: '#',
 									links: [
-										{ url:'#', label:'Link 1' },
-										{ url:'#', label:'Link 2' },
-										{ url:'#', label:'Link 3' },
+										{ url:'#', label:'I Chapter 1'},
+										[
+											{ url:'#', label:'1.1 Sub chapter' },
+											{ url:'#', label:'1.2 Sub chapter' },
+										],
+										{ url:'#', label:'II Link 2' },
+										{ url:'#', label:'III Link 3' },
 									]
 								},
 								{

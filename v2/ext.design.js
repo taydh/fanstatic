@@ -290,23 +290,23 @@
 			
 			return {[tagFill]: model}
 		},
-		escapeHtml: function(val, rules = null) {
-			if (Array.isArray(val)) {
-				for (let i in val) {
-					this.escapeHtml(val[i], rules);
+		escapeHtml: function(obj, rules = null) {
+			if (Array.isArray(obj)) {
+				for (let i in obj) {
+					this.escapeHtml(obj[i], rules);
 				}
 			}
-			else if (val !== null && typeof val == 'object') {
-				const keys = Object.keys(val);
+			else if (obj !== null && typeof obj == 'object') {
+				const keys = Object.keys(obj);
 			
 				for (let k of keys) {
-					if (typeof val[k] == 'string') {
-						const ruled = rules ? rules(k, val[k]) : false;
+					if (typeof obj[k] == 'string') {
+						const ruled = rules ? rules(k, obj[k]) : false;
 
-						val[k] = ruled || fanstatic.escapeHtml(val[k]);
+						obj[k] = ruled || fanstatic.escapeHtml(obj[k]);
 					}
 					else {
-						this.escapeHtml(val[k], rules);
+						this.escapeHtml(obj[k], rules);
 					}
 				}
 			}
