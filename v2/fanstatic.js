@@ -194,6 +194,10 @@
 			return str.replace(/\/+$/, '');
 		},
 
+		withTrailingSlash : function (str) {
+			return '/' == str[str.length - 1] ? str : str + '/';
+		},
+
 		/* trail */
 
 		tail: function(asObject = false) { return this.trail(asObject); },

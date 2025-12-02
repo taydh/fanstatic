@@ -14,7 +14,7 @@
 		applyTheme: function(style = fanstatic.settings.theme_style, framework = fanstatic.settings.theme_framework, opt = { mode: fanstatic.settings.theme_mode, includeUtility: null }) {
 			const mode = opt.mode || fanstatic.settings.theme_mode || 'css';
 			const includeUtility = opt.includeUtility !== null ? opt.includeUtility : false;
-			const styleBaseUrl = fanstatic.settings.style_base_url || fanstatic.settings.base_url + fanstatic.settings.version;
+			const styleBaseUrl = fanstatic.withTrailingSlash(fanstatic.settings.style_base_url || fanstatic.getVersionedBaseUrl());
 
 			// sanitize values
 			style = fanstatic.removePathCharacters(style);
@@ -22,13 +22,13 @@
 
 			console.log('🖼️ Style theme applied: ' + style + ' (' + framework + '), mode: ' + mode);
 
-			const utilsBaseUrl = `${styleBaseUrl}/utils/`;
-			const themeBaseUrl = `${styleBaseUrl}/themes/`;
+			const utilsBaseUrl = `${styleBaseUrl}utils/`;
+			const themeBaseUrl = `${styleBaseUrl}themes/`;
 			const themeFrameworkBaseUrl = fanstatic.settings.theme_framework_base_url || `${themeBaseUrl}${framework}/`;
 			const themeStyleBaseUrl = fanstatic.settings.theme_style_base_url || `${themeBaseUrl}${framework}/${style}/`;
 
 			const scriptsUrls = [
-				`${themeBaseUrl}/theme-generic.js` + '?' + fanstatic.trail(),
+				`${themeBaseUrl}theme-generic.js` + '?' + fanstatic.trail(),
 				`${themeFrameworkBaseUrl}theme-framework.js` + '?' + fanstatic.trail(),
 				`${themeStyleBaseUrl}theme-style.js` + '?' + fanstatic.trail(),
 			];
