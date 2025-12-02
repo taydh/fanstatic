@@ -11,18 +11,35 @@
 		panelElement.setAttribute('data-pn-panel', panelScope);
 		panelElement.setAttribute('data-pn-scope', outerScope);
 
-		panelElement.innerHTML = fanstatic.renderJhtm(design.axis(
-			data.chapters.map(chapter => design.wrap([
-				design.div({ 'data-pn': 'title' }, chapter.title),
-				design.list({ 'data-pn': 'nav_list' }, { 'data-pn': 'nav_item' },
-					chapter.links.map(link => {
-						const href = (link.url ? fanstatic.sanitizeAttribute(link.url) : null) || '#';
+		const getTitle = function(title) {
+			return design.div({ 'data-pn': 'title' }, title);
+		}
+
+		const getList = function(links) {
+			return design.list({ 'data-pn': 'nav_list' }, { 'data-pn': 'nav_item' },
+				links.map(link => {
+					if (Array.isArray(link)) {
+						return getList(link);
+					}
+					else {
+						const href = (link.url ? fanstatic.sanitizeAttrValue(link.url) : null) || '#';
 						const tagFill = `a href="${href}" data-pn="nav_link"`;
 
 						return { [tagFill] : link.label }
-					}))
+					}
+				})
+			)
+		}
+
+		panelElement.innerHTML = fanstatic.renderJhtm(design.axis({ 'data-pn': 'chapters' },
+			data.chapters.map(chapter => design.wrap({ 'data-pn': 'chapter' }, [
+				chapter.url ? design.tag('a', { href: chapter.url }, getTitle(chapter.title)) : getTitle(chapter.title),
+				chapter.links ? getList(chapter.links) : false,
 			]))
 		));
+
+		panelElement.querySelectorAll('[data-ds]').forEach( elem => elem.removeAttribute('data-ds'));
+		panelElement.querySelectorAll('[data-pn=nav_item]:has(> [data-pn=nav_list])').forEach( elem => elem.dataset.pn = 'nav_items')
 
 		this.controller = {
 			panelElement: panelElement,

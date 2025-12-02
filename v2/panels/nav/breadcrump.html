@@ -13,7 +13,7 @@
 
 		panelElement.innerHTML = fanstatic.renderJhtm(
 			data.links.map((link, i) => {
-				const href = (link.url ? fanstatic.sanitizeAttribute(link.url) : null) || null;
+				const href = (link.url ? fanstatic.sanitizeAttrValue(link.url) : null) || null;
 				return [
 					, design.element('span', { 'data-pn': 'separator' }, i > 0 ? data.separator : '')
 					, "\n"

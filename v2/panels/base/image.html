@@ -3,7 +3,7 @@
 	return function(roof, data) {
 		const imgElement = roof.children[0];
 
-		imgElement.src = fanstatic.sanitizeAttribute(data.src);
+		imgElement.src = fanstatic.sanitizeAttrValue(data.src);
 
 		this.controller = {
 			panelElement: imgElement

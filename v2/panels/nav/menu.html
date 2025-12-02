@@ -16,7 +16,7 @@
 			{
 				listTag: 'div',
 				items: data.links.map(link => {
-					const href = (link.url ? fanstatic.sanitizeAttribute(link.url) : null) || null;
+					const href = (link.url ? fanstatic.sanitizeAttrValue(link.url) : null) || null;
 
 					return href 
 						? design.element('a', { href: href, 'data-pn': 'nav_link' }, link.label || true)
