@@ -17,8 +17,8 @@
 		<script defer src="https://cdn.jsdelivr.net/npm/mustache@4.2.0/mustache.min.js"></script>
 		<script defer src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.15.4/beautify-html.min.js"></script>
 		
-		<!-- script defer src="https://fanstatic.annexdesk.com/v2/fanstatic-combined.min.js"></script -->
-        <script defer src="http://localhost:8080/v2/fanstatic.js"></script>
+		<script defer src="https://fanstatic.annexdesk.com/v2/fanstatic.js"></script>
+        <!--script defer src="http://localhost:8080/v2/fanstatic.js"></script-->
 		<script>
 			{
                 let fanstaticVersion = 'v2';
@@ -29,9 +29,9 @@
 				const resolveOriginAndLoadModel = async function(){
 					// resolve origin
 					[
-						'http://localhost/fanstatic3/',
+						'/fanstatic3',
 					].forEach(path => {
-						if (window.location.href.startsWith(path)) origin = path;
+						if (window.location.href.startsWith(origin + path)) origin = origin + path;
 					});
                     
                     // resolve absolute origin
@@ -50,7 +50,7 @@
                             hostEnv = data;
 
 							Object.assign(fanstatic.settings, {
-								base_url: hostEnv.fanstatic_base_url,
+								//base_url: hostEnv.fanstatic_base_url,
 								version: fanstaticVersion,
 								theme_framework: usp.get('framework') || 'bulma',
 								theme_style: usp.get('style') || 'earth',

@@ -16,7 +16,7 @@
         <script defer src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
 		<script defer src="https://cdn.jsdelivr.net/npm/mustache@4.2.0/mustache.min.js"></script>
 		
-		<script defer src="https://fanstatic.annexdesk.com/v2/fanstatic-combined.min.js"></script>
+		<script defer src="https://fanstatic.annexdesk.com/v2/fanstatic.js"></script>
         <!-- script defer src="http://localhost:8080/v2/fanstatic.js"></script-->
 		<script>
 			{
@@ -27,7 +27,7 @@
 				const resolveOriginAndLoadModel = async function(){
 					// resolve origin on subfolder
 					[
-						'/fanstatic3/',
+						'/fanstatic3',
 					].forEach(path => {
 						if (window.location.href.startsWith(origin + path)) origin = origin + path;
 					});
@@ -36,7 +36,7 @@
                     document.head.querySelector('base').href = origin  + '/'; // make base URI absolute
                     
                     return new Promise(resolve => {
-						const hostEnvPath = origin + 'env.' + origin.replace(/[:/]/g, "_") + '.json'
+						const hostEnvPath = origin + '/env.' + origin.replace(/[:/]/g, "_") + '.json'
                         const asyncCounter = fanstatic.asyncCounter(1, () => {
                             resolve();
                         })
@@ -48,7 +48,7 @@
                             hostEnv = data;
 
 							Object.assign(fanstatic.settings, {
-								base_url: hostEnv.fanstatic_base_url,
+								//base_url: hostEnv.fanstatic_base_url,
 								theme_framework: 'bulma',
 								theme_style: 'earth',
 								theme_mode: 'less',
@@ -56,7 +56,7 @@
 								trail_span: hostEnv.trail_span,
 								log_render: false,
 							})
-
+							
                             asyncCounter.done();
                         })
                     })
@@ -98,7 +98,7 @@
 							const selStyle = document.body.querySelector('[name=selStyle]')
 							const header = document.body.querySelector('header');
 							const main = document.body.querySelector('main');
-							const panel = fanstatic.sanitizeHtml(searchParams.get('panel'));
+							const panel = fanstatic.escapeHtml(searchParams.get('panel'));
 
 							selFramework.value = searchParams.get('framework') || 'bulma';
 							selStyle.value = searchParams.get('style') || 'earth';
@@ -185,66 +185,66 @@
 					<h2 class="title">Base</h2>
 					<div class="mb-4">
 						<ul>
-							<li><a href="panelinfo-index.html?panel=base.text">Text</a></li>
-							<li><a href="panelinfo-index.html?panel=base.element">Element</a></li>
+							<li><a href="panel-index.html?panel=base.text">Text</a></li>
+							<li><a href="panel-index.html?panel=base.element">Element</a></li>
 						</ul>
 					</div>
 					
 					<h2 class="title">Blocks</h2>
 					<div class="mb-4">
 						<ul>
-							<li><a href="panelinfo-index.html?panel=block.unit">Unit</a></li>
-							<li><a href="panelinfo-index.html?panel=block.content">Content</a></li>
-							<li><a href="panelinfo-index.html?panel=block.actionable">Actionable</a></li>
-							<li><a href="panelinfo-index.html?panel=block.identity">Identity</a></li>
+							<li><a href="panel-index.html?panel=block.unit">Unit</a></li>
+							<li><a href="panel-index.html?panel=block.content">Content</a></li>
+							<li><a href="panel-index.html?panel=block.actionable">Actionable</a></li>
+							<li><a href="panel-index.html?panel=block.identity">Identity</a></li>
 						</ul>
 					</div>
 
 					<h2 class="title">Cluster</h2>
 					<div class="mb-4">
 						<ul>
-							<li><a href="panelinfo-index.html?panel=cluster.stack">Stack</a></li>
-							<li><a href="panelinfo-index.html?panel=cluster.grid">Grid</a></li>
+							<li><a href="panel-index.html?panel=cluster.stack">Stack</a></li>
+							<li><a href="panel-index.html?panel=cluster.grid">Grid</a></li>
 						</ul>
 					</div>
 
 					<h2 class="title">Cards</h2>
 					<div class="mb-4">
 						<ul>
-							<li><a href="panelinfo-index.html?panel=card.highlight">Highlight Card</a></li>
-							<li><a href="panelinfo-index.html?panel=card.post">Post Card</a></li>
-							<li><a href="panelinfo-index.html?panel=card.profile">Profile Card</a></li>
-							<li><a href="panelinfo-index.html?panel=card.rating">Rating Card</a></li>
-							<li><a href="panelinfo-index.html?panel=card.quote">Quote Card</a></li>
+							<li><a href="panel-index.html?panel=card.highlight">Highlight Card</a></li>
+							<li><a href="panel-index.html?panel=card.post">Post Card</a></li>
+							<li><a href="panel-index.html?panel=card.profile">Profile Card</a></li>
+							<li><a href="panel-index.html?panel=card.rating">Rating Card</a></li>
+							<li><a href="panel-index.html?panel=card.quote">Quote Card</a></li>
 						</ul>
 					</div>
 
 					<h2 class="title">Navigation</h2>
 					<div class="mb-4">
 						<ul>
-							<li><a href="panelinfo-index.html?panel=nav.breadcrump">Breadcrump</a></li>
-							<li><a href="panelinfo-index.html?panel=nav.menu">Menu</a></li>
-							<li><a href="panelinfo-index.html?panel=nav.toc">TOC</a></li>
+							<li><a href="panel-index.html?panel=nav.breadcrump">Breadcrump</a></li>
+							<li><a href="panel-index.html?panel=nav.menu">Menu</a></li>
+							<li><a href="panel-index.html?panel=nav.toc">TOC</a></li>
 						</ul>
 					</div>
 
 					<h2 class="title">Section</h2>
 					<div class="mb-4">
 						<ul>
-							<li><a href="panelinfo-index.html?panel=section.containerized">Containerized</a></li>
-							<li><a href="panelinfo-index.html?panel=section.containerized-subcontent">Containerized Sub Content</a></li>
-							<li><a href="panelinfo-index.html?panel=section.containerized-hero">Containerized Hero</a></li>
-							<li><a href="panelinfo-index.html?panel=section.containerized-stack">Containerized Stack</a></li>
-							<li><a href="panelinfo-index.html?panel=section.containerized-grid">Containerized Grid</a></li>
-							<li><a href="panelinfo-index.html?panel=section.header">Header</a></li>
+							<li><a href="panel-index.html?panel=section.containerized">Containerized</a></li>
+							<li><a href="panel-index.html?panel=section.containerized-subcontent">Containerized Sub Content</a></li>
+							<li><a href="panel-index.html?panel=section.containerized-hero">Containerized Hero</a></li>
+							<li><a href="panel-index.html?panel=section.containerized-stack">Containerized Stack</a></li>
+							<li><a href="panel-index.html?panel=section.containerized-grid">Containerized Grid</a></li>
+							<li><a href="panel-index.html?panel=section.header">Header</a></li>
 						</ul>
 					</div>
 
 					<h2 class="title">Layout</h2>
 					<div class="mb-4">
 						<ul>
-							<li><a href="panelinfo-index.html?panel=layout.1-column">1 Column</a></li>
-							<li><a href="panelinfo-index.html?panel=layout.3-columns">3 Columns</a></li>
+							<li><a href="panel-index.html?panel=layout.1-column">1 Column</a></li>
+							<li><a href="panel-index.html?panel=layout.3-columns">3 Columns</a></li>
 						</ul>
 					</div>
 				</div>

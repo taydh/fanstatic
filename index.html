@@ -87,7 +87,7 @@
 					})
 
 					fanstatic.append(
-						document.body, fanstatic_base_dir + '/panels/action/back-to-top-button.html',
+						document.body, fanstatic.getVersionedBaseUrl() + 'panels/action/back-to-top-button.html',
 						{ tail_key: null }
 					)
 
@@ -95,7 +95,7 @@
 						log_render: true,
 						turn_delay: 300,
 					})
-
+					
 					await fanstatic.insert(
 						document.querySelector('#container'), // target element 
 						'./assets/templates/layout_page.html',
@@ -135,7 +135,7 @@
 		return async function(roof, data) {
 			const homepageBox = roof.querySelector('#homepage')
 			const pageBox = roof.querySelector('#page')
-
+			
 			await fanstatic.insert(roof.querySelector('#headbar > .container'), './assets/templates/section_header.html')
 
 			if (window.location.href == fanstatic.settings.base_url || window.location.href == fanstatic.settings.base_url + 'index.html') {	
