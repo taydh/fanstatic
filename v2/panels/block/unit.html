@@ -19,8 +19,8 @@
 
 		if (data.id) panelElement.id = data.id;
 
-		panelElement.dataset.pnScope = scope;
 		panelElement.dataset.pnPanel = panelScope;
+		panelElement.dataset.pnScope = scope;
 
 		let capProm, headProm, bodyProm, footProm;
 		
@@ -59,6 +59,8 @@
 			headController: resolves[1],
 			bodyController: resolves[2],
 			footController: resolves[3],
+			scope: scope,
+			panelScope: panelScope,
 		};
 	};
 </script>

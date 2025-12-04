@@ -217,10 +217,9 @@
 			let items = (Array.isArray(model) ? model : model.items) || [];
 
 			result[tagFill] = items.map(item => {
-				let obj = {};
-				obj['div data-ds="item" ' +  _toAttributesString(secondaryAttributes)] = item;
-
-				return obj;
+				return fanstatic.tagFillContains(item, 'data-ds="stack_item"')
+					? item
+					: { ['div data-ds="stack_item" ' +  _toAttributesString(secondaryAttributes)]: item };
 			});
 
 			return result;
@@ -243,9 +242,9 @@
 			let items = (Array.isArray(model) ? model : model.items) || [];
 
 			result[tagFill] = items.map(item => {
-				return fanstatic.tagFillContains(item, 'data-ds="item"')
+				return fanstatic.tagFillContains(item, 'data-ds="grid_item"')
 					? item
-					: { ['div data-ds="item" ' +  _toAttributesString(secondaryAttributes)]: item };
+					: { ['div data-ds="grid_item" ' +  _toAttributesString(secondaryAttributes)]: item };
 			});
 
 			return result;
@@ -268,9 +267,9 @@
 			let items = (Array.isArray(model) ? model : model.items) || [];
 
 			result[tagFill] = items.map(item => {
-				return fanstatic.tagFillContains(item, 'data-ds="item"') 
+				return fanstatic.tagFillContains(item, 'data-ds="flex_item"') 
 					? item
-					: { ['div data-ds="item" ' +  _toAttributesString(secondaryAttributes)]: item };
+					: { ['div data-ds="flex_item" ' +  _toAttributesString(secondaryAttributes)]: item };
 			});
 
 			return result;

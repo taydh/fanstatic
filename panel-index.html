@@ -17,52 +17,43 @@
 		<script defer src="https://cdn.jsdelivr.net/npm/mustache@4.2.0/mustache.min.js"></script>
 		
 		<script defer src="https://fanstatic.annexdesk.com/v2/fanstatic.js"></script>
-        <!-- script defer src="http://localhost:8080/v2/fanstatic.js"></script-->
 		<script>
 			{
                 let origin = window.location.origin;
+				let host = window.location.host;
 				let hostEnv = null;
                 let searchParams = new window.URLSearchParams(window.location.search);
 
-				const resolveOriginAndLoadModel = async function(){
-					// resolve origin on subfolder
+				const resolveHostEnv = async function(){
+					let originPath = origin;
+
+					// relative path
 					[
+						'/fanstatic',
 						'/fanstatic3',
 					].forEach(path => {
-						if (window.location.href.startsWith(origin + path)) origin = origin + path;
+						if (window.location.href.startsWith(origin + path)) originPath = origin + path;
 					});
-                    
-                    // resolve absolute origin
-                    document.head.querySelector('base').href = origin  + '/'; // make base URI absolute
-                    
-                    return new Promise(resolve => {
-						const hostEnvPath = origin + '/env.' + origin.replace(/[:/]/g, "_") + '.json'
-                        const asyncCounter = fanstatic.asyncCounter(1, () => {
-                            resolve();
-                        })
 
-						console.log('🎁 Resolving host environment variables from', hostEnvPath) ;
+					// absolute origin
+					if (!hostEnv) {
+						hostEnv = await fanstatic.fetchJson(originPath + '/env.' + window.location.host.replace(/[:/]/g, "_") + '.json');
+					}
 
-                        fanstatic.fetchJson(hostEnvPath)
-                        .then(data => {
-                            hostEnv = data;
-
-							Object.assign(fanstatic.settings, {
-								//base_url: hostEnv.fanstatic_base_url,
-								theme_framework: 'bulma',
-								theme_style: 'earth',
-								theme_mode: 'less',
-								library_less_url: 'https://cdn.jsdelivr.net/npm/less',
-								trail_span: hostEnv.trail_span,
-								log_render: false,
-							})
-							
-                            asyncCounter.done();
-                        })
-                    })
+					document.head.querySelector('base').href = hostEnv.document_base_uri;
 				}
 
 				const loadExtensions = async function(asyncCounter) {
+					fanstatic.assign({
+						base_url: hostEnv.fanstatic_base_url,
+						theme_framework: 'bulma',
+						theme_style: 'earth',
+						theme_mode: 'less',
+						library_less_url: 'https://cdn.jsdelivr.net/npm/less',
+						trail_span: hostEnv.trail_span,
+						log_render: false,
+					});
+
 					await fanstatic.insertScripts([
 						fanstatic.getVersionedBaseUrl() + 'ext.tools.js?' + fanstatic.tail(),
 						fanstatic.getVersionedBaseUrl() + 'ext.visual.js?' + fanstatic.tail(),
@@ -72,9 +63,10 @@
 					]);
 				}
 				
-				const init = async function(){
-                    await resolveOriginAndLoadModel();
-					await loadExtensions()
+				const main = async function(){
+					console.log('hey')
+                    await resolveHostEnv();
+					await loadExtensions();
 
 					const promises = [];
 
@@ -132,8 +124,8 @@
 						});
 					})
 				};
-                
-                document.addEventListener('DOMContentLoaded', init);
+
+				document.addEventListener('DOMContentLoaded', main);
 			}
 		</script>
 	</head>
@@ -186,7 +178,7 @@
 					<div class="mb-4">
 						<ul>
 							<li><a href="panel-index.html?panel=base.text">Text</a></li>
-							<li><a href="panel-index.html?panel=base.element">Element</a></li>
+							<li><a href="panel-index.html?panel=base.elements">Elements</a></li>
 						</ul>
 					</div>
 					

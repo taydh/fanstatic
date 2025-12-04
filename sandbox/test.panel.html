@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+		<title>Panel</title>
+		
+		<script src="https://fanstatic.annexdesk.com/v2/fanstatic-combined.min.js"></script>
+		<script>
+			async function main() {
+				const design = fanstatic.design;
+				const body = document.body;
+				
+				body.innerHTML = fanstatic.renderJhtm(design.div('Hello World'))
+				
+				fanstatic.appendPanel(body, 'block.unit', {
+					head: 'Tentang Panel',
+					
+				});
+			};
+
+			window.addEventListener('DOMContentLoaded', main);
+		</script>
+	</head>
+
+	<body>
+	</body>
+</html>

@@ -24,8 +24,7 @@
 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css">
 		<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
 		
-		<script src="https://fanstatic.annexdesk.com/v2/fanstatic.js"></script>
-		<!-- script src="http://localhost/fanstatic3/v2/fanstatic.js"></script -->
+		<script defer src="https://fanstatic.annexdesk.com/v2/fanstatic.js"></script>
 		
 		<script>
 			/*
@@ -34,7 +33,6 @@
 			 * */
 			{
 				let fanstatic_engine_dir = '';
-				let fanstatic_base_dir = '';
 				let origin = window.location.origin;
 				let host_env = null;
 				
@@ -49,29 +47,30 @@
 					window.addEventListener('fanstatic.tools.load', () => asyncCounter.done());
 
 					fanstatic.insertScripts([
-						fanstatic_base_dir + '/ext.visual.js?_=2',
-						fanstatic_base_dir + '/ext.tools.js?_=1',
-						fanstatic_base_dir + '/ext.design.js?_=1',
-						fanstatic_base_dir + '/ext.template.js?_=1',
+						fanstatic.getVersionedBaseUrl() + '/ext.visual.js?_=2',
+						fanstatic.getVersionedBaseUrl() + '/ext.tools.js?_=1',
+						fanstatic.getVersionedBaseUrl() + '/ext.design.js?_=1',
+						fanstatic.getVersionedBaseUrl() + '/ext.template.js?_=1',
 					]).then(() => asyncCounter.done());	
 				});
 				
 				const resolveOrigin = async function(){
-					// relative origin
+					let originPath = origin;
+
+					// relative path
 					[
-						'/fanstatic3',
 						'/fanstatic',
+						'/fanstatic3',
 					].forEach(path => {
-						if (window.location.href.startsWith(origin + path)) origin = origin + path;
+						if (window.location.href.startsWith(origin + path)) originPath = origin + path;
 					});
 
 					// absolute origin
 					if (!host_env) {
-						host_env = await fanstatic.fetchJson(origin + '/env.' + origin.replace(/[:/]/g, "_") + '.json');
+						host_env = await fanstatic.fetchJson(originPath + '/env.' + window.location.host.replace(/[:/]/g, "_") + '.json');
 					}
 
-					document.head.querySelector('base').href = host_env.base_url; // make base URI absolute
-					fanstatic_base_dir = fanstatic_engine_dir = document.baseURI + 'v2'
+					document.head.querySelector('base').href = host_env.document_base_uri;
 
 					fanstatic.insertStyles([
 						`${document.baseURI}/assets/css/stbs-5-3.css`,

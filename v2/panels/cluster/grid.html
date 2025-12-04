@@ -7,7 +7,7 @@
 		const itemControllers = [];
 
 		roof.innerHTML = fanstatic.renderJhtm(design.grid(
-			{data: {pn: {scope:scope, panel:panelScope}}, 'data-pn': 'items'},
+			{data: {pn: {scope:scope, panel:panelScope}}, 'data-pn': 'grid'},
 			{},
 			data.items ? data.items.map(item => design.placeholder()) : []
 		));
@@ -16,13 +16,13 @@
 
 		if (data.id) panelElement.id = data.id;
 
-		const itemNodes = panelElement.querySelectorAll('[data-ds=item]');
+		const itemNodes = panelElement.querySelectorAll('[data-ds=grid_item]');
 		const placeholderNodes = panelElement.querySelectorAll('[data-ds-placeholder]');
 		
 		panelElement.removeAttribute('data-ds');
 
 		for (const i in data.items) {
-			itemNodes[i].dataset.pn = 'item';
+			itemNodes[i].dataset.pn = 'grid_item';
 			itemNodes[i].removeAttribute('data-ds');
 
 			const template = data.items[i];
@@ -35,6 +35,8 @@
 		this.controller = {
 			panelElement: panelElement,
 			itemControllers: itemControllers,
+			scope: scope,
+			panelScope: panelScope,
 		};
 	};
 </script>

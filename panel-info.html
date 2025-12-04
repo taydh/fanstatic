@@ -18,7 +18,6 @@
 		<script defer src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.15.4/beautify-html.min.js"></script>
 		
 		<script defer src="https://fanstatic.annexdesk.com/v2/fanstatic.js"></script>
-        <!--script defer src="http://localhost:8080/v2/fanstatic.js"></script-->
 		<script>
 			{
                 let fanstaticVersion = 'v2';
@@ -26,46 +25,36 @@
 				let hostEnv = null;
 				const usp = new URLSearchParams(window.location.search);
 
-				const resolveOriginAndLoadModel = async function(){
-					// resolve origin
+				const resolveHostEnv = async function(){
+					let originPath = origin;
+
+					// relative path
 					[
+						'/fanstatic',
 						'/fanstatic3',
 					].forEach(path => {
-						if (window.location.href.startsWith(origin + path)) origin = origin + path;
+						if (window.location.href.startsWith(origin + path)) originPath = origin + path;
 					});
-                    
-                    // resolve absolute origin
-                    document.head.querySelector('base').href = origin  + '/'; // make base URI absolute
-                    
-                    return new Promise(resolve => {
-						const hostEnvPath = origin + '/env.' + origin.replace(/[:/]/g, "_") + '.json'
-                        const asyncCounter = fanstatic.asyncCounter(1, () => {
-                            resolve();
-                        })
 
-						console.log('🎁 Resolving host environment variables from', hostEnvPath) ;
+					// absolute origin
+					if (!hostEnv) {
+						hostEnv = await fanstatic.fetchJson(originPath + '/env.' + window.location.host.replace(/[:/]/g, "_") + '.json');
+					}
 
-                        fanstatic.fetchJson(hostEnvPath)
-                        .then(data => {
-                            hostEnv = data;
-
-							Object.assign(fanstatic.settings, {
-								//base_url: hostEnv.fanstatic_base_url,
-								version: fanstaticVersion,
-								theme_framework: usp.get('framework') || 'bulma',
-								theme_style: usp.get('style') || 'earth',
-								theme_mode: 'less',
-								library_less_url: 'https://cdn.jsdelivr.net/npm/less',
-								trail_span: hostEnv.trail_span,
-								log_render: false,
-							})
-
-                            asyncCounter.done();
-                        })
-                    })
+					document.head.querySelector('base').href = hostEnv.document_base_uri;
 				}
 
 				const loadExtensions = async function(asyncCounter) {
+					fanstatic.assign({
+						base_url: hostEnv.fanstatic_base_url,
+						theme_framework: 'bulma',
+						theme_style: 'earth',
+						theme_mode: 'less',
+						library_less_url: 'https://cdn.jsdelivr.net/npm/less',
+						trail_span: hostEnv.trail_span,
+						log_render: false,
+					});
+
 					await fanstatic.insertScripts([
 						fanstatic.getVersionedBaseUrl() + 'ext.tools.js?' + fanstatic.tail(),
 						fanstatic.getVersionedBaseUrl() + 'ext.visual.js?' + fanstatic.tail(),
@@ -75,9 +64,9 @@
 					]);
 				}
 				
-				const init = async function(){
-                    await resolveOriginAndLoadModel();
-					await loadExtensions()
+				const main = async function(){
+                    await resolveHostEnv();
+					await loadExtensions();
 
 					const themingPromises = [];
 
@@ -127,7 +116,7 @@
 					})
 				};
                 
-                document.addEventListener('DOMContentLoaded', init);
+                document.addEventListener('DOMContentLoaded', main);
 			}
 		</script>
 	</head>
@@ -166,6 +155,11 @@
 					<pre></pre>
 				</section>
 
+				<section id="controllerSection" class="section">
+					<h2 class="title">Controller Result Object</h2>
+					<pre></pre>
+				</section>
+
 				<script>
 					return {
 						oninsert: function(nodes) {
@@ -177,6 +171,8 @@
 								});
 
 								nodes[0].parentNode.querySelector('#htmlOutputSection > pre').textContent = prettyHtml;
+								nodes[0].parentNode.querySelector('#controllerSection > pre').innerHTML = 
+								Object.entries(window.recordedController).map(([k,v]) => { return '<div style="margin-bottom:.5rem"><b>' + k + '</b><br>' + v.toString() + '</div>'; }).join('');
 							});
 						}
 					}
@@ -210,6 +206,24 @@
 					Use nav.menu panel to implement a breadcrump navigation with customized separator and link content.
 				</div>
 
+				<div data-panel="layout.1-column">
+					Use layout.1-columns panel to implement single flow type layout page.
+					The layout scoped by a parent element with a simple structure of &lt;header&gt;, &lt;main&gt;, and &lt;footer&gt;.
+					<p>
+					use <i>mainTag</i> property in data option to change the main element tag instead of using &lt;main&gt;, in example:
+					</p>
+<pre>
+{
+  mainTag: 'div'
+}
+</pre>
+				</div>
+
+				<div data-panel="layout.3-columns">
+					Use layout.3-columns panel to implement a 3 columns or dynamic layout page.
+					The layout scoped by a parent element with the &lt;main&gt; element reside inside the center of columns row.
+				</div>
+
 				<script>
 					return function(roof, data) {
 						roof.innerHTML = roof.querySelector(`[data-panel="${data.panel}"]`)?.innerHTML || '';
@@ -222,15 +236,19 @@
 			<template data-url="base.text">
 				<script>
 					return async function(roof, data) {
-						await fanstatic.appendPanel(roof, 'base.text', '<div>Hello Text</div>')
+						window.recordedController = await fanstatic.appendPanel(roof, 'base.text', '<div>Hello Text</div>')
 					}
 				</script>
 			</template>
 
-			<template data-url="base.element">
+			<template data-url="base.elements">
 				<script>
 					return async function(roof, data) {
-						await fanstatic.appendPanel(roof, 'base.element', { div: 'Hello Element'})
+						window.recordedController = await fanstatic.appendPanel(roof, 'base.elements', 
+						[
+							{ div: 'Hello Element 1'},
+							{ div: 'Hello Element 2'},
+						])
 					}
 				</script>
 			</template>
@@ -240,14 +258,12 @@
 			<template data-url="block.unit">
 				<script>
 					return async function(roof, data) {
-						const controller = await fanstatic.appendPanel(roof, 'block.unit', {
-							cap: new fanstatic.panel('base.element', fanstatic.design.tag('img', {src: 'https://dummyimage.com/60x60/eee/fff&text=cap'})),
+						window.recordedController = await fanstatic.appendPanel(roof, 'block.unit', {
+							cap: new fanstatic.panel('base.elements', fanstatic.design.tag('img', {src: 'https://dummyimage.com/60x60/eee/fff&text=cap'})),
 							head: new fanstatic.panel('base.text', '(head element)'),
 							body: new fanstatic.panel('base.text', '(body element)'),
 							foot: new fanstatic.panel('base.text', '(foot element)'),
 						})
-
-						console.log('block.unit', controller);
 					}
 				</script>
 			</template>
@@ -255,7 +271,7 @@
 			<template data-url="block.content">
 				<script>
 					return async function(roof, data) {
-						const controller = await fanstatic.appendPanel(roof, 'block.content', {
+						window.recordedController = await fanstatic.appendPanel(roof, 'block.content', {
 							category: 'block',
 							title: 'CONTENT BLOCK',
 							subtitle: 'This is the content block',
@@ -263,8 +279,6 @@
 							content: 'This is content',
 							footnote: 'What a content',
 						})
-
-						console.log('block.content', controller);
 					}
 				</script>
 			</template>
@@ -272,14 +286,12 @@
 			<template data-url="block.actionable">
 				<script>
 					return async function(roof, data) {
-						const controller = await fanstatic.appendPanel(roof, 'block.actionable', {
+						window.recordedController = await fanstatic.appendPanel(roof, 'block.actionable', {
 							image: 'https://dummyimage.com/60x60/eee/fff&text=image',
 							subjects: ['Subject 1', 'Subject 2'],
 							message: 'Message area',
 							actions: ['Action 1', 'Action 2'],
 						})
-
-						console.log('block.actionable', controller);
 					}
 				</script>
 			</template>
@@ -287,12 +299,10 @@
 			<template data-url="block.identity">
 				<script>
 					return async function(roof, data) {
-						const controller = await fanstatic.appendPanel(roof, 'block.identity', {
+						window.recordedController = await fanstatic.appendPanel(roof, 'block.identity', {
 							logo: 'https://dummyimage.com/100x100/fff/000&text=image',
 							name: 'Fanstatic',
 						})
-
-						console.log('block.identity', controller);
 					}
 				</script>
 			</template>
@@ -302,7 +312,8 @@
 			<template data-url="cluster.stack">
 				<script>
 					return async function(roof, data) {
-						const controller = await fanstatic.appendPanel(roof, 'cluster.stack', {
+						window.recordedController = await fanstatic.appendPanel(roof, 'cluster.stack', {
+							scope: 'my_stack',
 							items: [
 								new fanstatic.panel('block.actionable', {
 									image: 'https://dummyimage.com/60x60/eee/fff&text=image',
@@ -318,8 +329,6 @@
 								}),
 							]
 						})
-
-						console.log('cluster.stack', controller);
 					}
 				</script>
 			</template>
@@ -327,7 +336,8 @@
 			<template data-url="cluster.grid">
 				<script>
 					return async function(roof, data) {
-						const controller = await fanstatic.appendPanel(roof, 'cluster.grid', {
+						window.recordedController = await fanstatic.appendPanel(roof, 'cluster.grid', {
+							scope: 'my_grid',
 							items: [
 								new fanstatic.panel('block.actionable', {
 									image: 'https://dummyimage.com/240x240/eee/fff&text=image',
@@ -341,8 +351,6 @@
 								}),
 							]
 						})
-
-						console.log('cluster.grid', controller);
 					}
 				</script>
 			</template>
@@ -352,7 +360,7 @@
 			<template data-url="card.rating">
 				<script>
 					return async function(roof, data) {
-						await fanstatic.appendPanel(roof, 'card.rating', {
+						window.recordedController = await fanstatic.appendPanel(roof, 'card.rating', {
 							icon: 'https://dummyimage.com/60x60/fff/000&text=icon',
 							subject: 'Subject',
 							rating: 100,
@@ -365,7 +373,7 @@
 			<template data-url="card.quote">
 				<script>
 					return async function(roof, data) {
-						await fanstatic.appendPanel(roof, 'card.quote', {
+						window.recordedController = await fanstatic.appendPanel(roof, 'card.quote', {
 							photo: '',
 							name: 'Name',
 							title: 'Title',
@@ -379,7 +387,7 @@
 			<template data-url="card.post">
 				<script>
 					return async function(roof, data) {
-						await fanstatic.appendPanel(roof, 'card.post', {
+						window.recordedController = await fanstatic.appendPanel(roof, 'card.post', {
 							image: 'https://dummyimage.com/300x200/eee/fff&text=Image',
 							id: '1',
 							section: 'Post Section',
@@ -395,7 +403,7 @@
 			<template data-url="card.profile">
 				<script>
 					return async function(roof, data) {
-						await fanstatic.appendPanel(roof, 'card.profile', {
+						window.recordedController = await fanstatic.appendPanel(roof, 'card.profile', {
 							photo: 'https://dummyimage.com/150x150/eee/fff&text=Photo',
 							id: '1',
 							name: 'Name',
@@ -414,7 +422,7 @@
 				<script>
 					const design = fanstatic.design;
 					return async function(roof, data) {
-						await fanstatic.appendPanel(roof, 'card.highlight', {
+						window.recordedController = await fanstatic.appendPanel(roof, 'card.highlight', {
 							background: '',
 							cover: [
 								design.div('Highlight Card'),
@@ -432,7 +440,7 @@
 			<template data-url="nav.breadcrump">
 				<script>
 					return async function(roof, data) {
-						await fanstatic.appendPanel(roof, 'nav.breadcrump', {
+						window.recordedController = await fanstatic.appendPanel(roof, 'nav.breadcrump', {
 							separator: '&raquo;',
 							links: [
 								{ label:'Link 1' },
@@ -447,7 +455,7 @@
 			<template data-url="nav.menu">
 				<script>
 					return async function(roof, data) {
-						await fanstatic.appendPanel(roof, 'nav.menu', {
+						window.recordedController = await fanstatic.appendPanel(roof, 'nav.menu', {
 							links: [
 								{ label:'Link 1' },
 								{ url:'#', label:'Link 2' },
@@ -461,7 +469,7 @@
 			<template data-url="nav.toc">
 				<script>
 					return async function(roof, data) {
-						await fanstatic.appendPanel(roof, 'nav.toc', {
+						window.recordedController = await fanstatic.appendPanel(roof, 'nav.toc', {
 							chapters: [
 								{
 									title: 'Part 1',
@@ -495,7 +503,7 @@
 			<template data-url="section.containerized">
 				<script>
 					return async function(roof, data) {
-						await fanstatic.appendPanel(roof, 'section.containerized', {
+						window.recordedController = await fanstatic.appendPanel(roof, 'section.containerized', {
 							title: 'Section',
 							content: 'Hello'
 						})
@@ -506,7 +514,7 @@
 			<template data-url="section.containerized-subcontent">
 				<script>
 					return async function(roof, data) {
-						await fanstatic.appendPanel(roof, 'section.containerized-subcontent', {
+						window.recordedController = await fanstatic.appendPanel(roof, 'section.containerized-subcontent', {
 							title: 'Section Title',
 							subContent: new fanstatic.panel('block.actionable', {
 								image: 'https://dummyimage.com/60x60/eee/fff&text=image',
@@ -522,7 +530,7 @@
 			<template data-url="section.containerized-hero">
 				<script>
 					return async function(roof, data) {
-						await fanstatic.appendPanel(roof, 'section.containerized-hero', {
+						window.recordedController = await fanstatic.appendPanel(roof, 'section.containerized-hero', {
 							title: 'Section Title',
 							image: 'https://dummyimage.com/60x60/eee/fff&text=image',
 							subjects: ['Subject 1', 'Subject 2'],
@@ -536,7 +544,7 @@
 			<template data-url="section.containerized-stack">
 				<script>
 					return async function(roof, data) {
-						await fanstatic.appendPanel(roof, 'section.containerized-stack', {
+						window.recordedController = await fanstatic.appendPanel(roof, 'section.containerized-stack', {
 							title: 'Section Title',
 							subContents: [
 								new fanstatic.panel('block.actionable', {
@@ -560,7 +568,7 @@
 			<template data-url="section.containerized-grid">
 				<script>
 					return async function(roof, data) {
-						await fanstatic.appendPanel(roof, 'section.containerized-grid', {
+						window.recordedController = await fanstatic.appendPanel(roof, 'section.containerized-grid', {
 							title: 'Section Title',
 							subContents: [
 								new fanstatic.panel('block.actionable', {
@@ -582,7 +590,7 @@
 			<template data-url="section.header">
 				<script>
 					return async function(roof, data) {
-						const headerController = await fanstatic.appendPanel(roof, 'section.header', {
+						window.recordedController = await fanstatic.appendPanel(roof, 'section.header', {
 							identity: {
 								panel: 'block.identity',
 								data: {
@@ -610,21 +618,21 @@
 			<template data-url="layout.1-column">
 				<script>
 					return async function(roof, data) {
-						await fanstatic.appendPanel(roof, 'layout.1-column', {
+						window.recordedController = await fanstatic.appendPanel(roof, 'layout.1-column', {
 							headerPanel: {
-								panel: 'block.base-block',
+								panel: 'block.unit',
 								data: {
 									head: 'Header Panel'
 								}
 							},
 							mainPanel: {
-								panel: 'block.base-block',
+								panel: 'block.unit',
 								data: {
 									body: 'Main Panel'
 								}
 							},
 							footerPanel: {
-								panel: 'block.base-block',
+								panel: 'block.unit',
 								data: {
 									foot: 'Footer Panel'
 								}
@@ -637,7 +645,8 @@
 			<template data-url="layout.3-columns">
 				<script>
 					return async function(roof, data) {
-						await fanstatic.appendPanel(roof, 'layout.3-columns', {
+						window.recordedController = await fanstatic.appendPanel(roof, 'layout.3-columns', {
+							scope: 'my_layout',
 							header: new fanstatic.panel('block.unit', {
 								head: 'Header Panel'
 							}),

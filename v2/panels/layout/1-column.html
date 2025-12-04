@@ -3,7 +3,7 @@
 
 	return async function(roof, data = {}, url) {
 		roof.innerHTML = fanstatic.renderJhtm(design.wrap([
-			design.element('header'), design.element('main'), design.element('footer'),
+			design.element('header'), design.element(data.mainTag ? data.mainTag : 'main'), design.element('footer'),
 		]))
 
 		const panelElement = roof.children[0];

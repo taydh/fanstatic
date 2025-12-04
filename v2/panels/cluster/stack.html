@@ -7,12 +7,14 @@
 		const itemControllers = [];
 
 		roof.innerHTML = fanstatic.renderJhtm(design.stack(
-			{data: {pn: {scope:scope, panel:panelScope }}, 'data-pn': 'items'},
+			{data: {pn: {scope:scope, panel:panelScope }}, 'data-pn': 'stack'},
 			{}, 
 			data.items ? data.items.map(item => design.placeholder('panel')) : [],
 		));
 
 		const panelElement = roof.children[0];
+
+		panelElement.removeAttribute('data-ds');
 
 		if (data.id) panelElement.id = data.id;
 
@@ -21,6 +23,9 @@
 		if (data.items) {
 			for (let i=0; i<data.items.length; i++) {
 				const template = data.items[i];
+
+				placeholders[i].parentElement.dataset.pn = 'stack_item';
+				placeholders[i].parentElement.removeAttribute('data-ds');
 
 				template.assignData({ panelScope: null, scope: scope });
 
@@ -31,6 +36,8 @@
 		this.controller = {
 			panelElement: panelElement,
 			itemControllers: itemControllers,
+			scope: scope,
+			panelScope: panelScope,
 		};;
 	};
 </script>

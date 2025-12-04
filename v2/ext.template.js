@@ -550,6 +550,10 @@
 			};
 		},
 
+		isTemplate: function(obj) {
+			return this.instanceOfTemplate(obj);
+		},
+
 		instanceOfTemplate: function(obj) {
 			return (obj instanceof fanstatic.template) || (obj instanceof fanstatic.panel);
 		},
