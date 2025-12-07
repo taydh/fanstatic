@@ -3,11 +3,12 @@
 
 	return async function (roof, data = {}, url) {
 		const panelScope = data.panelScope || fanstatic.resolvePanelScope(url);
-		const scope = data.scope || panelScope;
+		const outerScope = data.scope;
+		const innerScope = data.innerScope || outerScope || data.id || panelScope;
 		const itemControllers = [];
 
 		roof.innerHTML = fanstatic.renderJhtm(design.grid(
-			{data: {pn: {scope:scope, panel:panelScope}}, 'data-pn': 'grid'},
+			{'data-pn': 'grid'},
 			{},
 			data.items ? data.items.map(item => design.placeholder()) : []
 		));
@@ -15,6 +16,8 @@
 		const panelElement = roof.children[0];
 
 		if (data.id) panelElement.id = data.id;
+		if (outerScope) panelElement.dataset.pnScope = outerScope;
+		panelElement.dataset.pnPanel = panelScope;
 
 		const itemNodes = panelElement.querySelectorAll('[data-ds=grid_item]');
 		const placeholderNodes = panelElement.querySelectorAll('[data-ds-placeholder]');
@@ -27,7 +30,7 @@
 
 			const template = data.items[i];
 			
-			template.assignData({ panelScope: null, scope: scope });
+			if (innerScope) template.outerScope(innerScope);
 
 			itemControllers.push(await fanstatic.applyTemplate(placeholderNodes[i], template, 'replace'));
 		}
@@ -35,7 +38,7 @@
 		this.controller = {
 			panelElement: panelElement,
 			itemControllers: itemControllers,
-			scope: scope,
+			scope: outerScope,
 			panelScope: panelScope,
 		};
 	};

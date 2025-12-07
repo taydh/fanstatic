@@ -3,17 +3,25 @@
 
 	return async function (roof, data = {}, url) {
 		const panelScope = data.panelScope || fanstatic.resolvePanelScope(url);
-		const scope = data.scope || panelScope;
+		const outerScope = data.scope;
+		const innerScope = data.innerScope || outerScope || data.id || panelScope;
 
-		const subContentData = Object.assign(data, {
-			panelScope: panelScope,
-			scope: scope,
-			subContent: new fanstatic.panel('block.actionable', data)
-		});
+		const sectionController = await fanstatic.insertPanel(roof, 'section.containerized', 
+			Object.assign(data, {
+				panelScope: panelScope,
+				scope: outerScope,
+				innerScope: innerScope,
+			})
+		);
 
-		const sectionController = await fanstatic.insertPanel(roof, 'section.containerized-subcontent', subContentData);
+		const heroPanel = new fanstatic.panel('block.actionable', Object.assign(data, { scope: outerScope, innerScope: innerScope }));
+		const heroTarget = sectionController.contentBlockController.panelElement.querySelector('[data-pn=content]')
+		const heroController = await fanstatic.applyContent(heroTarget, heroPanel);
 
-		sectionController.subPanelController.panelElement.dataset.pn = 'hero_block';
+		heroController.panelElement.dataset.pn = 'hero_block';
+		sectionController.heroController = heroController;
+		
 		this.controller = sectionController;
+
 	};
 </script>

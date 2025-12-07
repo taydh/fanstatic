@@ -129,6 +129,10 @@
 			model: 1,
 			data: 2,
 		},
+
+		ELEMENT_STORAGE_KEYS: {
+			PANEL_CONTROLLER: 'fanstatic.panel_controller',
+		},
 		
 		_getTemplateElement: function(url) {
 			return document.getElementById(this.settings.local_area_id)?.querySelector(`template[data-url="${url}"]`)
@@ -506,6 +510,18 @@
 
 		/* panel */
 
+		getPanelControllers: function(elements) {
+			return Array.from(elements).map(elem => fanstatic.elementStorage.get(elem, fanstatic.ELEMENT_STORAGE_KEYS.PANEL_CONTROLLER));
+		},
+
+		_insertPanel: async function(el, panelScope, opt = {}, optMode, insertFn) {
+			return new Promise(async function (resolve) {
+				const c = await fanstatic[insertFn](el, fanstatic.resolvePanelPath(panelScope), opt, optMode);
+				if (c.panelElement) fanstatic.elementStorage.set(c.panelElement, fanstatic.ELEMENT_STORAGE_KEYS.PANEL_CONTROLLER, c);
+				resolve(c);
+			});
+		},
+
 		resolvePanelScope: function(path) {
 			const parts = path.split('/').reverse();
 
@@ -517,29 +533,40 @@
 			return panelBaseUrl + '/panels/'+panelScope.replace('.','/')+'.html'
 		},
 		insertPanel: async function(el, panelScope, opt, optMode = 2) {
-			return await fanstatic.insert(el, this.resolvePanelPath(panelScope), opt, optMode);
+			return this._insertPanel(el, panelScope, opt, optMode, 'insert');
 		},
 		replacePanel: async function(el, panelScope, opt, optMode = 2) {
-			return await fanstatic.replace(el, this.resolvePanelPath(panelScope), opt, optMode);
+			return this._insertPanel(el, panelScope, opt, optMode, 'replace');
 		},
 		appendPanel: async function(el, panelScope, opt, optMode = 2) {
-			return await fanstatic.append(el, this.resolvePanelPath(panelScope), opt, optMode);
+			return this._insertPanel(el, panelScope, opt, optMode, 'append');
 		},
 		prependPanel: async function(el, panelScope, opt, optMode = 2) {
-			return await fanstatic.prepend(el, this.resolvePanelPath(panelScope), opt, optMode);
+			return this._insertPanel(el, panelScope, opt, optMode, 'replace');
 		},
 		beforePanel: async function(el, panelScope, opt, optMode = 2) {
-			return await fanstatic.before(el, this.resolvePanelPath(panelScope), opt, optMode);
+			return this._insertPanel(el, panelScope, opt, optMode, 'before');
 		},
 		afterPanel: async function(el, panelScope, opt, optMode = 2) {
-			return await fanstatic.after(el, this.resolvePanelPath(panelScope), opt, optMode);
+			return this._insertPanel(el, panelScope, opt, optMode, 'after');
 		},
 
 		panel: function(panelScope, opt, optMode = 2) {
 			this.panelScope = panelScope;
 			this.options = opt || {};
 			this.optMode = optMode;
+			this.getData = function() {
+				if (fanstatic.TEMPLATE_OPTMODE.default == this.optMode) {
+					if (!this.options.data) this.options.data = {};
+					return this.options.data;
+				}
 
+				return this.options;
+			};
+			this.outerScope = function(outerScope) {
+				const data = this.getData();
+				data.scope = data.scope || outerScope;
+			};
 			this.assignData = function(assignment) {
 				if (fanstatic.TEMPLATE_OPTMODE.data == this.optMode) {
 					Object.assign(this.options, assignment);
@@ -571,8 +598,10 @@
 			return false;
 		},
 
-		applyContent: function(target, content) {
+		applyContent: function(target, content, outerScope = null) {
 			if (fanstatic.instanceOfTemplate(content)){
+				if (outerScope) content.outerScope(outerScope);
+
 				return fanstatic.applyTemplate(target, content);
 			} else {
 				target.innerHTML = fanstatic.renderJhtm ? fanstatic.renderJhtm(content) : content;

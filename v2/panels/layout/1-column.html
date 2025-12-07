@@ -19,10 +19,11 @@
 		};
 
 		const panelScope = data.panelScope || fanstatic.resolvePanelScope(url)
-		const scope = data.scope || panelScope;
+		const scope = data.scope || data.id || panelScope;
 
-		panelElement.dataset.pnPanel = panelScope;
+		if (data.id) panelElement.id = data.id;
 		panelElement.dataset.pnScope = scope;
+		panelElement.dataset.pnPanel = panelScope;
 
 		const headerProm = data.headerPanel
 			? fanstatic.appendPanel(headerElement, data.headerPanel.panel, Object.assign({}, data.headerPanel.data, { scope: scope }))

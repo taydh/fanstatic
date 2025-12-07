@@ -5,11 +5,13 @@
 
 	return async function (roof, data, url) {
 		const panelScope = data.panel || fanstatic.resolvePanelScope(url);
-		const outerScope = data.scope || panelScope;
+		const outerScope = data.scope;
+		const innerScope = data.innerScope || outerScope || data.id || panelScope;
 		const panelElement = roof.children[0];
 
+		if (data.id) panelElement.id = data.id;
+		if (outerScope) panelElement.dataset.pnScope = outerScope;
 		panelElement.dataset.pnPanel = panelScope;
-		panelElement.dataset.pnScope = outerScope;
 
 		panelElement.innerHTML = fanstatic.renderJhtm([
 			design.wrap(

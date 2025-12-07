@@ -3,20 +3,26 @@
 
 	return async function (roof, data = {}, url) {
 		const panelScope = data.panelScope || fanstatic.resolvePanelScope(url);
-		const scope = data.scope || panelScope;
+		const outerScope = data.scope;
+		const innerScope = data.innerScope || outerScope || data.id || panelScope;
 
 		await fanstatic.appendPanel(roof, 'block.unit', {
 			id: data.id,
 			panelScope: panelScope,
-			scope: scope,
+			scope: data.scope,
+			innerScope: data.innerScope,
 			body: data.content || true,
 			foot: data.footnote || true,
 		})
 		
 		const panelElement = roof.children[0];
 		
+		if (data.id) panelElement.id = data.id;
+		if (outerScope) panelElement.dataset.pnScope = outerScope;
+		panelElement.dataset.pnPanel = panelScope;
+
 		panelElement.insertAdjacentHTML('afterbegin', fanstatic.renderJhtm(
-			design.div({ 'data-pn': 'header'}, [
+			design.div({ 'data-pn': 'headline'}, [
 				design.div({'data-pn':'category'}, data.category || true),
 				design.div({'data-pn':'title'}, data.title || true),
 				design.div({'data-pn':'subtitle'}, data.subtitle || true),
@@ -32,7 +38,7 @@
 
 		this.controller = {
 			panelElement: panelElement,
-			scope: scope,
+			scope: outerScope,
 			panelScope: panelScope,
 		};
 	};

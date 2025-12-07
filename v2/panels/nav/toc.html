@@ -5,11 +5,13 @@
 
 	return async function(roof, data, url) {
 		const panelScope = data.panelScope || fanstatic.resolvePanelScope(url);
-		const outerScope = data.scope || panelScope;
+		const outerScope = data.scope;
+		const innerScope = data.innerScope || outerScope || data.id || panelScope;
 		const panelElement = roof.children[0];
 
-		panelElement.setAttribute('data-pn-panel', panelScope);
-		panelElement.setAttribute('data-pn-scope', outerScope);
+		if (data.id) panelElement.id = data.id;
+		if (outerScope) panelElement.dataset.pnScope = outerScope;
+		panelElement.dataset.pnPanel = panelScope;
 
 		const getTitle = function(title) {
 			return design.div({ 'data-pn': 'title' }, title);
@@ -43,6 +45,8 @@
 
 		this.controller = {
 			panelElement: panelElement,
+			scope: outerScope,
+			panelScope: panelScope,
 		};
 	}
 </script>

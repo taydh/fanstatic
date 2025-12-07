@@ -3,10 +3,11 @@
 
 	return async function (roof, data = {}, url) {
 		const panelScope = data.panelScope || fanstatic.resolvePanelScope(url);
-		const scope = data.scope || panelScope;
+		const outerScope = data.scope;
+		const innerScope = data.innerScope || outerScope || data.id || panelScope;
 
 		roof.innerHTML = fanstatic.renderJhtm([
-			design.unit({data: { pn:  { scope: scope, panel: panelScope }}}, {
+			design.unit({
 				mode: data.mode,
 				cap: !!data.cap,
 				head: !!data.head,
@@ -18,34 +19,33 @@
 		const panelElement = roof.children[0];
 
 		if (data.id) panelElement.id = data.id;
-
+		if (outerScope) panelElement.dataset.pnScope = outerScope;
 		panelElement.dataset.pnPanel = panelScope;
-		panelElement.dataset.pnScope = scope;
 
 		let capProm, headProm, bodyProm, footProm;
 		
 		if (data.cap) {
 			const target = panelElement.querySelector('[data-ds=cap]')
 			target.dataset.pn = 'cap';
-			capProm = fanstatic.applyContent(target, data.cap);
+			capProm = fanstatic.applyContent(target, data.cap, innerScope);
 		}
 		
 		if (data.head) {
 			const target = panelElement.querySelector('[data-ds=head]');
 			target.dataset.pn = 'head';
-			headProm = fanstatic.applyContent(target, data.head);
+			headProm = fanstatic.applyContent(target, data.head, innerScope);
 		}
 
 		if (data.body) {
 			const target = panelElement.querySelector('[data-ds=body]');
 			target.dataset.pn = 'body';
-			bodyProm = fanstatic.applyContent(target, data.body);
+			bodyProm = fanstatic.applyContent(target, data.body, innerScope);
 		}
 
 		if (data.foot) {
 			const target = panelElement.querySelector('[data-ds=foot]')
 			target.dataset.pn = 'foot';
-			footProm = fanstatic.applyContent(target, data.foot);
+			footProm = fanstatic.applyContent(target, data.foot, innerScope);
 		}
 
 		panelElement.querySelectorAll(':scope > [data-ds]').forEach(elem => elem.removeAttribute('data-ds'));
@@ -59,7 +59,7 @@
 			headController: resolves[1],
 			bodyController: resolves[2],
 			footController: resolves[3],
-			scope: scope,
+			scope: outerScope,
 			panelScope: panelScope,
 		};
 	};

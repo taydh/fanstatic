@@ -7,33 +7,32 @@
 		const innerScope = data.innerScope || outerScope || data.id || panelScope;
 		const itemControllers = [];
 
-		roof.innerHTML = fanstatic.renderJhtm(design.stack(
-			{'data-pn': 'stack'},
-			{}, 
-			data.items ? data.items.map(item => design.placeholder('panel')) : [],
+		roof.innerHTML = fanstatic.renderJhtm(design.flex(
+			{'data-pn': 'flex'},
+			{},
+			data.items ? data.items.map(item => design.placeholder()) : []
 		));
 
 		const panelElement = roof.children[0];
-
-		panelElement.removeAttribute('data-ds');
 
 		if (data.id) panelElement.id = data.id;
 		if (outerScope) panelElement.dataset.pnScope = outerScope;
 		panelElement.dataset.pnPanel = panelScope;
 
-		const placeholders = roof.querySelectorAll('[data-ds-placeholder=panel]')
+		const itemNodes = panelElement.querySelectorAll('[data-ds=flex_item]');
+		const placeholderNodes = panelElement.querySelectorAll('[data-ds-placeholder]');
+		
+		panelElement.removeAttribute('data-ds');
 
-		if (data.items) {
-			for (let i=0; i<data.items.length; i++) {
-				const template = data.items[i];
+		for (const i in data.items) {
+			itemNodes[i].dataset.pn = 'flex_item';
+			itemNodes[i].removeAttribute('data-ds');
 
-				placeholders[i].parentElement.dataset.pn = 'stack_item';
-				placeholders[i].parentElement.removeAttribute('data-ds');
+			const template = data.items[i];
+			
+			if (innerScope) template.outerScope(innerScope);
 
-				if (innerScope) template.outerScope(innerScope);
-
-				itemControllers.push(await fanstatic.applyTemplate(placeholders[i], template, 'replace'));
-			}
+			itemControllers.push(await fanstatic.applyTemplate(placeholderNodes[i], template, 'replace'));
 		}
 
 		this.controller = {
@@ -41,6 +40,6 @@
 			itemControllers: itemControllers,
 			scope: outerScope,
 			panelScope: panelScope,
-		};;
+		};
 	};
 </script>

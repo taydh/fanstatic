@@ -3,7 +3,7 @@
 
 	return async function(roof, data = {}, url) {
 		const panelScope = data.panelScope || fanstatic.resolvePanelScope(url);
-		const outerScope = data.scope || panelScope;
+		
 		const model = {
 			id: data.postId || '',
 			backgroundImage: data.backgroundImage || '',
@@ -16,7 +16,8 @@
 		const baseBlockController = await fanstatic.appendPanel(roof, 'block.unit', {
 			id: model.id,
 			panelScope: panelScope,
-			scope: outerScope,
+			scope: data.scope,
+			innerScope: data.innerScope,
 			cap: {[tagFill]: true},
 			head: model.cover,
 			body: model.reveal,

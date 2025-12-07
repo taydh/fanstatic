@@ -3,7 +3,8 @@
 
 	return async function (roof, data, url) {
 		const panelScope = data.panelScope || fanstatic.resolvePanelScope(url);
-		const scope = data.scope || panelScope;
+		const outerScope = data.scope;
+		const innerScope = data.innerScope || outerScope || data.id || panelScope;
 
 		// const stackPanel = (data.stackPanels 
 		// 	? data.stackPanels.panel 
@@ -15,7 +16,8 @@
 		const sectionController = await fanstatic.insertPanel(roof, 'section.containerized-subcontent',
 			Object.assign(data, {
 				panelScope: panelScope,
-				scope: scope,
+				scope: outerScope,
+				innerScope: innerScope,
 				subContent: new fanstatic.panel('cluster.stack', {
 					items: data.subContents
 				}),

@@ -3,13 +3,14 @@
 
 	return async function(roof, data, url) {
 		const panelScope = data.panelScope || fanstatic.resolvePanelScope(url);
-		const outerScope = data.scope || panelScope;
 
 		const basicUnitController = await fanstatic.insertPanel(roof, 'block.unit', {
+			id: data.id,
 			panelScope: panelScope,
-			scope: outerScope,
+			scope: data.scope,
+			innerScope: data.innerScope,
 			cap: design.element('img', {src: data.icon}),
-			head: data.rating,
+			head: data.score,
 			body: data.subject,
 			foot: data.summary,
 		})

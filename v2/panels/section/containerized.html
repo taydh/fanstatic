@@ -5,18 +5,20 @@
 
 	return async function (roof, data = {}, url) {
 		const panelScope = data.panelScope || fanstatic.resolvePanelScope(url);
-		const scope = data.scope = data.scope || panelScope;
+		const outerScope = data.scope;
+		const innerScope = data.innerScope || outerScope || data.id || panelScope;
 		const panelElement = roof.children[0];
 
 		if (data.id) panelElement.id = data.id;
-
+		if (outerScope) panelElement.dataset.pnScope = outerScope;
 		panelElement.dataset.pnPanel = panelScope;
-		panelElement.dataset.pnScope = scope;
 
 		const contentBlockController = await fanstatic.insertPanel(panelElement, 'block.content', 
 			Object.assign(data, {
+				id: null,
 				panelScope: null,
-				scope: scope,
+				scope: outerScope,
+				innerScope: innerScope,
 			})
 		);
 

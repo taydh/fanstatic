@@ -3,7 +3,8 @@
 
 	return async function (roof, data = {}, url) {
 		const panelScope = data.panelScope || fanstatic.resolvePanelScope(url);
-		const scope = data.scope || panelScope;
+		const outerScope = data.scope;
+		const innerScope = data.innerScope || outerScope || data.id || panelScope;
 		// const mode = data.mode || 0;
 
 		// if (1 == mode) { // all
@@ -28,8 +29,9 @@
 
 		await fanstatic.insertPanel(roof, 'block.unit', {
 				id: data.id,
-				scope: scope,
 				panelScope: panelScope,
+				scope: data.scope,
+				innerScope: data.innerScope,
 				mode: data.mode,
 				cap: data.image ? design.element('img', {src: data.image}) : false,
 				head: data.subjects ? data.subjects.map(jhtm => design.div([jhtm])) : false,
@@ -45,12 +47,13 @@
 		if (data.message) panelElement.querySelector(':scope > [data-pn=body]').dataset.pn = 'message';
 		if (data.actions) panelElement.querySelector(':scope > [data-pn=foot]').dataset.pn = 'actions';
 
+		if (data.id) panelElement.id = data.id;
+		if (outerScope) panelElement.dataset.pnScope = outerScope;
 		panelElement.dataset.pnPanel = panelScope;
-		panelElement.dataset.pnScope = scope;
 
 		this.controller = {
 			panelElement: panelElement,
-			scope: scope,
+			scope: outerScope,
 			panelScope: panelScope,
 		};
 	};

@@ -7,11 +7,13 @@
 	return {
 		onload: async function(root, data, url) {
 			const panelScope = data.panelScope || fanstatic.resolvePanelScope(url);
-			const scope = data.scope || panelScope;
+			const outerScope = data.scope;
+			const innerScope = data.innerScope || outerScope || data.id || panelScope;
 			const panelElement = root.children[0];
-
-			panelElement.setAttribute('data-pn-panel', panelScope);
-			panelElement.setAttribute('data-pn-scope', scope);
+			
+			if (data.id) panelElement.id = data.id;
+			if (outerScope) panelElement.dataset.pnScope = outerScope;
+			panelElement.dataset.pnPanel = panelScope;
 
 			panelElement.innerHTML = fanstatic.renderJhtm([
 				design.element('figure', {style:'display:none', data:{ pn: 'logo'}}),
@@ -21,7 +23,7 @@
 			controller.panelElement = panelElement;
 			controller.logoElement = panelElement.querySelector('[data-pn=logo]');
 			controller.nameElement = panelElement.querySelector('[data-pn=name]');
-			controller.scope = scope;
+			controller.scope = outerScope;
 			controller.panelScope = panelScope;
 
 			let imgProm, nameProm;

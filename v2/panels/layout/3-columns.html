@@ -13,15 +13,17 @@
 
 	return async function(roof, data = {}, url) {
 		const panelScope = data.panelScope || fanstatic.resolvePanelScope(url)
-		const scope = data.scope || panelScope;
+		const outerScope = data.scope;
+		const innerScope = data.innerScope || outerScope || data.id || panelScope;
 		
 		const panelElement = roof.children[0];
 		const headerElement = panelElement.children[0];
 		const columnsElement = panelElement.children[1];
 		const footerElement = panelElement.children[2];
 
+		if (data.id) panelElement.id = data.id;
+		if (outerScope) panelElement.dataset.pnScope = outerScope;
 		panelElement.dataset.pnPanel = panelScope;
-		panelElement.dataset.pnScope = scope;
 
 		this.controller = {
 			panelElement: panelElement,
@@ -35,28 +37,26 @@
 		let headerProm, startProm, mainProm, endProm, footerProm;
 
 		if (data.header) {
-			if (fanstatic.isTemplate(data.header)) data.header.assignData({ scope: scope });
-			headerProm = fanstatic.applyContent(headerElement, data.header);
+			headerProm = fanstatic.applyContent(headerElement, data.header, innerScope);
 		}
 
 		if (data.startColumn) {
-			if (fanstatic.isTemplate(data.startColumn)) data.startColumn.assignData({ scope: scope });
-			startProm = fanstatic.applyContent(this.controller.startColumnElement, data.startColumn);
+			startProm = fanstatic.applyContent(this.controller.startColumnElement, data.startColumn, innerScope);
 		}
 
 		if (data.mainColumn) {
-			if (fanstatic.isTemplate(data.mainColumn)) data.mainColumn.assignData({ scope: scope });
-			mainProm = fanstatic.applyContent(this.controller.mainColumnElement, data.mainColumn);
+			//if (fanstatic.isTemplate(data.mainColumn)) data.mainColumn.assignData({ scope: outerScope });
+			mainProm = fanstatic.applyContent(this.controller.mainColumnElement, data.mainColumn, innerScope);
 		}
 
 		if (data.endColumn) {
-			if (fanstatic.isTemplate(data.endColumn)) data.endColumn.assignData({ scope: scope });
-			endProm = fanstatic.applyContent(this.controller.endColumnElement, data.endColumn);
+			//if (fanstatic.isTemplate(data.endColumn)) data.endColumn.assignData({ scope: outerScope });
+			endProm = fanstatic.applyContent(this.controller.endColumnElement, data.endColumn, innerScope);
 		}
 
 		if (data.footer) {
-			if (fanstatic.isTemplate(data.footer)) data.footer.assignData({ scope: scope });
-			footerProm = fanstatic.applyContent(footerElement, data.footer);
+			//if (fanstatic.isTemplate(data.footer)) data.footer.assignData({ scope: outerScope });
+			footerProm = fanstatic.applyContent(footerElement, data.footer, innerScope);
 		}
 
 		const resolves = await Promise.all([headerProm, startProm, mainProm, endProm, footerProm]);
@@ -66,7 +66,7 @@
 		this.controller.mainColumnController = resolves[2];
 		this.controller.endColumnController = resolves[3];
 		this.controller.footerColumnController = resolves[4];
-		this.controller.scope = scope;
+		this.controller.scope = outerScope;
 		this.controller.panelScope = panelScope;
 	}
 </script>
