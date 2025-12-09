@@ -125,7 +125,7 @@
 
 	Object.assign(fanstatic, {
 		TEMPLATE_OPTMODE: {
-			default: 0,
+			full: 0,
 			model: 1,
 			data: 2,
 		},
@@ -502,7 +502,7 @@
 				if (fanstatic.TEMPLATE_OPTMODE.data == this.optMode) {
 					Object.assign(this.options, assignment);
 				}
-				if (fanstatic.TEMPLATE_OPTMODE.default == this.optMode) {
+				if (fanstatic.TEMPLATE_OPTMODE.full == this.optMode) {
 					this.options.data = Object.assign(this.options.data || {}, assignment);
 				}
 			};
@@ -556,7 +556,7 @@
 			this.options = opt || {};
 			this.optMode = optMode;
 			this.getData = function() {
-				if (fanstatic.TEMPLATE_OPTMODE.default == this.optMode) {
+				if (fanstatic.TEMPLATE_OPTMODE.full == this.optMode) {
 					if (!this.options.data) this.options.data = {};
 					return this.options.data;
 				}
@@ -571,18 +571,22 @@
 				if (fanstatic.TEMPLATE_OPTMODE.data == this.optMode) {
 					Object.assign(this.options, assignment);
 				}
-				if (fanstatic.TEMPLATE_OPTMODE.default == this.optMode) {
+				if (fanstatic.TEMPLATE_OPTMODE.full == this.optMode) {
 					this.options.data = Object.assign(this.options.data || {}, assignment);
 				}
 			};
 		},
 
 		isTemplate: function(obj) {
-			return this.instanceOfTemplate(obj);
+			return this.instanceOfTemplate(obj) || this.instanceOfPanel(obj);
 		},
 
 		instanceOfTemplate: function(obj) {
-			return (obj instanceof fanstatic.template) || (obj instanceof fanstatic.panel);
+			return (obj instanceof fanstatic.template);
+		},
+
+		instanceOfPanel: function(obj) {
+			return (obj instanceof fanstatic.panel)
 		},
 
 		applyTemplate: async function(target, obj, insertFn) {
@@ -598,11 +602,11 @@
 			return false;
 		},
 
-		applyContent: function(target, content, outerScope = null) {
-			if (fanstatic.instanceOfTemplate(content)){
-				if (outerScope) content.outerScope(outerScope);
+		applyContent: function(target, content, outerScope = null, insertFn = 'append') {
+			if (fanstatic.isTemplate(content)){
+				if (outerScope && fanstatic.instanceOfPanel(content)) content.outerScope(outerScope);
 
-				return fanstatic.applyTemplate(target, content);
+				return fanstatic.applyTemplate(target, content, insertFn);
 			} else {
 				target.innerHTML = fanstatic.renderJhtm ? fanstatic.renderJhtm(content) : content;
 				return new Promise(rs => rs(null));

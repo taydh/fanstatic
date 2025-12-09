@@ -2,6 +2,10 @@
 	const design = fanstatic.design;
 
 	return async function(roof, data = {}, url) {
+		const panelScope = data.panelScope || fanstatic.resolvePanelScope(url)
+		const outerScope = data.scope;
+		const innerScope = data.innerScope || outerScope || data.id || panelScope;
+
 		roof.innerHTML = fanstatic.renderJhtm(design.wrap([
 			design.element('header'), design.element(data.mainTag ? data.mainTag : 'main'), design.element('footer'),
 		]))
@@ -11,6 +15,10 @@
 		const mainElement = panelElement.children[1];
 		const footerElement = panelElement.children[2];
 
+		if (data.id) panelElement.id = data.id;
+		if (outerScope) panelElement.dataset.pnScope = outerScope;
+		panelElement.dataset.pnPanel = panelScope;
+
 		this.controller = {
 			panelElement: panelElement,
 			headerElement: headerElement,
@@ -18,26 +26,16 @@
 			footerElement: footerElement
 		};
 
-		const panelScope = data.panelScope || fanstatic.resolvePanelScope(url)
-		const scope = data.scope || data.id || panelScope;
+		let headerProm, mainProm, footerProm;
 
-		if (data.id) panelElement.id = data.id;
-		panelElement.dataset.pnScope = scope;
-		panelElement.dataset.pnPanel = panelScope;
-
-		const headerProm = data.headerPanel
-			? fanstatic.appendPanel(headerElement, data.headerPanel.panel, Object.assign({}, data.headerPanel.data, { scope: scope }))
-			: new Promise(rs => rs(null));
-		const mainProm = data.mainPanel
-			? fanstatic.appendPanel(mainElement, data.mainPanel.panel, Object.assign({}, data.mainPanel.data, { scope: scope }))
-			: new Promise(rs => rs(null));
-		const footerProm = data.footerPanel
-			? fanstatic.appendPanel(footerElement, data.footerPanel.panel, Object.assign({}, data.footerPanel.data, { scope: scope }))
-			: new Promise(rs => rs(null));
+		if (data.header)
+			headerProm = fanstatic.applyContent(headerElement, data.header, innerScope);
+		if (data.main)
+			mainProm = fanstatic.applyContent(mainElement, data.main, innerScope);
+		if (data.footer)
+			footerProm = fanstatic.applyContent(footerElement, data.footer, innerScope);
 			
 		const resolves = await Promise.all([headerProm, mainProm, footerProm]);
-
-		console.log(resolves)
 
 		this.controller.headerController = resolves[0];
 		this.controller.mainController = resolves[1];

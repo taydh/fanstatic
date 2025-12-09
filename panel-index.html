@@ -30,6 +30,7 @@
 					// relative path
 					[
 						'/fanstatic',
+						'/fanstatic2',
 						'/fanstatic3',
 					].forEach(path => {
 						if (window.location.href.startsWith(origin + path)) originPath = origin + path;
@@ -46,8 +47,8 @@
 				const loadExtensions = async function(asyncCounter) {
 					fanstatic.assign({
 						base_url: hostEnv.fanstatic_base_url,
+						theme: 'earth',
 						theme_framework: 'bulma',
-						theme_style: 'earth',
 						theme_mode: 'less',
 						library_less_url: 'https://cdn.jsdelivr.net/npm/less',
 						trail_span: hostEnv.trail_span,

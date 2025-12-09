@@ -12,9 +12,9 @@
 				panelScope: panelScope,
 				scope: outerScope,
 				innerScope: innerScope,
-				subContent: new fanstatic.panel('cluster.grid', {
-					scope: scope,
-					items: data.subContents
+				item: new fanstatic.panel('cluster.grid', {
+					scope: outerScope,
+					items: data.items
 				})
 			})
 		);

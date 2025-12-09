@@ -25,14 +25,10 @@
 
 		if (data.items) {
 			for (let i=0; i<data.items.length; i++) {
-				const template = data.items[i];
-
 				placeholders[i].parentElement.dataset.pn = 'stack_item';
 				placeholders[i].parentElement.removeAttribute('data-ds');
 
-				if (innerScope) template.outerScope(innerScope);
-
-				itemControllers.push(await fanstatic.applyTemplate(placeholders[i], template, 'replace'));
+				itemControllers.push(await fanstatic.applyContent(placeholders[i], data.items[i], innerScope, 'replace'));
 			}
 		}
 

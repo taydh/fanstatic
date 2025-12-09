@@ -31,14 +31,22 @@
 			actionsElement: panelElement.querySelector(`:scope > [data-pn=container] > [data-pn=actions]`)
 		}
 
+		let identityProm, navigationProm, actionsProm;
+
 		if (data.identity)
-			await fanstatic.appendPanel(controller.identityElement, data.identity.panel, data.identity.data);
+			identityProm = fanstatic.applyContent(controller.identityElement, data.identity, innerScope);
 		
 		if (data.navigation)
-			await fanstatic.appendPanel(controller.navigationElement, data.navigation.panel, data.navigation.data);
+			navigationProm = fanstatic.applyContent(controller.navigationElement, data.navigation, innerScope);
 
 		if (data.actions)
-			await fanstatic.appendPanel(controller.actionsElement, data.actions.panel, data.actions.data);
+			actionsProm = fanstatic.applyContent(controller.actionsElement, data.actions, innerScope);
+
+		const allResolve = await Promise.all([identityProm, navigationProm, actionsProm]);
+
+		controller.identityController = allResolve[0];
+		controller.navigationsController = allResolve[1];
+		controller.actionsController = allResolve[2];
 
 		this.controller = controller;
 	};

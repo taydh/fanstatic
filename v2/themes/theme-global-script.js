@@ -1,6 +1,10 @@
 {
 	fanstatic.assignClassfix({
 		/* general */
+		'[data-pn-panel^="layout."]': 'theme-page-layout',
+		'[data-pn-panel^="section."] [data-pn=identity]': 'theme-page-identity',
+		'[data-pn-panel^="section."] [data-pn=navigation]': 'theme-page-navigation',
+		'[data-pn-panel^="section."] [data-pn=action]': 'theme-page-action',
 
 		'main > section': 'theme-section',
 		'.panel-section [data-pn-panel="block.section-block"]': 'panel-section-block',

@@ -28,11 +28,7 @@
 			itemNodes[i].dataset.pn = 'grid_item';
 			itemNodes[i].removeAttribute('data-ds');
 
-			const template = data.items[i];
-			
-			if (innerScope) template.outerScope(innerScope);
-
-			itemControllers.push(await fanstatic.applyTemplate(placeholderNodes[i], template, 'replace'));
+			itemControllers.push(await fanstatic.applyContent(placeholderNodes[i], data.items[i], innerScope, 'replace'));
 		}
 
 		this.controller = {

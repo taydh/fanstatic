@@ -14,12 +14,12 @@
 				})
 			);
 
-			if (fanstatic.instanceOfTemplate(data.subContent)) {
-				data.subContent.outerScope(innerScope);
+			if (fanstatic.instanceOfTemplate(data.item)) {
+				data.item.outerScope(innerScope);
 			}
 
 			const subContentTarget = sectionController.contentBlockController.panelElement.querySelector('[data-pn=content]')
-			const subContentController = await fanstatic.applyContent(subContentTarget, data.subContent);
+			const subContentController = await fanstatic.applyContent(subContentTarget, data.item);
 			
 			// await fanstatic.insertPanel(subContentTarget, subContent,
 			// 	Object.assign(data.subPanel.data, {
@@ -29,7 +29,7 @@
 			// );
 
 			sectionController.subPanelController = subContentController;
-			sectionController.subPanelController.panelElement.dataset.pn = 'subcontent';
+			sectionController.subPanelController.panelElement.dataset.pn = 'item';
 			this.controller = sectionController;
 	};
 </script>

@@ -31,6 +31,7 @@
 					// relative path
 					[
 						'/fanstatic',
+						'/fanstatic2',
 						'/fanstatic3',
 					].forEach(path => {
 						if (window.location.href.startsWith(origin + path)) originPath = origin + path;
@@ -47,8 +48,8 @@
 				const loadExtensions = async function(asyncCounter) {
 					fanstatic.assign({
 						base_url: hostEnv.fanstatic_base_url,
+						theme: 'earth',
 						theme_framework: 'bulma',
-						theme_style: 'earth',
 						theme_mode: 'less',
 						library_less_url: 'https://cdn.jsdelivr.net/npm/less',
 						trail_span: hostEnv.trail_span,
@@ -552,7 +553,7 @@
 						window.recordedController = await fanstatic.appendPanel(roof, 'section.containerized-subcontent', {
 							id: 'my_section_1',
 							title: 'Section Title',
-							subContent: new fanstatic.panel('block.actionable', {
+							item: new fanstatic.panel('block.actionable', {
 								image: 'https://dummyimage.com/60x60/eee/fff&text=image',
 								subjects: ['Subject 1', 'Subject 2'],
 								message: 'Message area',
@@ -585,7 +586,7 @@
 							id: 'my_section_1',
 							innerScope: 'my_section_scope',
 							title: 'Section Title',
-							subContents: [
+							items: [
 								new fanstatic.panel('block.actionable', {
 									image: 'https://dummyimage.com/60x60/eee/fff&text=image',
 									subjects: ['Subject 1', 'Subject 2'],
@@ -611,7 +612,7 @@
 							id: 'my_section',
 							scope: 'my_section_scope',
 							title: 'Section Title',
-							subContents: [
+							items: [
 								new fanstatic.panel('block.actionable', {
 									image: 'https://dummyimage.com/240x240/eee/fff&text=image',
 									subjects: ['Subject 1', 'Subject 2'],
@@ -632,27 +633,21 @@
 				<script>
 					return async function(roof, data) {
 						window.recordedController = await fanstatic.appendPanel(roof, 'section.header', {
-							scope: 'my_header',
-							identity: {
-								panel: 'block.identity',
-								data: {
-									id: 'my_identity',
-									logo: 'https://dummyimage.com/150x150/eee/fff&text=LOGO',
-									name: 'The Company',
-								}
-							},
-							navigation: {
-								panel: 'nav.menu',
-								data: {
-									id: 'my_menu',
-									links: [
-										{ label:'Link 1' },
-										{ url:'#', label:'Link 2' },
-										{ url:'#', label:'Link 3' },
-									]
-								}
-							}
-						});						
+							id: 'my_header',
+							identity: new fanstatic.panel('block.identity', {
+								id: 'my_identity',
+								logo: 'https://dummyimage.com/150x150/eee/fff&text=LOGO',
+								name: 'The Company',
+							}),
+							navigation: new fanstatic.panel('nav.menu', {
+								id: 'my_menu',
+								links: [
+									{ label:'Link 1' },
+									{ url:'#', label:'Link 2' },
+									{ url:'#', label:'Link 3' },
+								]
+							})
+						});			
 					}
 				</script>
 			</template>
