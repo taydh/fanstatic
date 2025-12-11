@@ -11,11 +11,12 @@
 
 		/* section */
 		
-		'[data-pn=container]': 'theme-container',
-		'[data-pn-scope="section.containerized-hero"][data-pn-panel^="block"]': 'panel-hero-block',
-		'[data-pn-scope="section.containerized-hero"][data-ds=unit]': 'theme-hero-block',
+		'section [data-pn=container]': 'theme-container',
+		'section [data-pn-scope="section.containerized-hero"][data-pn-panel^="block"]': 'panel-hero-block',
+		'section [data-pn-scope="section.containerized-hero"][data-ds=unit]': 'theme-hero-block',
+		'section [data-pn-scope="section.containerized-stack"] [data-pn=items]': 'theme-section-stack-items',
 
-		'[data-pn-scope="section.containerized-stack"] [data-pn=items]': 'theme-section-stack-items',
+		'section[data-pn-panel="section.header"] .theme-container': 'theme-flex',
 
 		/* block */
 

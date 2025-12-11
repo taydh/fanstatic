@@ -8,8 +8,8 @@
 		const itemControllers = [];
 
 		roof.innerHTML = fanstatic.renderJhtm(design.flex(
-			{'data-pn': 'flex'},
-			{},
+			{$tag: data.$tag, 'data-pn': 'flex'},
+			{$tag: data.$itemTag},
 			data.items ? data.items.map(item => design.placeholder()) : []
 		));
 

@@ -1,6 +1,6 @@
 /* variables */
 :root {
-	--util-spacer: 3;
+	--theme-spacer: 1;
 
 	--theme-dark-8: #000000;
 	--theme-dark-7: #111111;
@@ -51,11 +51,11 @@ html {
 	letter-spacing: 1.2px;
 	font-family: Verdana, Geneva, Tahoma, sans-serif;
 
-	@media only screen and (max-width: 359px) {
+	.responsive-max(calc(@xs - 0.1px), {
 		font-size: 10px;
 		line-height: 2;
 		letter-spacing: 1.5px;
-	}
+	})
 }
 
 body {
@@ -70,6 +70,7 @@ body {
 
 /* LAYOUT RULES */
 
+/*
 .theme-pi-0 { padding-inline: 0; }
 .theme-pi-1 { padding-inline: calc(.25 * var(--theme-padding)); }
 .theme-pi-2 { padding-inline: calc(.5 * var(--theme-padding)); }
@@ -83,14 +84,9 @@ body {
 .theme-pb-3 { padding-block: var(--theme-padding); }
 .theme-pb-4 { padding-block: calc(2 * var(--theme-padding)); }
 .theme-pb-5 { padding-block: calc(2.5 * var(--theme-padding)); }
+*/
 
-.theme-container {
-	box-sizing: border-box;
-	margin: 0 auto;
-	max-width: 1000px;
-	padding-inline: var(--util-padding);
-	padding-block: calc(var(--util-spacer) * var(--util-padding));
-}
+
 
 .theme-layout-3cols {
 	display: grid;
@@ -102,10 +98,6 @@ body {
 }
 
 /* THEME RULES */
-
-/* .theme-container {
-	background-color: var(--theme-bg-color-section-darker);
-} */
 
 .theme-display-1 { font-size: 1.5rem; }
 .theme-display-2 { font-size: 2rem; }

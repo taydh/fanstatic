@@ -37,6 +37,11 @@
 				head: data.subjects ? data.subjects.map(jhtm => design.div([jhtm])) : false,
 				body: data.message ? data.message : false,
 				foot: data.actions ? data.actions.map(jhtm => design.div([jhtm])) : false,
+				$tag: data.$tag,
+				$capTag: data.$capTag,
+				$headTag: data.$headTag,
+				$bodyTag: data.$bodyTag,
+				$footTag: data.$footTag,
 			}
 		);
 

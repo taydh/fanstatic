@@ -20,6 +20,9 @@
 			}
 			else if ('style' === k && typeof v === 'object') {
 				return 'style="' + _toStyleAttributesString(v) + '"';
+			} 
+			else if ('$' == k[0]) {
+				return ''; // preserved for special usage
 			} else {
 				return `${k}="${v}"`;
 			}
@@ -118,6 +121,16 @@
 
 			return this.element('p', attributes, items);
 		},
+		button: function(attributes = {}, model) {
+			if (('object' != typeof attributes) || Array.isArray(attributes)) {
+				model = attributes;
+				attributes = {};
+			}
+
+			let tagFill = `button data-ds="button"`;
+
+			return {[tagFill]: model};
+		},
 		unit: function(attributes = {}, model) {
 			if (!model){
 				if (Object.keys(attributes).some(k => 'cap' == k || 'head' == k || 'body' == k || 'foot' == k)) {
@@ -129,7 +142,7 @@
 				}
 			}
 
-			let tagFill = ('div data-ds="unit" ' + _toAttributesString(attributes));
+			let tagFill = ((attributes.$tag || 'div') + ' data-ds="unit" ' + _toAttributesString(attributes));
 			let result = {
 				[tagFill]: [],
 			};
@@ -151,10 +164,10 @@
 				model.foot = false;
 			}
 
-			if (model.cap) result[tagFill].push({'figure data-ds="cap"': model.cap});
-			if (model.head) result[tagFill].push({'div data-ds="head"': model.head});
-			if (model.body) result[tagFill].push({'div data-ds="body"': model.body});
-			if (model.foot) result[tagFill].push({'div data-ds="foot"': model.foot});
+			if (model.cap) result[tagFill].push({[(attributes.$capTag || 'figure') + ' data-ds="cap"']: model.cap});
+			if (model.head) result[tagFill].push({[(attributes.$headTag || 'div') + ' data-ds="head"']: model.head});
+			if (model.body) result[tagFill].push({[(attributes.$bodyTag || 'div') + ' data-ds="body"']: model.body});
+			if (model.foot) result[tagFill].push({[(attributes.$footTag || 'div') + ' data-ds="foot"']: model.foot});
 
 			return result;
 		},
@@ -164,7 +177,7 @@
 				attributes = {};
 			}
 
-			let tagFill = ('div data-ds="wrap" ' +  _toAttributesString(attributes));
+			let tagFill = ((attributes.$tag || 'div') + ' data-ds="wrap" ' +  _toAttributesString(attributes));
 			let result = {};
 
 			result[tagFill] = item;
@@ -177,7 +190,7 @@
 				attributes = {};
 			}
 
-			let tagFill = ('div data-ds="axis" ' +  _toAttributesString(attributes));
+			let tagFill = ((attributes.$tag || 'div') + ' data-ds="axis" ' +  _toAttributesString(attributes));
 			let result = {};
 			let items = (Array.isArray(model) ? model : model.items) || [];
 
@@ -191,8 +204,8 @@
 				attributes = {};
 			}
 
-			let listTag = model.listTag || 'ul';
-			let itemTag = ('div' == listTag) ? (model.listItemTag || 'div') : 'li';
+			let listTag = attributes.$tag || model.listTag || 'ul';
+			let itemTag = (['ul','ol'].includes(listTag)) ? 'li' : (secondaryAttributes.$tag || model.listItemTag || 'div');
 			let tagFill = (listTag + ' data-ds="list" ' +  _toAttributesString(attributes));
 			let result = {};
 			let items = (Array.isArray(model) ? model : model.items) || [];
@@ -212,14 +225,14 @@
 				attributes = {};
 			}
 
-			let tagFill = ('div data-ds="stack" ' +  _toAttributesString(attributes));
+			let tagFill = ((attributes.$tag || 'div') + ' data-ds="stack" ' +  _toAttributesString(attributes));
 			let result = {};
 			let items = (Array.isArray(model) ? model : model.items) || [];
 
 			result[tagFill] = items.map(item => {
 				return fanstatic.tagFillContains(item, 'data-ds="stack_item"')
 					? item
-					: { ['div data-ds="stack_item" ' +  _toAttributesString(secondaryAttributes)]: item };
+					: {[(secondaryAttributes.$tag || model.itemTag || 'div') + ' data-ds="stack_item" ' +  _toAttributesString(secondaryAttributes)]: item };
 			});
 
 			return result;
@@ -237,14 +250,14 @@
 				attributes.style = (attributes.style || '') + '; display: grid;';
 			}
 
-			let tagFill = ('div data-ds="grid" ' +  _toAttributesString(attributes));
+			let tagFill = ((attributes.$tag || 'div') + ' data-ds="grid" ' +  _toAttributesString(attributes));
 			let result = {};
 			let items = (Array.isArray(model) ? model : model.items) || [];
 
 			result[tagFill] = items.map(item => {
 				return fanstatic.tagFillContains(item, 'data-ds="grid_item"')
 					? item
-					: { ['div data-ds="grid_item" ' +  _toAttributesString(secondaryAttributes)]: item };
+					: { [(secondaryAttributes.$tag || model.itemTag || 'div') + ' data-ds="grid_item" ' +  _toAttributesString(secondaryAttributes)]: item };
 			});
 
 			return result;
@@ -262,30 +275,20 @@
 				attributes.style = (attributes.style || '') + '; display: flex;';
 			}
 
-			let tagFill = ('div data-ds="flex" ' +  _toAttributesString(attributes));
+			let tagFill = ((attributes.$tag || 'div') + ' data-ds="flex" ' +  _toAttributesString(attributes));
 			let result = {};
 			let items = (Array.isArray(model) ? model : model.items) || [];
 
 			result[tagFill] = items.map(item => {
 				return fanstatic.tagFillContains(item, 'data-ds="flex_item"') 
 					? item
-					: { ['div data-ds="flex_item" ' +  _toAttributesString(secondaryAttributes)]: item };
+					: { [(secondaryAttributes.$tag || model.itemTag || 'div') + 'div data-ds="flex_item" ' +  _toAttributesString(secondaryAttributes)]: item };
 			});
 
 			return result;
 		},
-		button: function(attributes = {}, model) {
-			if (('object' != typeof attributes) || Array.isArray(attributes)) {
-				model = attributes;
-				attributes = {};
-			}
-
-			let tagFill = `button data-ds="button"`;
-
-			return {[tagFill]: model};
-		},
 		placeholder: function(name = "", model = true) {
-			let tagFill = `div data-ds-placeholder="${name}"`;
+			let tagFill = `span data-ds-placeholder="${name}"`;
 			
 			return {[tagFill]: model}
 		},

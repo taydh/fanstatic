@@ -7,7 +7,7 @@
 		const innerScope = data.innerScope || outerScope || data.id || panelScope;
 
 		roof.innerHTML = fanstatic.renderJhtm(design.wrap([
-			design.element('header'), design.element(data.mainTag ? data.mainTag : 'main'), design.element('footer'),
+			design.element(data.$headerTag || 'header'), design.element(data.$mainTag || 'main'), design.element(data.$footerTag || 'footer'),
 		]))
 
 		const panelElement = roof.children[0];

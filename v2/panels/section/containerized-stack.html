@@ -19,7 +19,9 @@
 				scope: outerScope,
 				innerScope: innerScope,
 				item: new fanstatic.panel('cluster.stack', {
-					items: data.items
+					items: data.items,
+					$tag: data.$itemsTag,
+					$itemTag: data.$itemTag,
 				}),
 			})
 		);

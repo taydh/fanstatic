@@ -16,8 +16,8 @@
 			panelElement.dataset.pnPanel = panelScope;
 
 			panelElement.innerHTML = fanstatic.renderJhtm([
-				design.element('figure', {style:'display:none', data:{ pn: 'logo'}}),
-				design.div({style:'display:none', data:{ pn: 'name'}}),
+				design.element(data.$logoTag || 'figure', {style:'display:none', data:{ pn: 'logo'}}),
+				design.tag(data.$nameTag || 'div', {style:'display:none', data:{ pn: 'name'}}),
 			]);
 
 			controller.panelElement = panelElement;

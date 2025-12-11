@@ -8,6 +8,12 @@
 
 		roof.innerHTML = fanstatic.renderJhtm([
 			design.unit({
+				$tag: data.$tag,
+				$capTag: data.$capTag,
+				$headTag: data.$headTag,
+				$bodyTag: data.$bodyTag,
+				$footTag: data.$footTag,
+			}, {
 				mode: data.mode,
 				cap: !!data.cap,
 				head: !!data.head,

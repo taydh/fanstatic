@@ -13,6 +13,8 @@
 			innerScope: data.innerScope,
 			body: data.content || true,
 			foot: data.footnote || true,
+			$bodyTag: data.$contentTag,
+			$footTag: data.$footnoteTag,
 		})
 		
 		const panelElement = roof.children[0];
@@ -22,11 +24,11 @@
 		panelElement.dataset.pnPanel = panelScope;
 
 		panelElement.insertAdjacentHTML('afterbegin', fanstatic.renderJhtm(
-			design.div({ 'data-pn': 'headline'}, [
-				design.div({'data-pn':'category'}, data.category || true),
-				design.div({'data-pn':'title'}, data.title || true),
-				design.div({'data-pn':'subtitle'}, data.subtitle || true),
-				design.div({'data-pn':'caption'}, data.caption || true),
+			design.tag((data.$headlineTag || 'div'), { 'data-pn': 'headline'}, [
+				design.tag((data.$categoryTag || 'div'), {'data-pn':'category'}, data.category || true),
+				design.tag((data.$titleTag || 'div'), {'data-pn':'title'}, data.title || true),
+				design.tag((data.$subtitleTag || 'div'), {'data-pn':'subtitle'}, data.subtitle || true),
+				design.tag((data.$captionTag || 'div'), {'data-pn':'caption'}, data.caption || true),
 			])
 		));
 
