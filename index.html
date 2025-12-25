@@ -149,7 +149,7 @@
 				if (window.location.pathname.includes('/designs')){	
 					await fanstatic.insert(pageBox, './assets/templates/page_designs.html', {
 						data: {
-							design_base_url: data.host_env.design_base_url,
+							design_base_url: data.host_env.design2_base_url,
 						}
 					})
 				}
@@ -180,9 +180,9 @@
 		<ul class="nav col-12 col-md-8 mb-2 justify-content-center justify-content-md-end mb-md-0">
 			<li><a href="./" class="nav-link text-dark px-2" data-url="/">Home</a></li>
 			<li><a href="./docs/" class="nav-link text-dark  px-2" data-url="/docs/">Documentation</a></li>
-			<li><a href="./designs/" class="nav-link text-dark  px-2" data-url="/designs/">Designs</a></li>
 			<li><a href="./showcases/" class="nav-link text-dark  px-2" data-url="/showcases/">Showcases</a></li>
 			<li><a href="./blog/" class="nav-link text-dark  px-2" data-url="/blog/">Blog</a></li>
+			<li><a href="./designs/" class="btn btn-primary px-2" data-url="/designs/">Designs</a></li>
 		</ul>
 
 		<div class="col-md-3 text-end"></div>

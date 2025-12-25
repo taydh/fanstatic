@@ -1,5 +1,3 @@
-<section></section>
-
 <script>
 	const design = fanstatic.design;
 
@@ -7,6 +5,9 @@
 		const panelScope = data.panelScope || fanstatic.resolvePanelScope(url);
 		const outerScope = data.scope;
 		const innerScope = data.innerScope || outerScope || data.id || panelScope;
+
+		roof.innerHTML = fanstatic.renderJhtm(design.element('section', data.$attr || {}, true));
+
 		const panelElement = roof.children[0];
 
 		if (data.id) panelElement.id = data.id;
@@ -19,6 +20,10 @@
 				panelScope: null,
 				scope: outerScope,
 				innerScope: innerScope,
+
+				$tag: data.blockTag,
+				$attr: data.blockAttr,
+				ignoreAttr: true,
 			})
 		);
 

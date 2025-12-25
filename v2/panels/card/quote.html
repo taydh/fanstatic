@@ -12,18 +12,26 @@
 			scope: data.scope,
 			innerScope: data.innerScope,
 			cap: {[tagFill]: true},
-			head: [
-				design.div({ 'data-pn': 'name' }, data.name), 
+			head: new fanstatic.panel('base.jhtm', [
+				design.tag(data.$nameTag || 'div', {'data-pn': 'name' }, data.name), 
 				design.wrap([
-					design.div({ 'data-pn': 'title' }, data.title),
-					design.div({ 'data-pn': 'company' }, data.company)
+					design.tag(data.$titleTag || 'div', { 'data-pn': 'title' }, data.title),
+					design.tag(data.$companyTag || 'div', { 'data-pn': 'company' }, data.company)
 				])
-			],
+			]),
 			body: data.quote || true,
+
+			$tag: data.$tag,
+			$attr: data.$attr,
+			$capTag: data.$photoTag,
+			$headTag: data.$headTag,
+			$bodyTag: data.$quoteTag || 'blockquote',
+			$footTag: data.$footTag,
 		})
 
 		const panelElement = baseBlockController.panelElement;
 
+		panelElement.querySelector(':scope > [data-pn=cap]').dataset.pn = 'photo';
 		panelElement.querySelector(':scope > [data-pn=body]').dataset.pn = 'quote';
 
 		this.controller = {

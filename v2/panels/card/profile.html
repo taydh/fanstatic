@@ -25,8 +25,8 @@
 			innerScope: data.innerScope,
 			cap: {[tagFill]: true},
 			head: design.wrap([
-				design.div({data: {'pn': 'name'}}, model.name),
-				design.div({data: {'pn': 'title'}}, model.title),
+				design.tag({$tag:data.$nameTag, data: {'pn': 'name'}}, model.name),
+				design.tag({$tag:data.$titleTag, data: {'pn': 'title'}}, model.title),
 			]),
 			body: model.brief,
 			foot: design.axis([
@@ -35,7 +35,14 @@
 				design.div({data: {'pn': 'twitterX'}}, model.twitterX),
 				design.div({data: {'pn': 'tiktok'}}, model.tiktok),
 				design.div({data: {'pn': 'linkedIn'}}, model.linkedIn),
-			])
+			]),
+
+			$tag: data.$tag,
+			$attr: data.$attr,
+			$capTag: data.$photoTag,
+			$headTag: data.$headTag,
+			$bodyTag: data.$briefTag,
+			$footTag: data.$footTag,
 		})
 
 		const panelElement = baseBlockController.panelElement;

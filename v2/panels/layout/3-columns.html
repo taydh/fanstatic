@@ -2,7 +2,7 @@
 	<header></header>
 	<div data-pn="columns">
 		<div data-pn="startColumn"></div>
-		<main data-pn="mainColumn"></main>
+		<span data-ds-placeholder="main"></span>
 		<div data-pn="endColumn"></div>
 	</div>
 	<footer></footer>
@@ -24,6 +24,10 @@
 		if (data.id) panelElement.id = data.id;
 		if (outerScope) panelElement.dataset.pnScope = outerScope;
 		panelElement.dataset.pnPanel = panelScope;
+
+		const mainColumnElement = document.createElement(data.$mainTag || 'main');
+		mainColumnElement.dataset.pn = 'mainColumn';
+		columnsElement.children[1].replaceWith(mainColumnElement),
 
 		this.controller = {
 			panelElement: panelElement,

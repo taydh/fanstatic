@@ -27,30 +27,46 @@
 		if (data.subjects && !Array.isArray(data.subjects)) data.subjects = [data.subjects];
 		if (data.actions && !Array.isArray(data.actions)) data.actions = [data.actions];
 
-		await fanstatic.insertPanel(roof, 'block.unit', {
+		const unitController = await fanstatic.insertPanel(roof, 'block.unit', {
 				id: data.id,
 				panelScope: panelScope,
 				scope: data.scope,
 				innerScope: data.innerScope,
 				mode: data.mode,
 				cap: data.image ? design.element('img', {src: data.image}) : false,
-				head: data.subjects ? data.subjects.map(jhtm => design.div([jhtm])) : false,
+				head: data.subjects ? data.subjects.map(() => design.div()) : false,
 				body: data.message ? data.message : false,
-				foot: data.actions ? data.actions.map(jhtm => design.div([jhtm])) : false,
+				foot: data.actions ? data.actions.map(() => design.div()) : false,
+
 				$tag: data.$tag,
-				$capTag: data.$capTag,
-				$headTag: data.$headTag,
-				$bodyTag: data.$bodyTag,
-				$footTag: data.$footTag,
+				$attr: data.$attr,
+				$capTag: data.$imageTag,
+				$headTag: data.$subjectsTag,
+				$bodyTag: data.$messageTag,
+				$footTag: data.$actionsTag,
 			}
 		);
 
 		const panelElement = roof.children[0];
-		
-		if (data.image) panelElement.querySelector(':scope > [data-pn=cap]').dataset.pn = 'image';
-		if (data.subjects) panelElement.querySelector(':scope > [data-pn=head]').dataset.pn = 'subjects';
-		if (data.message) panelElement.querySelector(':scope > [data-pn=body]').dataset.pn = 'message';
-		if (data.actions) panelElement.querySelector(':scope > [data-pn=foot]').dataset.pn = 'actions';
+
+		if (data.image) unitController.capElement.dataset.pn = 'image';
+		if (data.subjects) {
+			unitController.headElement.dataset.pn = 'subjects';
+			const divs = Array.from(unitController.headElement.children);
+
+			for (let i=0; i<data.subjects.length; i++) {
+				await fanstatic.applyContent(divs[i], data.subjects[i], innerScope);
+			}
+		}
+		if (data.message) unitController.bodyElement.dataset.pn = 'message';
+		if (data.actions) {
+			unitController.footElement.dataset.pn = 'actions';
+			const divs = Array.from(unitController.footElement.children);
+
+			for (let i=0; i<data.subjects.length; i++) {
+				await fanstatic.applyContent(divs[i], data.actions[i], innerScope);
+			}
+		}
 
 		if (data.id) panelElement.id = data.id;
 		if (outerScope) panelElement.dataset.pnScope = outerScope;

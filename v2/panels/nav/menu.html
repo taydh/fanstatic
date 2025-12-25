@@ -16,7 +16,6 @@
 		panelElement.innerHTML = fanstatic.renderJhtm(
 			design.list({ 'data-pn': 'nav_list' }, { 'data-pn': 'nav_item' },
 			{
-				listTag: 'div',
 				items: data.links.map(link => {
 					const href = (link.url ? fanstatic.sanitizeAttrValue(link.url) : null) || null;
 

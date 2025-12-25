@@ -8,8 +8,8 @@
 		const itemControllers = [];
 
 		roof.innerHTML = fanstatic.renderJhtm(design.grid(
-			{$tag: data.$tag, 'data-pn': 'grid'},
-			{$tag: data.$itemTag},
+			Object.assign(data.$attr || {}, { $tag: data.$tag, 'data-pn': 'grid'}),
+			Object.assign(data.itemAttr || {}, { $tag: data.$itemTag }),
 			data.items ? data.items.map(item => design.placeholder()) : []
 		));
 

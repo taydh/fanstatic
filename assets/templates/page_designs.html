@@ -1,25 +1,20 @@
 <div id="page_template" class="container pt-3">
-	<h2 class="text-center">Instant<br>DESIGN<br><small class="text-secondary">(BETA version)</small></h2>
+	<h2 class="text-center">Instant DESIGN</h2>
 
 	<div class="card card-body mb-3 text-md-center">
 		<p>
-			Since this website is about client-side templating engine for developer, our designs are more than the usual HTML+CSS templates.
-		</p>
-		<p>
-			We provide basic web design for several business need and filled with sections that we hope you will find usefull to start with.
-			Then, or you may already knew, that many web design elements built as typical components and that it easier to have separate data model from the template itself.
-			That is when these designs shine.
-		</p>
-		<p>
+			Since this is a website focused on client-side templating engine, we offer designs where source code managable by <b><i>text or code editor</i></b> for anyone with basic web knowledge.
+			As a matter of fact, each website designs are actually a system, not a general purpose template. They are developed for specific and conditional business requirements and started by providing the data model (YAML format), underlying information that will translate into the design elements.
 			In some of the design, you will also find how to have blog-like system for your new static website.
 		</p>
 		<p>
 			You can download and customized them for your need. 
 			See <a href="./docs/">documentation</a> page for technical reference.
 		</p>
-	</div>
-	<div class="mb-3 text-center">
-		<a href="mailto:contact@annexdesk.com" class="btn btn-primary btn-lg my-5">Contact for Service</a>
+
+		<div class="text-center">
+			<a href="mailto:contact@annexdesk.com" class="btn btn-primary btn-lg my-3">Contact for Service</a>
+		</div>
 	</div>
 
 	<div id="designGrid" class="card-grid row justify-content-start"></div>
@@ -34,7 +29,7 @@
 <script type="text/plain">
 <div class="col-12 col-lg-6 mb-3">
 	<div class="card flex-row" 
-		data-template-onrender="viewport-enter-animate" 
+		data-template-onplace="viewport-enter-animate" 
 		data-visual-hidden data-visual-animation="slideInUp">
 
 		<div 
@@ -62,13 +57,57 @@
 </div>
 </script>
 
+<script id="design2template" type="text/plain">
+{{#groups}}
+<div class="col-12 mb-3">
+	<div class="card flex-row" 
+		data-template-onplace="viewport-enter-animate" 
+		data-visual-hidden data-visual-animation="slideInUp">
+
+		<div 
+			class="card-img-left bg-light border-end"
+			style="border-radius:var(--bs-card-border-radius) 0 0 var(--bs-card-border-radius); flex: 2; background: url('{{designBaseUrl}}(assets)/diy-thumbnails/{{id}}.jpg') top left / cover">
+		</div>
+
+		<div class="card-body" style="min-height: 300px;">
+			<div class="d-flex justify-content-between align-items-center">
+				<h3>{{name}}</h3>
+				<div>
+					{{designs.length}} base variant(s) &bull; <a href="#" title="view the data model sample">data model sample</a>
+				</div>
+			</div>
+
+			<hr class="mb-4">
+
+			{{#designs}}
+			<div class="d-flex mb-3">
+				<div class="flex-fill" style="align-content:center;">
+					<strong>{{name}}</strong><br>
+					{{description}}
+				</div>
+				<div style="align-content:center;">
+					<button class="x-live-demo-button btn btn-info" title="preview"
+						data-id="{{id}}" data-gesture="{{gesture}}" data-category="{{category}}" data-name="{{name}}" data-url="{{url}}" data-zip-url="{{zipUrl}}"
+						data-bs-toggle="modal" data-bs-target="#Webframe_Modal"><i class="bi bi-eye"></i></button>
+					<a href="{{download}}" class="x-download-button btn btn-primary" title="download"><i class="bi bi-download"></i></a>
+				</div>
+			</div>
+			{{/designs}}
+
+			
+		</div>
+	</div>
+</div>
+{{/groups}}
+</script>
+
 <script>
 	//# sourceURL=page_templates.js`;
-	return function (roof, data, url) {
+	return async function (roof, data, url) {
 		var cardGrid = roof.querySelector('.card-grid');
 		var designBaseUrl = data.design_base_url;
-		var stp = roof.querySelector('script').innerText;
-
+		var designGridTemplate = roof.querySelector('#design2template').innerText;
+		
 		// setup modal asynchronosly
 		const webframeModalArea = roof.querySelector('#webframe-modal-area')
 		fanstatic.append(webframeModalArea, './assets/templates/modal.html', {
@@ -84,38 +123,72 @@
 
 					modalElem.addEventListener('hidden.bs.modal', function(ev) {
 						modalElem.querySelector('iframe').src = 'about:blank'
-						modalElem.querySelector('.modal-title').innerText = '...'
+						modalElem.querySelector('.modal-title').textContent = '...'
 					})
 
 					modalElem.addEventListener('show.bs.modal', function(ev) {
 						const dataset = ev.relatedTarget.dataset
 
 						modalElem.querySelector('iframe').src = designBaseUrl + dataset.url
-						modalElem.querySelector('.modal-title').innerText = dataset.name
+						modalElem.querySelector('.modal-category').textContent = dataset.category
+						modalElem.querySelector('.modal-title').textContent = dataset.name
 						modalElem.querySelector('.modal-footer').style.justifyContent = 'center'
-						modalElem.querySelector('.modal-footer').innerHTML = `<small>${dataset.gesture} <a title="download design" href="https://fanstatic.annexdesk.com/designs/${dataset.id}.zip">https://fanstatic.annexdesk.com/designs/${dataset.id}.zip</a><small>`
+						
+						modalElem.querySelector('.modal-footer').innerHTML = `<small><a title="download design" href="${designBaseUrl}${dataset.zipUrl}">${designBaseUrl}${dataset.zipUrl}</a><small>`
+						// modalElem.querySelector('.modal-footer').innerHTML = `<small>${dataset.gesture} <a title="download design" href="https://fanstatic.annexdesk.com/designs/${dataset.id}.zip">https://fanstatic.annexdesk.com/designs/${dataset.id}.zip</a><small>`
 					})
 				}
 			}
 		})
 
+		const designMap = await fanstatic.fetchYaml(designBaseUrl + '(assets)/design-map.yaml?' + fanstatic.tail());
+
 		fanstatic.insertScripts(['https://cdn.jsdelivr.net/npm/papaparse@5.5.2/papaparse.min.js']).then(function(){
-			Papa.parse(designBaseUrl + '(data)/instant-templates.csv?' + fanstatic.tail(), {
+
+			/* instant-v2 */
+
+			Papa.parse(designBaseUrl + '(assets)/design-list.csv?' + fanstatic.tail(), {
 				download: true,
 				header: true,
 				complete: function(results) {
-					console.log('[templates data]', results.data)
+					console.log('[templates data]', results.data);
 
-					for (let o of results.data) {
-						o.tags = o.tags.split('|');
-						o.designBaseUrl = designBaseUrl;
-						cardGrid.append(fanstatic.parseHTML(Mustache.render(stp, o)));
+					for (let r of results.data) {
+						r.designBaseUrl = designBaseUrl;
+						r.url = r.group + '/' + r.index;
+						r.zipUrl = r.group + '/' + r.name + '.zip';
+						r.category = designMap.groups.find(o => o.group == r.group)?.name;
 					}
 
-					console.log(cardGrid);
-					fanstatic.searchOnRenderAndRun(cardGrid);
+					const groups = designMap.groups;
+
+					for (let g of groups) {
+						g.designs = results.data.filter(item => item.group === g.group);
+					}
+
+					cardGrid.append(fanstatic.parseHTML(Mustache.render(designGridTemplate, { groups: groups })));
+					fanstatic.searchOnPlaceAndRun(cardGrid);
 				}
 			});
+
+			/* design2 (v1) */
+
+			// Papa.parse(designBaseUrl + '(data)/instant-templates.csv?' + fanstatic.tail(), {
+			// 	download: true,
+			// 	header: true,
+			// 	complete: function(results) {
+			// 		console.log('[templates data]', results.data)
+
+			// 		for (let o of results.data) {
+			// 			o.tags = o.tags.split('|');
+			// 			o.designBaseUrl = designBaseUrl;
+			// 			cardGrid.append(fanstatic.parseHTML(Mustache.render(stp, o)));
+			// 		}
+
+			// 		console.log(cardGrid);
+			// 		fanstatic.searchOnPlaceAndRun(cardGrid);
+			// 	}
+			// });
 		});
 	}
 </script>

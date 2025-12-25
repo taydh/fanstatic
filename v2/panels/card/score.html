@@ -9,14 +9,32 @@
 			panelScope: panelScope,
 			scope: data.scope,
 			innerScope: data.innerScope,
-			cap: design.element('img', {src: data.icon}),
+			cap: data.icon ? design.element('img', {src: data.icon}) : false,
 			head: data.score,
 			body: data.subject,
-			foot: data.summary,
+			foot: data.note,
+
+			$tag: data.$tag,
+			$attr: data.$attr,
+			$capTag: data.$capTag,
+			$headTag: data.$headTag,
+			$bodyTag: data.$bodyTag,
+			$footTag: data.$footTag,
 		})
+
+		const panelElement = basicUnitController.panelElement;
+		const cap = panelElement.querySelector(':scope > [data-pn=cap]');
+		const head = panelElement.querySelector(':scope > [data-pn=head]');
+		const body = panelElement.querySelector(':scope > [data-pn=body]');
+		const foot = panelElement.querySelector(':scope > [data-pn=foot]');
+		
+		if (data.icon) cap.dataset.pn = 'icon';
+		if (data.score) head.dataset.pn = 'score';
+		if (data.subject) body.dataset.pn = 'subject';
+		if (data.note) foot.dataset.pn = 'note';
 		
 		this.controller = {
-			panelElement: basicUnitController.panelElement,
+			panelElement: panelElement,
 		}
 	}
 </script>

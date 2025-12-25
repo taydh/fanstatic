@@ -27,15 +27,22 @@
 			innerScope: data.innerScope,
 			cap: {[tagFill]: true},
 			head: [
-				design.div({data:{'pn':'section'}}, model.section),
-				design.div({data:{'pn':'title'}}, design.element('a', {href: model.postLink}, model.title)),
-				design.div({data:{'pn':'date'}}, model.date),
-				design.div({data:{'pn':'author'}}, model.author), 
+				design.tag({$tag:data.$sectionTag || 'div', data:{'pn':'section'}}, model.section),
+				design.tag({$tag:data.$titleTag || 'div', data:{'pn':'title'}}, design.element('a', {href: model.postLink}, model.title)),
+				design.tag({$tag:data.$dateTag || 'div', data:{'pn':'date'}}, model.date),
+				design.tag({$tag:data.$authorTag || 'div', data:{'pn':'author'}}, model.author), 
 			],
 			body: model.short || true,
 			foot: [
 				design.div([design.element('a', {href: model.postLink, data: {'pn': 'button-more'}}, 'Read more')]),
 			],
+
+			$tag: data.$tag,
+			$attr: data.$attr,
+			$capTag: data.$imageTag,
+			$headTag: data.$headTag,
+			$bodyTag: data.$shortTag,
+			$footTag: data.$footTag,	
 		})
 
 		const panelElement = baseBlockController.panelElement;

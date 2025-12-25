@@ -21,6 +21,12 @@
 			cap: {[tagFill]: true},
 			head: model.cover,
 			body: model.reveal,
+
+			$tag: data.$tag,
+			$attr: data.$attr,
+			$capTag: data.$backgroundImageTag,
+			$headTag: data.$coverTag,
+			$bodyTag: data.$revealTag,
 		})
 
 		const panelElement = baseBlockController.panelElement;

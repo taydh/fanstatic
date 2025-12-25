@@ -222,7 +222,7 @@
 				model: null,
 				onload: null,
 				oninsert: null,
-				onrender: null,
+				onplace: null,
 				controller: null,
 			}
 
@@ -577,6 +577,14 @@
 			};
 		},
 
+		panelController: function(panelElement, scope, panelScope) {
+			this.panelElement = panelElement;
+			this.scope = scope;
+			this.panelScope = panelScope;
+			this.select = function(name) { return panelElement.querySelector(`[data-pn="${name}"]`); };
+			this.selectAll = function(name) { return panelElement.querySelectorAll(`[data-pn="${name}"]`); };
+		},
+
 		isTemplate: function(obj) {
 			return this.instanceOfTemplate(obj) || this.instanceOfPanel(obj);
 		},
@@ -603,13 +611,19 @@
 		},
 
 		applyContent: function(target, content, outerScope = null, insertFn = 'append') {
-			if (fanstatic.isTemplate(content)){
-				if (outerScope && fanstatic.instanceOfPanel(content)) content.outerScope(outerScope);
+			const arrContent = Array.isArray(content) ? content : [content];
 
-				return fanstatic.applyTemplate(target, content, insertFn);
-			} else {
-				target.innerHTML = fanstatic.renderJhtm ? fanstatic.renderJhtm(content) : content;
-				return new Promise(rs => rs(null));
+			for(let i = 0; i < arrContent.length; i++) {
+				content = arrContent[i];
+				
+				if (fanstatic.isTemplate(content)){
+					if (outerScope && fanstatic.instanceOfPanel(content)) content.outerScope(outerScope);
+
+					return fanstatic.applyTemplate(target, content, insertFn);
+				} else {
+					target.innerHTML = fanstatic.renderJhtm ? fanstatic.renderJhtm(content) : content;
+					return new Promise(rs => rs(null));
+				}
 			}
 		},
 

@@ -7,13 +7,13 @@
 		const innerScope = data.innerScope || outerScope || data.id || panelScope;
 
 		roof.innerHTML = fanstatic.renderJhtm([
-			design.unit({
+			design.unit(Object.assign(data.$attr || {}, {
 				$tag: data.$tag,
 				$capTag: data.$capTag,
 				$headTag: data.$headTag,
 				$bodyTag: data.$bodyTag,
 				$footTag: data.$footTag,
-			}, {
+			}), {
 				mode: data.mode,
 				cap: !!data.cap,
 				head: !!data.head,
@@ -28,28 +28,29 @@
 		if (outerScope) panelElement.dataset.pnScope = outerScope;
 		panelElement.dataset.pnPanel = panelScope;
 
+		let capElem, headElem, bodyElem, footElem;
 		let capProm, headProm, bodyProm, footProm;
 		
 		if (data.cap) {
-			const target = panelElement.querySelector('[data-ds=cap]')
+			const target = capElem = panelElement.querySelector('[data-ds=cap]')
 			target.dataset.pn = 'cap';
 			capProm = fanstatic.applyContent(target, data.cap, innerScope);
 		}
 		
 		if (data.head) {
-			const target = panelElement.querySelector('[data-ds=head]');
+			const target = headElem = panelElement.querySelector('[data-ds=head]');
 			target.dataset.pn = 'head';
 			headProm = fanstatic.applyContent(target, data.head, innerScope);
 		}
 
 		if (data.body) {
-			const target = panelElement.querySelector('[data-ds=body]');
+			const target = bodyElem = panelElement.querySelector('[data-ds=body]');
 			target.dataset.pn = 'body';
 			bodyProm = fanstatic.applyContent(target, data.body, innerScope);
 		}
 
 		if (data.foot) {
-			const target = panelElement.querySelector('[data-ds=foot]')
+			const target = footElem = panelElement.querySelector('[data-ds=foot]')
 			target.dataset.pn = 'foot';
 			footProm = fanstatic.applyContent(target, data.foot, innerScope);
 		}
@@ -61,6 +62,10 @@
 
 		this.controller = {
 			panelElement: panelElement,
+			capElement: capElem,
+			headElement: headElem,
+			bodyElement: bodyElem,
+			footElement: footElem,
 			capController: resolves[0],
 			headController: resolves[1],
 			bodyController: resolves[2],

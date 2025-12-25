@@ -1,0 +1,139 @@
+@import "_utils_base.less";
+@import "_utils_for_@{framework}.less";
+
+@breakpoints_max: {
+	xxs: calc(@xs - 0.1px);
+}
+
+@breakpoints_min: {
+	xs: @xs;
+	sm: @sm;
+	md: @md;
+	lg: @lg;
+	xl: @xl;
+	xxl: @xxl;
+}
+
+.responsive-max(@breakpoint, @rules) {
+	@media only screen and (max-width: @breakpoint) {
+		@rules();
+	}
+}
+
+.responsive-min(@breakpoint, @rules) {
+	@media only screen and (min-width: @breakpoint) {
+		@rules();
+	}
+}
+
+.responsive(@breakpoint, @rules) {
+	@media only screen and (max-width: @breakpoint) {
+		@rules();
+	}
+}
+
+each(@breakpoints_max, {
+	@media only screen and (max-width: @value) {
+		.util-w-@{key}-full { .util-w-full(); }
+
+		.util-d-@{key}-flex { .util-d-flex(); }
+		.util-d-@{key}-flex-evenly { .util-d-flex-evenly(); }
+		.util-d-@{key}-flex-evenly > * { flex: 1; }
+
+		.util-d-@{key}-grid { .util-d-grid(); }
+
+		.util-d-@{key}-table { .util-d-table(); }
+		.util-d-@{key}-table-row { .util-d-table-row(); }
+		.util-d-@{key}-table-cell { .util-d-table-cell(); }
+		.util-d-@{key}-table-header { .util-d-table-header(); }
+		.util-d-@{key}-table-footer { .util-d-table-footer(); }
+		.util-d-@{key}-table-row-group { .util-d-table-row-group(); }
+		.util-d-@{key}-table-header-group { .util-d-table-header-group(); }
+		.util-d-@{key}-table-footer-group { .util-d-table-footer-group(); }
+
+		.util-sticky-@{key}-top { .util-sticky-top(); }
+		.util-sticky-@{key}-bottom { .util-sticky-bottom(); }
+		.util-fixed-@{key}-top { .util-fixed-top(); }
+		.util-fixed-@{key}-bottom { .util-fixed-bottom(); }
+
+		.util-text-@{key}-start { .util-text-start(); }
+		.util-text-@{key}-center { .util-text-center(); }
+		.util-text-@{key}-end { .util-text-end(); }
+
+		.util-jc-@{key}-start { .util-jc-start(); }
+		.util-jc-@{key}-center { .util-jc-center(); }
+		.util-jc-@{key}-end { .util-jc-end(); }
+		.util-jc-@{key}-between { .util-jc-between(); }
+		.util-jc-@{key}-around { .util-jc-around(); }
+
+		.util-fs-@{key}-0rem25 { .util-fs-0rem25(); }
+		.util-fs-@{key}-0rem50 { .util-fs-0rem50(); }
+		.util-fs-@{key}-1rem { .util-fs-1rem(); }
+		.util-fs-@{key}-1rem25 { .util-fs-1rem25(); }
+		.util-fs-@{key}-1rem50 { .util-fs-1rem50(); }
+		.util-fs-@{key}-1rem75 { .util-fs-1rem75(); }
+		.util-fs-@{key}-2rem { .util-fs-2rem(); }
+		.util-fs-@{key}-2rem50 { .util-fs-2rem50(); }
+		.util-fs-@{key}-3rem { .util-fs-3rem(); }
+		.util-fs-@{key}-3rem50 { .util-fs-3rem50(); }
+		.util-fs-@{key}-4rem { .util-fs-4rem(); }
+		.util-fs-@{key}-5rem { .util-fs-5rem(); }
+		.util-fs-@{key}-6rem { .util-fs-6rem(); }
+
+		.util-unit-@{key}-left-capped { .util-unit-left-capped(); }
+		.util-unit-@{key}-right-capped { .util-unit-right-capped(); }
+	}
+})
+
+each(@breakpoints_min, {
+	@media only screen and (min-width: @value) {		
+		.util-w-@{key}-full { .util-w-full(); }
+
+		.util-d-@{key}-flex { .util-d-flex(); }
+		.util-d-@{key}-flex-evenly { .util-d-flex-evenly(); }
+		.util-d-@{key}-flex-evenly > * { flex: 1; }
+
+		.util-d-@{key}-grid { .util-d-grid(); }
+
+		.util-d-@{key}-table { .util-d-table(); }
+		.util-d-@{key}-table-row { .util-d-table-row(); }
+		.util-d-@{key}-table-cell { .util-d-table-cell(); }
+		.util-d-@{key}-table-header { .util-d-table-header(); }
+		.util-d-@{key}-table-footer { .util-d-table-footer(); }
+		.util-d-@{key}-table-row-group { .util-d-table-row-group(); }
+		.util-d-@{key}-table-header-group { .util-d-table-header-group(); }
+		.util-d-@{key}-table-footer-group { .util-d-table-footer-group(); }
+
+		.util-sticky-@{key}-top { .util-sticky-top(); }
+		.util-sticky-@{key}-bottom { .util-sticky-bottom(); }
+		.util-fixed-@{key}-top { .util-fixed-top(); }
+		.util-fixed-@{key}-bottom { .util-fixed-bottom(); }
+
+		.util-text-@{key}-start { .util-text-start(); }
+		.util-text-@{key}-center { .util-text-center(); }
+		.util-text-@{key}-end { .util-text-end(); }
+
+		.util-jc-@{key}-start { .util-jc-start(); }
+		.util-jc-@{key}-center { .util-jc-center(); }
+		.util-jc-@{key}-end { .util-jc-end(); }
+		.util-jc-@{key}-between { .util-jc-between(); }
+		.util-jc-@{key}-around { .util-jc-around(); }
+
+		.util-fs-@{key}-0rem25 { .util-fs-0rem25(); }
+		.util-fs-@{key}-0rem50 { .util-fs-0rem50(); }
+		.util-fs-@{key}-1rem { .util-fs-1rem(); }
+		.util-fs-@{key}-1rem25 { .util-fs-1rem25(); }
+		.util-fs-@{key}-1rem50 { .util-fs-1rem50(); }
+		.util-fs-@{key}-1rem75 { .util-fs-1rem75(); }
+		.util-fs-@{key}-2rem { .util-fs-2rem(); }
+		.util-fs-@{key}-2rem50 { .util-fs-2rem50(); }
+		.util-fs-@{key}-3rem { .util-fs-3rem(); }
+		.util-fs-@{key}-3rem50 { .util-fs-3rem50(); }
+		.util-fs-@{key}-4rem { .util-fs-4rem(); }
+		.util-fs-@{key}-5rem { .util-fs-5rem(); }
+		.util-fs-@{key}-6rem { .util-fs-6rem(); }
+
+		.util-unit-@{key}-left-capped { .util-unit-left-capped(); }
+		.util-unit-@{key}-right-capped { .util-unit-right-capped(); }
+	}
+})

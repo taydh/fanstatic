@@ -25,7 +25,8 @@
 				
 				await fanstatic.append(roof, './assets/templates/layout_blog.html')
 
-				roof.querySelector('.website-blog-title').innerHTML = fanstatic.sanitizeHtml(post.title);
+				roof.querySelector('.website-blog-title').textContent = fanstatic.escapeHtml(post.title);
+				roof.querySelector('.website-blog-published-date').textContent = new Date(post.publishedAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
 				
 				await fanstatic.append(roof.querySelector('.website-blog-content'), './contents/blog/' + post.slug + '.md', opt)
 			}

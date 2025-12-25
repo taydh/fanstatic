@@ -11,9 +11,3 @@ Back to our definition, we consider additional resources fetched from server by 
 Modern search engines, the spider-bots, works in accordance to this principle when crawling, fetching, and evaluating page content (keyword: Fetch and Render (AFD)).
 
 Annexdesk offers a "no-build" approach. This mean you just include the fanstatic script, structure your files, and utilize the available methods, and view the result on the browser.
-
-<script>
-	return {
-		renderer: "markdown"
-	}
-</script>

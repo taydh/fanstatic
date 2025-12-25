@@ -3,6 +3,10 @@
 		return Object.entries(attributes).map(([k,v]) => `${k}:${fanstatic.sanitizeAttrValue(v)}`).join(';');
 	}
 
+	const _toClassAttributesString = function(attributes) {
+		return attributes.map((v) => `${fanstatic.sanitizeAttrValue(v)}`).join(' ');
+	}
+
 	const _toDataAttributesString = function(attributes, suffix = '') {
 		return Object.entries(attributes).map(([k,v]) => {
 			if (typeof v === 'object') {
@@ -20,6 +24,9 @@
 			}
 			else if ('style' === k && typeof v === 'object') {
 				return 'style="' + _toStyleAttributesString(v) + '"';
+			} 
+			else if ('class' === k && Array.isArray(v)) {
+				return 'class="' + _toClassAttributesString(v) + '"';
 			} 
 			else if ('$' == k[0]) {
 				return ''; // preserved for special usage

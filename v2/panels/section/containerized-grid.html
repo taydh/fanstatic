@@ -14,7 +14,9 @@
 				innerScope: innerScope,
 				item: new fanstatic.panel('cluster.grid', {
 					scope: outerScope,
-					items: data.items
+					items: data.items,
+					$tag: data.$itemsTag,
+					$itemTag: data.$itemTag,
 				})
 			})
 		);

@@ -8,8 +8,8 @@
 		const itemControllers = [];
 
 		roof.innerHTML = fanstatic.renderJhtm(design.flex(
-			{$tag: data.$tag, 'data-pn': 'flex'},
-			{$tag: data.$itemTag},
+			Object.assign(data.$attr || {}, { $tag: data.$tag, 'data-pn': 'flex'}),
+			Object.assign(data.itemAttr || {}, { $tag: data.$itemTag }),
 			data.items ? data.items.map(item => design.placeholder()) : []
 		));
 
@@ -30,9 +30,10 @@
 
 			const template = data.items[i];
 			
-			if (innerScope) template.outerScope(innerScope);
+			// if (innerScope) template.outerScope(innerScope);
 
-			itemControllers.push(await fanstatic.applyTemplate(placeholderNodes[i], template, 'replace'));
+			//itemControllers.push(await fanstatic.applyTemplate(placeholderNodes[i], template, 'replace'));
+			itemControllers.push(await fanstatic.applyContent(placeholderNodes[i], template, innerScope, 'replace'));
 		}
 
 		this.controller = {
