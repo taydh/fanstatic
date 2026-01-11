@@ -2,9 +2,10 @@
 	const design = fanstatic.design;
 
 	return async function (roof, data = {}, url) {
+		const panelElementId = data.$id || data.id || null;
 		const panelScope = data.panelScope || fanstatic.resolvePanelScope(url);
 		const outerScope = data.scope;
-		const innerScope = data.innerScope || outerScope || data.id || panelScope;
+		const innerScope = data.innerScope || outerScope || panelElementId || panelScope;
 		// const mode = data.mode || 0;
 
 		// if (1 == mode) { // all
@@ -26,18 +27,18 @@
 
 		if (data.subjects && !Array.isArray(data.subjects)) data.subjects = [data.subjects];
 		if (data.actions && !Array.isArray(data.actions)) data.actions = [data.actions];
-
+		
 		const unitController = await fanstatic.insertPanel(roof, 'block.unit', {
-				id: data.id,
 				panelScope: panelScope,
 				scope: data.scope,
 				innerScope: data.innerScope,
 				mode: data.mode,
-				cap: data.image ? design.element('img', {src: data.image}) : false,
-				head: data.subjects ? data.subjects.map(() => design.div()) : false,
-				body: data.message ? data.message : false,
-				foot: data.actions ? data.actions.map(() => design.div()) : false,
+				cap: data.image ? design.element('img', {src: data.image}) : true,
+				head: data.subjects ? data.subjects.map(() => design.div()) : true,
+				body: data.message ? data.message : true,
+				foot: data.actions ? data.actions.map(() => design.div()) : true,
 
+				$id: panelElementId,
 				$tag: data.$tag,
 				$attr: data.$attr,
 				$capTag: data.$imageTag,
@@ -63,7 +64,7 @@
 			unitController.footElement.dataset.pn = 'actions';
 			const divs = Array.from(unitController.footElement.children);
 
-			for (let i=0; i<data.subjects.length; i++) {
+			for (let i=0; i<data.actions.length; i++) {
 				await fanstatic.applyContent(divs[i], data.actions[i], innerScope);
 			}
 		}
@@ -76,6 +77,7 @@
 			panelElement: panelElement,
 			scope: outerScope,
 			panelScope: panelScope,
+			
 		};
 	};
 </script>

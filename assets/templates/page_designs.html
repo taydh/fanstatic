@@ -59,7 +59,7 @@
 
 <script id="design2template" type="text/plain">
 {{#groups}}
-<div class="col-12 mb-3">
+<div class="col-12 mb-3" id="group_{{group}}">
 	<div class="card flex-row" 
 		data-template-onplace="viewport-enter-animate" 
 		data-visual-hidden data-visual-animation="slideInUp">
@@ -87,7 +87,7 @@
 				</div>
 				<div style="align-content:center;">
 					<button class="x-live-demo-button btn btn-info" title="preview"
-						data-id="{{id}}" data-gesture="{{gesture}}" data-category="{{category}}" data-name="{{name}}" data-url="{{url}}" data-zip-url="{{zipUrl}}"
+						data-id="{{id}}" data-gesture="{{gesture}}" data-group={{group}} data-category="{{category}}" data-name="{{name}}" data-url="{{url}}" data-zip-url="{{zipUrl}}"
 						data-bs-toggle="modal" data-bs-target="#Webframe_Modal"><i class="bi bi-eye"></i></button>
 					<a href="{{download}}" class="x-download-button btn btn-primary" title="download"><i class="bi bi-download"></i></a>
 				</div>
@@ -126,16 +126,30 @@
 						modalElem.querySelector('.modal-title').textContent = '...'
 					})
 
-					modalElem.addEventListener('show.bs.modal', function(ev) {
+					modalElem.addEventListener('show.bs.modal', async function(ev) {
+						console.log('#group_' + ev.relatedTarget.dataset.group);
+
 						const dataset = ev.relatedTarget.dataset
+						const elementGroup = fanstatic.elementStorage.get(document.querySelector('#group_' + ev.relatedTarget.dataset.group), 'group');
 
 						modalElem.querySelector('iframe').src = designBaseUrl + dataset.url
 						modalElem.querySelector('.modal-category').textContent = dataset.category
 						modalElem.querySelector('.modal-title').textContent = dataset.name
 						modalElem.querySelector('.modal-footer').style.justifyContent = 'center'
-						
-						modalElem.querySelector('.modal-footer').innerHTML = `<small><a title="download design" href="${designBaseUrl}${dataset.zipUrl}">${designBaseUrl}${dataset.zipUrl}</a><small>`
-						// modalElem.querySelector('.modal-footer').innerHTML = `<small>${dataset.gesture} <a title="download design" href="https://fanstatic.annexdesk.com/designs/${dataset.id}.zip">https://fanstatic.annexdesk.com/designs/${dataset.id}.zip</a><small>`
+
+						const c = await fanstatic.insert(modalElem.querySelector('.modal-footer'), './assets/templates/dialog_footer.html', {
+							renderer: 'mustache',
+							model: {
+								zipUrl: designBaseUrl + dataset.zipUrl,
+								models: elementGroup.models,
+							}
+						})
+
+						c._template.target.querySelector('select').addEventListener('change', function(){
+							if (this.value) {
+								modalElem.querySelector('iframe').src = designBaseUrl + dataset.url + '?__model=' + this.value
+							}
+						})
 					})
 				}
 			}
@@ -168,6 +182,10 @@
 
 					cardGrid.append(fanstatic.parseHTML(Mustache.render(designGridTemplate, { groups: groups })));
 					fanstatic.searchOnPlaceAndRun(cardGrid);
+
+					for (let g of groups) {
+						fanstatic.elementStorage.set(cardGrid.querySelector('#group_' + g.group), 'group', g);
+					}
 				}
 			});
 

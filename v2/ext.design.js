@@ -43,7 +43,7 @@
 		renderJhtm: function(arr) {
 			var html = '';
 			
-			if ('boolean' == typeof(arr)) return html;
+			if ('boolean' == typeof(arr) || undefined == arr) return html;
 			if ('number' == typeof(arr)) return String(arr);
 			if (!Array.isArray(arr) && typeof arr === 'object') arr = [arr];
 			if (1 == arr.length && null == arr[0]) return html;
@@ -120,13 +120,22 @@
 
 			return this.element('div', attributes, items);
 		},
-		par: function(attributes = {}, items = true) {
+		par: function(attributes = {}, items = true) { return this.p(attributes, items); },
+		p: function(attributes = {}, items = true) {
 			if (('object' != typeof attributes) || Array.isArray(attributes)) {
 				items = attributes;
 				attributes = {};
 			}
 
 			return this.element('p', attributes, items);
+		},
+		a: function(attributes = {}, items = true) {
+			if (('object' != typeof attributes) || Array.isArray(attributes)) {
+				items = attributes;
+				attributes = {};
+			}
+
+			return this.element('a', attributes, items);
 		},
 		button: function(attributes = {}, model) {
 			if (('object' != typeof attributes) || Array.isArray(attributes)) {

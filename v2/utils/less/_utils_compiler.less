@@ -2,7 +2,12 @@
 @import "_utils_for_@{framework}.less";
 
 @breakpoints_max: {
-	xxs: calc(@xs - 0.1px);
+	lxs: calc(@xs - 0.02px);
+	lsm: calc(@sm - 0.02px);
+	lmd: calc(@md - 0.02px);
+	llg: calc(@lg - 0.02px);
+	lxl: calc(@xl - 0.02px);
+	lxxl: calc(@xxl - 0.02px);
 }
 
 @breakpoints_min: {
@@ -14,27 +19,12 @@
 	xxl: @xxl;
 }
 
-.responsive-max(@breakpoint, @rules) {
-	@media only screen and (max-width: @breakpoint) {
-		@rules();
-	}
-}
-
-.responsive-min(@breakpoint, @rules) {
-	@media only screen and (min-width: @breakpoint) {
-		@rules();
-	}
-}
-
-.responsive(@breakpoint, @rules) {
-	@media only screen and (max-width: @breakpoint) {
-		@rules();
-	}
-}
-
 each(@breakpoints_max, {
 	@media only screen and (max-width: @value) {
 		.util-w-@{key}-full { .util-w-full(); }
+
+		.util-d-@{key}-none { .util-d-none(); }
+		.util-d-@{key}-block { .util-d-block(); }
 
 		.util-d-@{key}-flex { .util-d-flex(); }
 		.util-d-@{key}-flex-evenly { .util-d-flex-evenly(); }
@@ -65,20 +55,21 @@ each(@breakpoints_max, {
 		.util-jc-@{key}-end { .util-jc-end(); }
 		.util-jc-@{key}-between { .util-jc-between(); }
 		.util-jc-@{key}-around { .util-jc-around(); }
+		.util-fwrap-@{key}-wrap { .util-fwrap-wrap(); }
 
-		.util-fs-@{key}-0rem25 { .util-fs-0rem25(); }
-		.util-fs-@{key}-0rem50 { .util-fs-0rem50(); }
-		.util-fs-@{key}-1rem { .util-fs-1rem(); }
-		.util-fs-@{key}-1rem25 { .util-fs-1rem25(); }
-		.util-fs-@{key}-1rem50 { .util-fs-1rem50(); }
-		.util-fs-@{key}-1rem75 { .util-fs-1rem75(); }
-		.util-fs-@{key}-2rem { .util-fs-2rem(); }
-		.util-fs-@{key}-2rem50 { .util-fs-2rem50(); }
-		.util-fs-@{key}-3rem { .util-fs-3rem(); }
-		.util-fs-@{key}-3rem50 { .util-fs-3rem50(); }
-		.util-fs-@{key}-4rem { .util-fs-4rem(); }
-		.util-fs-@{key}-5rem { .util-fs-5rem(); }
-		.util-fs-@{key}-6rem { .util-fs-6rem(); }
+		.util-pt-@{key} { .util-pt(); }
+		.util-pr-@{key} { .util-pr(); }
+		.util-pb-@{key} { .util-pb(); }
+		.util-pl-@{key} { .util-pl(); }
+		.util-pblock-@{key} { .util-pblock(); }
+		.util-pinline-@{key} { .util-pinline(); }
+
+		.util-mt-@{key} { .util-mt(); }
+		.util-mr-@{key} { .util-mr(); }
+		.util-mb-@{key} { .util-mb(); }
+		.util-ml-@{key} { .util-ml(); }
+		.util-mblock-@{key} { .util-mblock(); }
+		.util-minline-@{key} { .util-minline(); }
 
 		.util-unit-@{key}-left-capped { .util-unit-left-capped(); }
 		.util-unit-@{key}-right-capped { .util-unit-right-capped(); }
@@ -88,6 +79,9 @@ each(@breakpoints_max, {
 each(@breakpoints_min, {
 	@media only screen and (min-width: @value) {		
 		.util-w-@{key}-full { .util-w-full(); }
+		
+		.util-d-@{key}-none { .util-d-none(); }
+		.util-d-@{key}-block { .util-d-block(); }
 
 		.util-d-@{key}-flex { .util-d-flex(); }
 		.util-d-@{key}-flex-evenly { .util-d-flex-evenly(); }
@@ -118,22 +112,69 @@ each(@breakpoints_min, {
 		.util-jc-@{key}-end { .util-jc-end(); }
 		.util-jc-@{key}-between { .util-jc-between(); }
 		.util-jc-@{key}-around { .util-jc-around(); }
+		.util-fwrap-@{key}-wrap { .util-fwrap-wrap(); }
 
-		.util-fs-@{key}-0rem25 { .util-fs-0rem25(); }
-		.util-fs-@{key}-0rem50 { .util-fs-0rem50(); }
-		.util-fs-@{key}-1rem { .util-fs-1rem(); }
-		.util-fs-@{key}-1rem25 { .util-fs-1rem25(); }
-		.util-fs-@{key}-1rem50 { .util-fs-1rem50(); }
-		.util-fs-@{key}-1rem75 { .util-fs-1rem75(); }
-		.util-fs-@{key}-2rem { .util-fs-2rem(); }
-		.util-fs-@{key}-2rem50 { .util-fs-2rem50(); }
-		.util-fs-@{key}-3rem { .util-fs-3rem(); }
-		.util-fs-@{key}-3rem50 { .util-fs-3rem50(); }
-		.util-fs-@{key}-4rem { .util-fs-4rem(); }
-		.util-fs-@{key}-5rem { .util-fs-5rem(); }
-		.util-fs-@{key}-6rem { .util-fs-6rem(); }
+		.util-pt-@{key} { .util-pt(); }
+		.util-pr-@{key} { .util-pr(); }
+		.util-pb-@{key} { .util-pb(); }
+		.util-pl-@{key} { .util-pl(); }
+		.util-pblock-@{key} { .util-pblock(); }
+		.util-pinline-@{key} { .util-pinline(); }
+
+		.util-mt-@{key} { .util-mt(); }
+		.util-mr-@{key} { .util-mr(); }
+		.util-mb-@{key} { .util-mb(); }
+		.util-ml-@{key} { .util-ml(); }
+		.util-mblock-@{key} { .util-mblock(); }
+		.util-minline-@{key} { .util-minline(); }
 
 		.util-unit-@{key}-left-capped { .util-unit-left-capped(); }
 		.util-unit-@{key}-right-capped { .util-unit-right-capped(); }
 	}
 })
+
+.generate-utils() when (@framework = pico) {
+	each(@breakpoints_max, {
+		@media only screen and (max-width: @value) {
+			.util-fs-@{key}-0rem25 { .util-fs-0rem25(); }
+			.util-fs-@{key}-0rem50 { .util-fs-0rem50(); }
+			.util-fs-@{key}-1rem { .util-fs-1rem(); }
+			.util-fs-@{key}-1rem25 { .util-fs-1rem25(); }
+			.util-fs-@{key}-1rem50 { .util-fs-1rem50(); }
+			.util-fs-@{key}-1rem75 { .util-fs-1rem75(); }
+			.util-fs-@{key}-2rem { .util-fs-2rem(); }
+			.util-fs-@{key}-2rem50 { .util-fs-2rem50(); }
+			.util-fs-@{key}-3rem { .util-fs-3rem(); }
+			.util-fs-@{key}-3rem50 { .util-fs-3rem50(); }
+			.util-fs-@{key}-4rem { .util-fs-4rem(); }
+			.util-fs-@{key}-5rem { .util-fs-5rem(); }
+			.util-fs-@{key}-6rem { .util-fs-6rem(); }
+		}
+	})
+
+	each(@breakpoints_min, {
+		@media only screen and (min-width: @value) {
+			.util-fs-@{key}-0rem25 { .util-fs-0rem25(); }
+			.util-fs-@{key}-0rem50 { .util-fs-0rem50(); }
+			.util-fs-@{key}-1rem { .util-fs-1rem(); }
+			.util-fs-@{key}-1rem25 { .util-fs-1rem25(); }
+			.util-fs-@{key}-1rem50 { .util-fs-1rem50(); }
+			.util-fs-@{key}-1rem75 { .util-fs-1rem75(); }
+			.util-fs-@{key}-2rem { .util-fs-2rem(); }
+			.util-fs-@{key}-2rem50 { .util-fs-2rem50(); }
+			.util-fs-@{key}-3rem { .util-fs-3rem(); }
+			.util-fs-@{key}-3rem50 { .util-fs-3rem50(); }
+			.util-fs-@{key}-4rem { .util-fs-4rem(); }
+			.util-fs-@{key}-5rem { .util-fs-5rem(); }
+			.util-fs-@{key}-6rem { .util-fs-6rem(); }
+		}
+	})
+}
+
+.generate-utils() when (@framework = bulma) {
+	each(@breakpoints_min, {
+		@media only screen and (min-width: @value) {
+
+		}
+	})
+}

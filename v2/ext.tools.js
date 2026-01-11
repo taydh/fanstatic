@@ -164,6 +164,10 @@
 
 		elementStorage: {
 			_loadStore: function(target) {
+				if ('string' == typeof(target)) {
+					target = document.querySelector(target);
+				}
+				
 				if (_elementStorage.has(target)) {
 					return _elementStorage.get(target);
 				}
@@ -206,6 +210,8 @@
 		},
 
 		sanitizeAttrValue: function(value) {
+			if ('string' != typeof(value)) return '';
+
 			return value
 				.replace(/&/g, '&amp;')
 				.replace(/"/g, '&quot;')

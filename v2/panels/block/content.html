@@ -2,18 +2,19 @@
 	const design = fanstatic.design;
 
 	return async function (roof, data = {}, url) {
+		const panelElementId = data.$id || data.id || null;
 		const panelScope = data.panelScope || fanstatic.resolvePanelScope(url);
 		const outerScope = data.scope;
-		const innerScope = data.innerScope || outerScope || data.id || panelScope;
+		const innerScope = data.innerScope || outerScope || panelElementId || panelScope;
 
 		await fanstatic.appendPanel(roof, 'block.unit', {
-			id: data.id,
 			panelScope: panelScope,
 			scope: data.scope,
 			innerScope: data.innerScope,
 			body: data.content || true,
-			foot: data.footnote || true,
+			foot: (true !== data.noFootnote) ? data.footnote || true : false,
 
+			$id: panelElementId,
 			$tag: data.$tag,
 			$attr: data.$attr,
 			$bodyTag: data.$contentTag,
@@ -26,7 +27,7 @@
 		if (outerScope) panelElement.dataset.pnScope = outerScope;
 		panelElement.dataset.pnPanel = panelScope;
 
-		if (false !== data.headline) {
+		if (true !== data.noHeadline) {
 			panelElement.insertAdjacentHTML('afterbegin', fanstatic.renderJhtm(
 				design.tag((data.$headlinedTag || 'hgroup'), { 'data-pn': 'headline'}, [
 					design.tag((data.$categoryTag || 'div'), {'data-pn':'category'}, data.category || true),
@@ -43,12 +44,6 @@
 		if (body) body.dataset.pn = 'content';
 		if (foot) foot.dataset.pn = 'footnote';
 
-		this.controller = {
-			panelElement: panelElement,
-			scope: outerScope,
-			panelScope: panelScope,
-			select: function(name) { return panelElement.querySelector(`[data-pn="${name}"]`); },
-			selectAll: function(name) { return panelElement.querySelectorAll(`[data-pn="${name}"]`); },
-		};
+		this.controller = Object.assign(new fanstatic.panelController(panelElement, outerScope, panelScope), {});
 	};
 </script>

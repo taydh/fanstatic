@@ -2,12 +2,13 @@
 	const design = fanstatic.design;
 
 	return async function(roof, data, url) {
+		const panelElementId = data.$id || data.id || null;
 		const panelScope = data.panelScope || fanstatic.resolvePanelScope(url);
 		const photoUrl = data.photo || '';
 		const tagFill = `img src="${photoUrl}"`;
 
 		const baseBlockController = await fanstatic.appendPanel(roof, 'block.unit', {
-			id: data.id,
+			$id: panelElementId,
 			panelScope: panelScope,
 			scope: data.scope,
 			innerScope: data.innerScope,
@@ -21,7 +22,7 @@
 			]),
 			body: data.quote || true,
 
-			$tag: data.$tag,
+			$tag: data.$tag || 'article',
 			$attr: data.$attr,
 			$capTag: data.$photoTag,
 			$headTag: data.$headTag,

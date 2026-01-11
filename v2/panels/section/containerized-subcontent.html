@@ -2,9 +2,10 @@
 	const design = fanstatic.design;
 
 	return async function (roof, data = {}, url) {
+			const panelElementId = data.$id || data.id || null;
 			const panelScope = data.panelScope || fanstatic.resolvePanelScope(url);
 			const outerScope = data.scope;
-			const innerScope = data.innerScope || outerScope || data.id || panelScope;
+			const innerScope = data.innerScope || outerScope || panelElementId || panelScope;
 
 			const sectionController = await fanstatic.insertPanel(roof, 'section.containerized', 
 				Object.assign(data, {
@@ -19,7 +20,7 @@
 			}
 
 			const subContentTarget = sectionController.contentBlockController.panelElement.querySelector('[data-pn=content]')
-			const subContentController = await fanstatic.applyContent(subContentTarget, data.item);
+			const subContentController = await fanstatic.applyContent(subContentTarget, data.item, innerScope, 'append');
 			
 			// await fanstatic.insertPanel(subContentTarget, subContent,
 			// 	Object.assign(data.subPanel.data, {

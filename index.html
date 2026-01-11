@@ -49,7 +49,7 @@
 					if (!host_env) {
 						host_env = await fanstatic.fetchJson(originPath + '/env.' + window.location.host.replace(/[:/]/g, "_") + '.json');
 					}
-
+					
 					document.head.querySelector('base').href = host_env.document_base_uri;
 
 					fanstatic.insertStyles([
@@ -59,12 +59,6 @@
 				}
 				
 				const init = async function(){
-					Object.assign(fanstatic.settings, {
-						base_url: document.baseURI,
-						tail_span: '5s',
-						log_render: false,
-					})
-
 					fanstatic.append(
 						document.body, fanstatic.getVersionedBaseUrl() + 'panels/action/back-to-top-button.html',
 						{ tail_key: null }
@@ -89,6 +83,12 @@
 				document.addEventListener('DOMContentLoaded', async function () {
 					await resolveOrigin();
 
+					fanstatic.assign({
+						base_url: host_env.fanstatic_base_url,
+						tail_span: '5s',
+						log_render: false,
+					});
+
 					const asyncCounter = fanstatic.asyncCounter(5, () => init());
 
 					window.addEventListener('fanstatic.visual.load', () => asyncCounter.done());
@@ -97,10 +97,10 @@
 					window.addEventListener('fanstatic.tools.load', () => asyncCounter.done());
 
 					fanstatic.insertScripts([
-						fanstatic.getVersionedBaseUrl() + '/ext.visual.js?_=2',
-						fanstatic.getVersionedBaseUrl() + '/ext.tools.js?_=1',
-						fanstatic.getVersionedBaseUrl() + '/ext.design.js?_=1',
-						fanstatic.getVersionedBaseUrl() + '/ext.template.js?_=1',
+						fanstatic.getVersionedBaseUrl() + 'ext.visual.js?_=2',
+						fanstatic.getVersionedBaseUrl() + 'ext.tools.js?_=1',
+						fanstatic.getVersionedBaseUrl() + 'ext.design.js?_=1',
+						fanstatic.getVersionedBaseUrl() + 'ext.template.js?_=1',
 					]).then(() => asyncCounter.done());	
 				});
 			}

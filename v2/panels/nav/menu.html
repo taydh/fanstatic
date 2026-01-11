@@ -4,19 +4,20 @@
 	const design = fanstatic.design;
 
 	return async function(roof, data, url) {
+		const panelElementId = data.$id || data.id || null;
 		const panelScope = data.panelScope || fanstatic.resolvePanelScope(url);
 		const outerScope = data.scope;
-		const innerScope = data.innerScope || outerScope || data.id || panelScope;
+		const innerScope = data.innerScope || outerScope || panelElementId || panelScope;
 		const panelElement = roof.children[0];
 
-		if (data.id) panelElement.id = data.id;
+		if (panelElementId) panelElement.id = panelElementId;
 		if (outerScope) panelElement.dataset.pnScope = outerScope;
 		panelElement.dataset.pnPanel = panelScope;
 
 		panelElement.innerHTML = fanstatic.renderJhtm(
 			design.list({ 'data-pn': 'nav_list' }, { 'data-pn': 'nav_item' },
 			{
-				items: data.links.map(link => {
+				items: data.links.filter(link => !!link).map(link => {
 					const href = (link.url ? fanstatic.sanitizeAttrValue(link.url) : null) || null;
 
 					return href 

@@ -1,0 +1,115 @@
+<div data-pn-panel="cluster.slide-shift">
+    <div class="fanstatic---units" style="display:none"></div>
+    <div class="fanstatic---blocks"></div>
+    <div class="fanstatic---slides"></div>
+</div>
+
+<script>
+    var _container;
+    var _units = [];
+    var _types = ['BLOCKS', 'SLIDES'];
+    var _props = {
+        currentType: '', 
+    };
+
+    var _modeBlocks = {
+        render: function(parentSelector='.target', isMultiParent=false) {
+            const modeElem = _container.querySelector('.fanstatic---blocks');
+            const singleParentElem = modeElem.querySelector(parentSelector);
+            const multiParentElems = modeElem.querySelectorAll(parentSelector);
+
+            if (!isMultiParent || (isMultiParent && 0 == multiParentElems.length)) {
+                (singleParentElem || modeElem).append(..._units);
+            }
+            else {
+                for (let i=0; i<_units.length; i++) {
+                    multiParentElems[i].append(_units[i]);
+                }
+            }
+            
+            modeElem.classList.add('active');
+        },
+        returnUnits: function() {
+            const modeElem = _container.querySelector('.active');
+
+            _container.querySelector('.fanstatic---units').append(..._units);
+            _container.querySelector('.active').classList.remove('active');
+        },
+    }
+
+    var _modeSlides = {
+         render: function(parentSelector='.target', isMultiParent=false) {
+            const modeElem = _container.querySelector('.fanstatic---slides');
+            const singleParentElem = modeElem.querySelector(parentSelector);
+            const multiParentElems = modeElem.querySelectorAll(parentSelector);
+
+            if (!isMultiParent || (isMultiParent && 0 == multiParentElems.length)) {
+                (singleParentElem || modeElem).append(..._units);
+            }
+            else {
+                for (let i=0; i<_units.length; i++) {
+                    multiParentElems[i].append(_units[i]);
+                }
+            }
+            
+            modeElem.classList.add('active');
+        },
+        returnUnits: function() {
+            const modeElem = _container.querySelector('.active');
+            const targetElem = modeElem.querySelector('.target') || modeElem;
+
+            _container.querySelector('.fanstatic---units').append(..._units);
+            _container.querySelector('.active').classList.remove('active');
+        },
+    }
+
+    return {
+        onload: async function(roof, data, url) {
+            const panelScope = data.panelScope || fanstatic.resolvePanelScope(url);
+            const outerScope = data.scope;
+            const innerScope = data.innerScope || outerScope || data.id || panelScope;
+            const itemControllers = [];
+
+            _props = Object.assign(_props, data.props || {});
+            _container = roof.firstChild;
+
+            const unitsElem = _container.querySelector('.fanstatic---units');
+
+            if (data.items) {
+                for (let i=0; i<data.items.length; i++) {
+                    itemControllers.push(await fanstatic.applyContent(unitsElem, data.items[i], innerScope, 'append'));
+                }
+
+                _units = Array.from(unitsElem.childNodes);
+            }
+
+            this.controller.panelElement = _container;
+        },
+        controller: {
+            prop: function(name, newValue){
+                if (undefined != typeof(newValue)) {
+                    _props[name] = newValue;
+                } 
+
+                return _props[name]; 
+            },
+            getModeElement: function(type) {
+                return _container.querySelector('.fanstatic---' + type.toLowerCase());
+            },
+            render: function(type, singleParentElem, isMultiParent){
+                var mode = {
+                    BLOCKS: _modeBlocks,
+                    SLIDES: _modeSlides,
+                }
+                
+                if (_props.type) {
+                    // fn move back to units
+                    mode[_props.type].returnUnits();
+                }
+
+                mode[type].render(singleParentElem, isMultiParent);
+                _props.type = type;
+            }
+        },
+    }
+</script>

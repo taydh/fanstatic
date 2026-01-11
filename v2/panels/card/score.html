@@ -2,10 +2,11 @@
 	const design = fanstatic.design;
 
 	return async function(roof, data, url) {
+		const panelElementId = data.$id || data.id || null;
 		const panelScope = data.panelScope || fanstatic.resolvePanelScope(url);
 
 		const basicUnitController = await fanstatic.insertPanel(roof, 'block.unit', {
-			id: data.id,
+			$id: panelElementId,
 			panelScope: panelScope,
 			scope: data.scope,
 			innerScope: data.innerScope,
@@ -14,7 +15,7 @@
 			body: data.subject,
 			foot: data.note,
 
-			$tag: data.$tag,
+			$tag: data.$tag || 'article',
 			$attr: data.$attr,
 			$capTag: data.$capTag,
 			$headTag: data.$headTag,

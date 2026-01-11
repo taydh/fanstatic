@@ -1,0 +1,14 @@
+<div class="d-flex justify-content-between w-100">
+	<div>
+		<select class="form-select">
+			<option value="">Change content model</option>
+			{{#models}}
+			<option value="{{.}}">{{.}}</option>
+			{{/models}}
+		</select>
+	</div>
+	
+	<div class="text-end">
+		<small><a title="download design" href="{{zipUrl}}">{{zipUrl}}</a></small>
+	</div>
+</div>

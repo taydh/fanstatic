@@ -374,6 +374,13 @@
 				}
 
 				this._onplaceQueue.push( fn );
+
+				if (opt.postplace) {
+					let fn = async function() {
+						await opt.postplace(nodes, opt.data, part.url);
+					}
+					this._onplaceQueue.push( fn );
+				}
 			}
 
 			/* run onplace queue if roof in on visible DOM */
@@ -598,11 +605,11 @@
 		},
 
 		applyTemplate: async function(target, obj, insertFn) {
-			if (obj instanceof fanstatic.panel) {
+			if (fanstatic.instanceOfPanel(obj)) {
 				insertFn = (insertFn || 'append') + 'Panel';
 				return fanstatic[insertFn](target, obj.panelScope, obj.options, obj.optMode);
 			}
-			else if (obj instanceof fanstatic.template) {
+			else if (fanstatic.instanceOfTemplate(obj)) {
 				insertFn = (insertFn || 'append') + 'Template';
 				return fanstatic[insertFn](target, obj.url, obj.options, obj.optMode);
 			}
@@ -610,20 +617,27 @@
 			return false;
 		},
 
-		applyContent: function(target, content, outerScope = null, insertFn = 'append') {
-			const arrContent = Array.isArray(content) ? content : [content];
+		/* Don't implemented array here, use one of the cluster panel and base.jhtm panel to mix */
+		applyContent: function(target, content, outerScope = null, insertFn = 'append') {	
+			if (fanstatic.isTemplate(content)){
+				if (outerScope && fanstatic.instanceOfPanel(content)) content.outerScope(outerScope);
 
-			for(let i = 0; i < arrContent.length; i++) {
-				content = arrContent[i];
-				
-				if (fanstatic.isTemplate(content)){
-					if (outerScope && fanstatic.instanceOfPanel(content)) content.outerScope(outerScope);
+				return fanstatic.applyTemplate(target, content, insertFn);
+			} else {
+				const tmp = document.createElement('div');
+				tmp.innerHTML = fanstatic.renderJhtm ? fanstatic.renderJhtm(content) : content;
 
-					return fanstatic.applyTemplate(target, content, insertFn);
-				} else {
-					target.innerHTML = fanstatic.renderJhtm ? fanstatic.renderJhtm(content) : content;
-					return new Promise(rs => rs(null));
+				if (insertFn === 'replace') {
+					target['after'](...tmp.childNodes);
+					target.remove();
 				}
+				else {
+					target[insertFn](...tmp.childNodes)
+				}
+
+				tmp.remove();
+
+				return new Promise(rs => rs(null));
 			}
 		},
 

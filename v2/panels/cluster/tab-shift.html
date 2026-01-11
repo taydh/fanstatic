@@ -1,0 +1,141 @@
+<div data-pn-panel="cluster.tab-shift">
+    <div class="fanstatic---units" style="display:none"></div>
+    <div class="fanstatic---blocks"></div>
+    <div class="fanstatic---tabs"></div>
+</div>
+
+<script>
+    var _container;
+    var _units = [];
+    var _types = ['BLOCKS', 'TABS'];
+    var _props = {
+        currentType: '', 
+    };
+
+    var _modeBlocks = {
+        render: function(parentSelector=['.target-label', '.target-content'], isMultiParent=true) {
+            const modeElem = _container.querySelector('.fanstatic---blocks');
+
+            const render2 = function (units, multiParent, parentSelector) {
+                const singleParentElem = modeElem.querySelector(parentSelector);
+                const multiParentElems = modeElem.querySelectorAll(parentSelector);
+
+                if (!multiParent || (multiParent && 0 == multiParentElems.length)) {
+                    units.forEach((unit, i) => (singleParentElem || modeElem).append(unit));
+                }
+                else {
+                    for (let i=0; i<units.length; i++) {
+                        multiParentElems[i].append(units[i]);
+                    }
+                }
+            }
+
+            render2(_units.map(unit => unit.label), isMultiParent, parentSelector[0]);
+            render2(_units.map(unit => unit.content), isMultiParent, parentSelector[1]);
+            
+            modeElem.classList.add('active');
+        },
+        returnUnits: function() {
+            const modeElem = _container.querySelector('.active');
+            const unitContainers = _container.querySelectorAll('.fanstatic---units > *');
+            
+            _units.forEach((unit, i) => unitContainers[i].append(unit.label, unit.content));
+            _container.querySelector('.active').classList.remove('active');
+        },
+    }
+
+    var _modeTabs = {
+         render: function(parentSelector=['.target-label', '.target-content'], isMultiParent=true) {
+            const modeElem = _container.querySelector('.fanstatic---tabs');
+
+            const render2 = function (units, multiParent, parentSelector) {
+                const singleParentElem = modeElem.querySelector(parentSelector);
+                const multiParentElems = modeElem.querySelectorAll(parentSelector);
+
+                if (!multiParent || (multiParent && 0 == multiParentElems.length)) {
+                    units.forEach((unit, i) => (singleParentElem || modeElem).append(unit));
+                }
+                else {
+                    for (let i=0; i<units.length; i++) {
+                        multiParentElems[i].append(units[i]);
+                    }
+                }
+            }
+
+            render2(_units.map(unit => unit.label), isMultiParent, parentSelector[0]);
+            render2(_units.map(unit => unit.content), isMultiParent, parentSelector[1]);
+            
+            modeElem.classList.add('active');
+        },
+        returnUnits: function() {
+            const modeElem = _container.querySelector('.active');
+            const targetElem = modeElem.querySelector('.target') || modeElem;
+
+            _container.querySelector('.fanstatic---units').append(..._units);
+            _container.querySelector('.active').classList.remove('active');
+        },
+    }
+
+    return {
+        onload: async function(roof, data, url) {
+            const panelScope = data.panelScope || fanstatic.resolvePanelScope(url);
+            const outerScope = data.scope;
+            const innerScope = data.innerScope || outerScope || data.id || panelScope;
+            const itemControllers = [];
+
+            _props = Object.assign(_props, data.props || {});
+            _container = roof.firstChild;
+
+            const unitsElem = _container.querySelector('.fanstatic---units');
+
+            if (data.items) {
+                for (let i=0; i<data.items.length; i++) {
+                    const itemContainer = document.createElement('div');
+                    
+                    itemContainer.innerHTML = fanstatic.renderJhtm([
+                        {['div data-pn="label" data-pn-index="'+i+'"']: data.items[i].label },
+                        {['div data-pn="content" data-pn-index="'+i+'"']: true}
+                    ]);
+
+                    unitsElem.append(itemContainer);
+                    itemControllers.push(await fanstatic.applyContent(itemContainer.children[1], data.items[i].content, innerScope, 'append'));
+                }
+
+                _units = Array.from(unitsElem.childNodes).map(node => {
+                    return {
+                        label: node.children[0],
+                        content: node.children[1],
+                    }
+                });
+            }
+
+            this.controller.panelElement = _container;
+        },
+        controller: {
+            prop: function(name, newValue){
+                if (undefined != typeof(newValue)) {
+                    _props[name] = newValue;
+                } 
+
+                return _props[name]; 
+            },
+            getModeElement: function(type) {
+                return _container.querySelector('.fanstatic---' + type.toLowerCase());
+            },
+            render: function(type, singleParentElem, isMultiParent){
+                var mode = {
+                    BLOCKS: _modeBlocks,
+                    TABS: _modeTabs,
+                }
+                
+                if (_props.type) {
+                    // fn move back to units
+                    mode[_props.type].returnUnits();
+                }
+
+                mode[type].render(singleParentElem, isMultiParent);
+                _props.type = type;
+            }
+        },
+    }
+</script>
