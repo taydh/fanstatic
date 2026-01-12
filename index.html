@@ -24,7 +24,8 @@
 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css">
 		<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
 		
-		<script defer src="https://fanstatic.annexdesk.com/v2/fanstatic.js"></script>
+		<!--script defer src="https://fanstatic.annexdesk.com/v2/fanstatic.js"></script-->
+		<script defer src="https://fanstatic2.test/v2/fanstatic.js"></script>
 		
 		<script>
 			/*
@@ -87,6 +88,7 @@
 						base_url: host_env.fanstatic_base_url,
 						tail_span: '5s',
 						log_render: false,
+						log_process: true,
 					});
 
 					const asyncCounter = fanstatic.asyncCounter(5, () => init());
@@ -97,10 +99,10 @@
 					window.addEventListener('fanstatic.tools.load', () => asyncCounter.done());
 
 					fanstatic.insertScripts([
-						fanstatic.getVersionedBaseUrl() + 'ext.visual.js?_=2',
-						fanstatic.getVersionedBaseUrl() + 'ext.tools.js?_=1',
-						fanstatic.getVersionedBaseUrl() + 'ext.design.js?_=1',
-						fanstatic.getVersionedBaseUrl() + 'ext.template.js?_=1',
+						fanstatic.getVersionedBaseUrl() + 'ext.visual.js?' + fanstatic.trail(),
+						fanstatic.getVersionedBaseUrl() + 'ext.tools.js?' + fanstatic.trail(),
+						fanstatic.getVersionedBaseUrl() + 'ext.design.js?'  + fanstatic.trail(),
+						fanstatic.getVersionedBaseUrl() + 'ext.template.js?' + fanstatic.trail(),
 					]).then(() => asyncCounter.done());	
 				});
 			}

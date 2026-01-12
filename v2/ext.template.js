@@ -421,12 +421,14 @@
 		/* commands */
 
 		searchOnLoadAndRun: async function(roof) {
-			return this.processCommands(roof);
+			return this.processCommandAttributes(roof);
 		},
 
 		searchOnPlaceAndRun: async function(roof) {
-			let count = 0;
-			let targets;
+			return this.processCommandAttributes(roof, '-onplace');
+
+			// let count = 0;
+			// let targets;
 			// let targets = roof.querySelectorAll('[data-command-onrender]')
 			
 			// for (let target of targets) {
@@ -436,24 +438,24 @@
 			// }
 
 			/* with command attributes */
-			for (let cmdSel of Object.entries(this._commandAttributes)) {
-				const attr = cmdSel[0] + '-onplace'
-				targets = roof.querySelectorAll(`[${attr}]`)
+			// for (let cmdSel of Object.entries(this._commandAttributes)) {
+			// 	const attr = cmdSel[0] + '-onplace'
+			// 	targets = roof.querySelectorAll(`[${attr}]`)
 				
-				if (targets) {
-					count += targets.length
+			// 	if (targets) {
+			// 		count += targets.length
 
-					for (let target of targets) {
-						const query = target.getAttribute(attr)
-						const fn = cmdSel[1]
+			// 		for (let target of targets) {
+			// 			const query = target.getAttribute(attr)
+			// 			const fn = cmdSel[1]
 
-						target.removeAttribute(attr)
-						await fn(this, target, query)
-					}
-				}
-			}
+			// 			target.removeAttribute(attr)
+			// 			await fn(this, target, query)
+			// 		}
+			// 	}
+			// }
 
-			if (this.settings.log_process) console.log('searchOnPlaceAndRun:', count)
+			// if (this.settings.log_process) console.log('searchOnPlaceAndRun:', count)
 		},
 
 		/* Insert */

@@ -9,7 +9,7 @@
 	fanstatic.registerCommand('viewport-enter-animate', function(fanstatic, elem) {
 		let animation = elem.dataset.visualAnimation;
 		let turn = 0;
-
+		
 		if (animation) {
 			fanstatic.visual.onEnterViewport(elem, function(){
 				_turnCount++;
@@ -23,6 +23,7 @@
 					_turnCount--;
 
 					elem.classList.add(...classes);
+					elem.setAttribute('data-visual', 'ok');
 					elem.removeAttribute('data-visual-hidden');
 					elem.removeAttribute('data-visual-animation');
 				};
@@ -35,8 +36,8 @@
 				}
 			})
 		}
-		else {
-			console.error('data-visual-animation attribute not found')
+		else if ('ok' != elem.dataset.visual) {
+			console.error('data-visual-animation attribute not found', elem);
 		}
 	})
 	

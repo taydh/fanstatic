@@ -337,10 +337,11 @@
 		},
 
 		searchAndRunCommand: async function(roof, suffix='') {
-			processCommands(roof, suffix);
+			this.processCommandAttributes(roof, suffix);
 		},
 
-		processCommands: async function(roof, suffix='') {
+		processCommandAttributes: async function(roof, suffix='') {
+			let count = 0;
 			let targets;
 
 			/* with command attributes */
@@ -349,8 +350,10 @@
 				targets = roof.querySelectorAll(`[${attr}]`);
 
 				if (targets) {
+					count += targets.length;
+
 					for (let target of targets) {
-						const query = target.getAttribute(cmdAttr[0])
+						const query = target.getAttribute(attr)
 						const fn = cmdAttr[1]
 
 						target.removeAttribute(cmdAttr[0])
@@ -358,6 +361,8 @@
 					}
 				}
 			}
+
+			if (this.settings.log_process) console.log('processCommandAttributes:', count)
 		},
 	}
 
