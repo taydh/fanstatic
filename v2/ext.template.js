@@ -83,41 +83,41 @@
 		// },
 		'data-fanstatic': async function(fanstatic, target) {
 			if ('TEMPLATE' == target.tagName) {
-				await fanstatic.runCommand(target, 'replace', {
+				await fanstatic.runCommand('replace', target, {
 					template: target,
 				});
 			}
 		},
 		'data-template': async function(fanstatic, target, query) {
 			let command = query;
-			await fanstatic.runCommand(target, command)
+			await fanstatic.runCommand(command, target)
 		},
 		'data-template-insert': async function(fanstatic, target, query) {
-			await fanstatic.runCommand(target, 'insert', {
+			await fanstatic.runCommand('insert', target, {
 				template: query, // default selector sudah tercover di command // || target.querySelector('template')
 				templateOptions: fanstatic.elementStorage.get(target, 'templateOptions') || null,
 			})
 		},
 		'data-template-replace': async function(fanstatic, target, query) {
-			await fanstatic.runCommand(target, 'replace', {
+			await fanstatic.runCommand('replace', target, {
 				template: query, // default selector sudah tercover di command //|| target.querySelector('template')
 				templateOptions: fanstatic.elementStorage.get(target, 'templateOptions') || null,
 			})
 		},
 		'data-template-insert-model': async function(fanstatic, target, query) {
-			await fanstatic.runCommand(target, 'insert-model', {
+			await fanstatic.runCommand('insert-model', target, {
 				template: query, // default selector sudah tercover di command // || target.querySelector('template'),
 				data: fanstatic.elementStorage.get(target, 'templateOptions').model || null,
 			})
 		},
 		'data-template-replace-model': async function(fanstatic, target, query) {
-			await fanstatic.runCommand(target, 'replace-model', {
+			await fanstatic.runCommand('replace-model', target, {
 				template: query, // default selector sudah tercover di command // || target.querySelector('template'),
 				data:  fanstatic.elementStorage.get(target, 'templateOptions').model || null,
 			})
 		},
 		'data-template-insert-markdown': async function(fanstatic, target, query) {
-			await fanstatic.runCommand(target, 'insert-markdown', {
+			await fanstatic.runCommand('insert-markdown', target, {
 				template: query // default selector sudah tercover di command // || target.querySelector('template')
 			})
 		},
@@ -421,7 +421,7 @@
 		/* commands */
 
 		searchOnLoadAndRun: async function(roof) {
-			return this.searchAndRunCommand(roof);
+			return this.processCommands(roof);
 		},
 
 		searchOnPlaceAndRun: async function(roof) {

@@ -324,11 +324,11 @@
 			this._commands[command] = fn
 		},
 
-		run: function(target, command, args) {
-			return this.runCommand(target, command, args);
+		run: function(command, target, args) {
+			return this.runCommand(command, target, args);
 		},
 
-		runCommand: function(target, command, args) {
+		runCommand: function(command, target, args) {
 			if (this.settings.log_render) console.log('🤖 command:', command, target)
 
 			let fn = this._commands[command]
@@ -337,19 +337,23 @@
 		},
 
 		searchAndRunCommand: async function(roof, suffix='') {
+			processCommands(roof, suffix);
+		},
+
+		processCommands: async function(roof, suffix='') {
 			let targets;
 
 			/* with command attributes */
-			for (let cmdSel of Object.entries(this._commandAttributes)) {
-				const attr = cmdSel[0] + suffix;
+			for (let cmdAttr of Object.entries(this._commandAttributes)) {
+				const attr = cmdAttr[0] + suffix;
 				targets = roof.querySelectorAll(`[${attr}]`);
 
 				if (targets) {
 					for (let target of targets) {
-						const query = target.getAttribute(cmdSel[0])
-						const fn = cmdSel[1]
+						const query = target.getAttribute(cmdAttr[0])
+						const fn = cmdAttr[1]
 
-						target.removeAttribute(cmdSel[0])
+						target.removeAttribute(cmdAttr[0])
 						await fn(this, target, query)
 					}
 				}
