@@ -300,24 +300,24 @@
 
 			// 1st step B: render text with model
 
-			let model = scriptOpt.model || {}
-			let renderers = scriptOpt.renderer || false ? scriptOpt.renderer.split(' ') : []
+			let model = scriptOpt.model || {};
+			let renderers = scriptOpt.renderer || false ? scriptOpt.renderer.split(' ') : [];
 
 			for (let r of renderers) {
 				switch (r) {
 				case 'mustache':
-					text = Mustache.render(text, model)
+					text = Mustache.render(text, model, model._partialTemplates_ || {});
 					break;
 				case 'markdown':
-					text = marked.parse(text)
+					text = marked.parse(text);
 					break;
 				case 'yhtm':
-					text = this.renderYhtm(text)
+					text = this.renderYhtm(text);
 					break;
 				}
 			}
 
-			tmp.innerHTML = text
+			tmp.innerHTML = text;
 
 			/* 2nd step: onload, postload, run command, apply classfix */
 
