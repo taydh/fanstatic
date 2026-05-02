@@ -36,7 +36,7 @@
 		},
 		beforeHtml: function(el, html) { el.insertAdjacentHTML('beforebegin', html); },
 		prependHtml: function(el, html) { el.insertAdjacentHTML('afterbegin', html); },
-		appendHtml: function(el, html) { el.insertAdjacentHTML('before', html); },
+		appendHtml: function(el, html) { el.insertAdjacentHTML('beforeend', html); },
 		afterHtml: function(el, html) { el.insertAdjacentHTML('afterend', html); },
 
 		/* classfix */
