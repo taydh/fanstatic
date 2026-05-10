@@ -27,7 +27,7 @@
 		/* adjacent html */
 
 		insertHtml: function(el, html) { 
-			el.empty();
+			el.replaceChildren();
 			el.insertAdjacentHTML('beforeend', html);
 		},
 		replaceHtml: function(el, html) { 
