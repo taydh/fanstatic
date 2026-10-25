@@ -337,7 +337,7 @@
 		},
 
 		searchAndRunCommand: async function(roof, suffix='') {
-			this.processCommandAttributes(roof, suffix);
+			await this.processCommandAttributes(roof, suffix);
 		},
 
 		processCommandAttributes: async function(roof, suffix='') {
