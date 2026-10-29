@@ -131,7 +131,7 @@
 		},
 
 		ELEMENT_STORAGE_KEYS: {
-			PANEL_CONTROLLER: 'fanstatic.panel_controller',
+			PART_CONTROLLER: 'fanstatic.part_controller',
 		},
 		
 		_getTemplateElement: function(url) {
@@ -517,51 +517,51 @@
 			};
 		},
 
-		/* panel */
+		/* PART */
 
-		getPanelControllers: function(elements) {
-			return Array.from(elements).map(elem => fanstatic.elementStorage.get(elem, fanstatic.ELEMENT_STORAGE_KEYS.PANEL_CONTROLLER));
+		getPartControllers: function(elements) {
+			return Array.from(elements).map(elem => fanstatic.elementStorage.get(elem, fanstatic.ELEMENT_STORAGE_KEYS.PART_CONTROLLER));
 		},
 
-		_insertPanel: async function(el, panelScope, opt = {}, optMode, insertFn) {
+		_insertPart: async function(el, frame, opt = {}, optMode, insertFn) {
 			return new Promise(async function (resolve) {
-				const c = await fanstatic[insertFn](el, fanstatic.resolvePanelPath(panelScope), opt, optMode);
-				if (c.panelElement) fanstatic.elementStorage.set(c.panelElement, fanstatic.ELEMENT_STORAGE_KEYS.PANEL_CONTROLLER, c);
+				const c = await fanstatic[insertFn](el, fanstatic.resolvePartPath(frame), opt, optMode);
+				if (c.root) fanstatic.elementStorage.set(c.root, fanstatic.ELEMENT_STORAGE_KEYS.PART_CONTROLLER, c);
 				resolve(c);
 			});
 		},
 
-		resolvePanelScope: function(path) {
+		resolveFrame: function(path) {
 			const parts = path.split('/').reverse();
 
 			return parts[1] + '.' + parts[0].substring(0, parts[0].lastIndexOf('.'));
 		},
-		resolvePanelPath: function(panelScope) {
-			const panelBaseUrl = panelScope.match(/^.+?:\/\//i) ? panelScope : fanstatic.settings.base_url + fanstatic.settings.version;
+		resolvePartPath: function(frame) {
+			const baseUrl = frame.match(/^.+?:\/\//i) ? frame : fanstatic.settings.base_url + fanstatic.settings.version;
 			
-			return panelBaseUrl + '/panels/'+panelScope.replace('.','/')+'.html'
+			return baseUrl + '/part-frames/'+frame.replace('.','/')+'.htm'
 		},
-		insertPanel: async function(el, panelScope, opt, optMode = 2) {
-			return this._insertPanel(el, panelScope, opt, optMode, 'insert');
+		insertPart: async function(el, frame, opt, optMode = 2) {
+			return this._insertPart(el, frame, opt, optMode, 'insert');
 		},
-		replacePanel: async function(el, panelScope, opt, optMode = 2) {
-			return this._insertPanel(el, panelScope, opt, optMode, 'replace');
+		replacePart: async function(el, frame, opt, optMode = 2) {
+			return this._insertPart(el, frame, opt, optMode, 'replace');
 		},
-		appendPanel: async function(el, panelScope, opt, optMode = 2) {
-			return this._insertPanel(el, panelScope, opt, optMode, 'append');
+		appendPart: async function(el, frame, opt, optMode = 2) {
+			return this._insertPart(el, frame, opt, optMode, 'append');
 		},
-		prependPanel: async function(el, panelScope, opt, optMode = 2) {
-			return this._insertPanel(el, panelScope, opt, optMode, 'replace');
+		prependPart: async function(el, frame, opt, optMode = 2) {
+			return this._insertPart(el, frame, opt, optMode, 'replace');
 		},
-		beforePanel: async function(el, panelScope, opt, optMode = 2) {
-			return this._insertPanel(el, panelScope, opt, optMode, 'before');
+		beforePart: async function(el, frame, opt, optMode = 2) {
+			return this._insertPart(el, frame, opt, optMode, 'before');
 		},
-		afterPanel: async function(el, panelScope, opt, optMode = 2) {
-			return this._insertPanel(el, panelScope, opt, optMode, 'after');
+		afterPart: async function(el, frame, opt, optMode = 2) {
+			return this._insertPart(el, frame, opt, optMode, 'after');
 		},
 
-		panel: function(panelScope, opt, optMode = 2) {
-			this.panelScope = panelScope;
+		part: function(frame, opt, optMode = 2) {
+			this.frame = frame;
 			this.options = opt || {};
 			this.optMode = optMode;
 			this.getData = function() {
@@ -572,9 +572,9 @@
 
 				return this.options;
 			};
-			this.outerScope = function(outerScope) {
+			this.scope = function(scope) {
 				const data = this.getData();
-				data.scope = data.scope || outerScope;
+				data.scope = data.scope || scope;
 			};
 			this.assignData = function(assignment) {
 				if (fanstatic.TEMPLATE_OPTMODE.data == this.optMode) {
@@ -586,30 +586,43 @@
 			};
 		},
 
-		panelController: function(panelElement, scope, panelScope) {
-			this.panelElement = panelElement;
-			this.scope = scope;
-			this.panelScope = panelScope;
-			this.select = function(name) { return panelElement.querySelector(`[data-pn="${name}"]`); };
-			this.selectAll = function(name) { return panelElement.querySelectorAll(`[data-pn="${name}"]`); };
+		partController: function(root) {
+			const obj = this;
+
+			this.root = root || null;
+
+			Object.defineProperties(obj, {
+				'scope': {
+					get() { return this.root ? this.root.dataset.ptScope || null : null },
+					enumerable: true,
+				},
+				'frame': {
+					get() { return this.root ? this.root.dataset.ptFrame || null : null },
+					enumerable: true,
+				},
+			});
+
+			
+			this.select = function(name) { return root ? root.querySelector(`[data-pt="${name}"]`) : null; };
+			this.selectAll = function(name) { return root ? root.querySelectorAll(`[data-pt="${name}"]`) : []; };
 		},
 
 		isTemplate: function(obj) {
-			return this.instanceOfTemplate(obj) || this.instanceOfPanel(obj);
+			return this.instanceOfTemplate(obj) || this.instanceOfPart(obj);
 		},
 
 		instanceOfTemplate: function(obj) {
 			return (obj instanceof fanstatic.template);
 		},
 
-		instanceOfPanel: function(obj) {
-			return (obj instanceof fanstatic.panel)
+		instanceOfPart: function(obj) {
+			return (obj instanceof fanstatic.part)
 		},
 
 		applyTemplate: async function(target, obj, insertFn) {
-			if (fanstatic.instanceOfPanel(obj)) {
-				insertFn = (insertFn || 'append') + 'Panel';
-				return fanstatic[insertFn](target, obj.panelScope, obj.options, obj.optMode);
+			if (fanstatic.instanceOfPart(obj)) {
+				insertFn = (insertFn || 'append') + 'Part';
+				return fanstatic[insertFn](target, obj.frame, obj.options, obj.optMode);
 			}
 			else if (fanstatic.instanceOfTemplate(obj)) {
 				insertFn = (insertFn || 'append') + 'Template';
@@ -619,10 +632,10 @@
 			return false;
 		},
 
-		/* Don't implemented array here, use one of the cluster panel and base.jhtm panel to mix */
-		applyContent: function(target, content, outerScope = null, insertFn = 'append') {	
+		/* Don't implemented array here, use one of the cluster frame and base.jhtm frame to mix */
+		applyContent: function(target, content, scope = null, insertFn = 'append') {	
 			if (fanstatic.isTemplate(content)){
-				if (outerScope && fanstatic.instanceOfPanel(content)) content.outerScope(outerScope);
+				if (scope && fanstatic.instanceOfPart(content)) content.scope(scope);
 
 				return fanstatic.applyTemplate(target, content, insertFn);
 			} else {

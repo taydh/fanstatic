@@ -1,0 +1,66 @@
+<script>
+	const design = fanstatic.design;
+
+	return async function(roof, data = {}, url) {
+		// A.
+
+		const model = Object.assign({}, data);
+
+		model.id = model.$id || model.id || null;
+		model.frame = model.frame || fanstatic.resolveFrame(url);
+
+		model.photoImageSrc = model.photoImageSrc || '';
+		model.name = model.name || '';
+		model.jobTitle = data.jobTitle || '';
+		model.company = data.company || '';
+		model.description = data.description || '';
+		model.facebook = data.facebook || '';
+		model.instagram = data.instagram || '';
+		model.twitterX = data.twitterX || '';
+		model.linkedIn = data.linkedIn || '';
+		model.tiktok = data.tiktok || '';
+		model.disabled = data.disabled || false;
+		
+		// B.
+
+		const blockController = await fanstatic.appendPart(roof, 'block.unit', 
+			Object.assign(model, {
+				cap: design.img({data: {pt: 'photoImage'}}),
+				head: [
+					design.tag(data.$nameTag || 'div', {data: {pt: 'name'}}),
+					design.tag(data.$jobTitleTag || 'div', {data: {pt: 'jobTitle'}}),
+					design.tag(data.$companyTag || 'div', {data: {pt: 'company'}}),
+				],
+				body: design.tag(model.$descriptionTag || 'div', {data: {pt: 'description'}}),
+				foot: design.axis([
+					design.div({data: {'pt': 'facebook'}}),
+					design.div({data: {'pt': 'instagram'}}),
+					design.div({data: {'pt': 'twitterX'}}),
+					design.div({data: {'pt': 'tiktok'}}),
+					design.div({data: {'pt': 'linkedIn'}}),
+				]),
+
+				$tag: data.$tag || 'article',
+			})
+		);
+
+		// C.
+
+		['photoImage', 'name', 'jobTitle', 'company', 'description'].forEach(prop => {
+			blockController[prop] = blockController.select(prop);
+		});
+
+		blockController.photoImage.src = model.photoImageSrc;
+
+		['name', 'jobTitle'].forEach(prop => {
+			blockController[prop].textContent = model[prop];
+		});
+
+		blockController.descriptionController = 
+			await fanstatic.applyContent(blockController.description, model.description, model.innerScope);
+
+		// D.
+
+		this.controller = blockController;
+	}
+</script>

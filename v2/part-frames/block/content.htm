@@ -1,0 +1,40 @@
+<script>
+	/*
+		Specifications:
+		- cap tag: unit default
+		- head tag: available when a child tag exists or not at all
+		- body tag: always available
+		- foot tag: unit default
+	 */
+
+	const design = fanstatic.design;
+
+	return async function (roof, data = {}, url) {
+		const model = Object.assign({}, data);
+
+		model.id = model.$id || model.id || null;
+		model.frame = model.frame || fanstatic.resolveFrame(url);
+
+
+		model.head = model.category || model.title || model.subtitle || model.caption;
+		model.body = model.body || true;
+
+		const unitController = await fanstatic.appendPart(roof, 'block.unit', model);
+		const root = roof.children[0];
+
+		if (unitController.head) { 
+			fanstatic.insertHtml(unitController.head, fanstatic.renderJhtm([
+				design.tag((model.$categoryTag || 'div'), {'data-pt':'category'}),
+				design.tag((model.$titleTag || 'h1'), {'data-pt':'title'}),
+				design.tag((model.$subtitleTag || 'div'), {'data-pt':'subtitle'}),
+				design.tag((model.$captionTag || 'div'), {'data-pt':'caption'}),
+			]));
+		}
+
+		['category', 'title', 'subtitle', 'caption'].forEach(prop => {
+			unitController.select(prop).textContent = model[prop];
+		});
+		
+		this.controller = unitController;
+	};
+</script>

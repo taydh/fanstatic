@@ -1,0 +1,10 @@
+<script>
+	return async function (roof, data = {}, url) {
+		roof.textContent = data;
+
+		const frame = data.frame || fanstatic.resolveFrame(url);
+		const outerScope = data.scope;
+
+		this.controller = new fanstatic.partController(null, outerScope, frame);
+	};
+</script>

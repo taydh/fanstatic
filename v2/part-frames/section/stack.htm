@@ -1,0 +1,50 @@
+<script>
+	const design = fanstatic.design;
+
+	return async function (roof, data, url) {
+		const panelElementId = data.$id || data.id || null;
+		const frame = data.frame || fanstatic.resolveFrame(url);
+		const outerScope = data.scope;
+		const innerScope = data.innerScope || outerScope || panelElementId || frame;
+
+		const itemControllers = [];
+
+		const sectionController = await fanstatic.insertPart(roof, 'section.content', 
+			Object.assign(data, {
+				frame: frame,
+			})
+		);
+
+		const clusterController = await fanstatic.insertPart(sectionController.blockController.body, 'cluster.stack', {
+			scope: outerScope,
+			items: data.items,
+
+			$tag: data.$itemsTag,
+			$itemTag: data.$itemTag,
+		});
+
+		clusterController.root.dataset.pt = 'cluster';
+		
+		// const stackPanel = (data.stackPanels 
+		// 	? data.stackPanels.panel 
+		// 	: { stackPanel: { panel: 'block.actionable-block', items: [] }}
+		// ) || 'block.actionable-block';
+		
+		// const blockController = await fanstatic.insertPart(roof, 'section.block',
+		// 	Object.assign(data, {
+		// 		frame: frame,
+		// 		scope: outerScope,
+		// 		innerScope: innerScope,
+		// 		content: clusterPart,
+		// 	})
+		// );
+
+		// blockController.root.dataset. = 'items';
+		
+		// sectionController.itemControllers = getter to clusterController.itemControllers //
+
+		this.controller = Object.assign(sectionController, {
+			clusterController: clusterController,
+		});;
+	}
+</script>

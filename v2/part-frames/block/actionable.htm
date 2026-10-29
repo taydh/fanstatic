@@ -1,0 +1,41 @@
+<script>
+	const design = fanstatic.design;
+
+	return async function (roof, data = {}, url) {
+		const model = Object.assign({}, data);
+
+		model.id = model.$id || model.id || null;
+		model.frame = model.frame || fanstatic.resolveFrame(url);
+
+		if (data.subjects && !Array.isArray(data.subjects)) model.subjects = [data.subjects];
+		if (data.actions && !Array.isArray(data.actions)) model.actions = [data.actions];
+		
+		model.head = model.subjects ? model.subjects.map(() => design.div({'data-pt':'subject'})) : true;
+		model.foot = model.actions ? model.actions.map(() => design.div({'data-pt':'action'})) : true;
+
+		const unitController = await fanstatic.insertPart(roof, 'block.unit', model);
+		const root = roof.children[0];
+		const subjectControllers = [];
+		const actionControllers = [];
+
+		if (model.subjects) {
+			const divs = Array.from(unitController.head.children);
+
+			for (let i=0; i<data.subjects.length; i++) {
+				subjectControllers.push(await fanstatic.applyContent(divs[i], model.subjects[i], model.innerScope));
+			}
+		}
+		if (model.actions) {
+			const divs = Array.from(unitController.foot.children);
+
+			for (let i=0; i<data.actions.length; i++) {
+				actionControllers.push(await fanstatic.applyContent(divs[i], model.actions[i], model.innerScope));
+			}
+		}
+
+		this.controller = Object.assign(unitController, {
+			subjectControllers: subjectControllers,
+			actionControllers: actionControllers,
+		});
+	};
+</script>

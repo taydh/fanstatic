@@ -1,0 +1,52 @@
+<div></div>
+
+<script>
+	const design = fanstatic.design;
+
+	return async function(roof, data, url) {
+		const model = Object.assign({}, data);
+
+		model.id = model.$id || model.id || null;
+		model.frame = model.frame || fanstatic.resolveFrame(url);
+
+		const root = roof.children[0];
+		
+		root.dataset.ptFrame = model.frame;
+		
+		if (model.id) root.id = model.id;
+		if (model.scope) root.dataset.ptScope = model.scope;
+		
+		root.innerHTML = fanstatic.renderJhtm([
+			design.tag(data.$logoTag || 'figure', {style:'display:none', data:{ pt: 'logo'}}),
+			design.tag(data.$labelTag || 'div', {style:'display:none', data:{ pt: 'label'}}),
+		]);
+
+		const controller = Object.assign(
+			new fanstatic.partController(root), 
+			{
+				logo: root.querySelector('[data-pt=logo]'),
+				label: root.querySelector('[data-pt=label]'),
+			}
+		);
+
+		let imgProm, labelProm;
+
+		if (model.logoImageSrc) {
+			imgProm = fanstatic.insertPart(controller.logo, 'base.image', { src: model.logoImageSrc });
+		}
+
+		if (model.label) {
+			labelProm = fanstatic.insertPart(controller.label, 'base.text', model.label);
+		}
+
+		const resolves = await Promise.all([imgProm, labelProm]);
+
+		controller.logoImageController = resolves[0];
+		controller.labelController = resolves[1];
+
+		controller.logo.style.display = 'block';
+		controller.label.style.display = 'block';
+
+		this.controller = controller;
+	}
+</script>

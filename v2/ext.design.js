@@ -36,6 +36,8 @@
 		}).join(' ');
 	}
 
+	const _emptyTags = ['area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'source', 'track', 'wbr'];
+
 	Object.assign(fanstatic, {
 		tagFillContains: function(obj, searchText) {
 			return ('object' == typeof obj) && obj ? Object.entries(obj)[0][0].includes(searchText) : false;
@@ -65,7 +67,7 @@
 				entry = Object.entries(entry)[0];
 				let tagFill = entry[0];
 				let content = entry[1];
-				let tagName = tagFill.split(' ')[0];
+				let tagName = tagFill.split(' ')[0].toLowerCase();
 				let innerHTML = '';
 
 				if (false === !!content) {
@@ -81,7 +83,12 @@
 					innerHTML = this.renderJhtm(content);
 				}
 
-				html += `<${tagFill}>${innerHTML}</${tagName}>`;
+				if (_emptyTags.includes(tagName)) {
+					html += `<${tagFill}>`;	
+				}
+				else {
+					html += `<${tagFill}>${innerHTML}</${tagName}>`;
+				}
 			}
 
 			return html
@@ -112,6 +119,10 @@
 		tag: function() {
 			return this.element(...arguments);
 		},
+		
+		// Only 4 real tags available as direct method
+		// <div> <span> <br> <hr> and <list>
+
 		div: function(attributes = {}, items = true) {
 			if (('object' != typeof attributes) || Array.isArray(attributes)) {
 				items = attributes;
@@ -120,33 +131,46 @@
 
 			return this.element('div', attributes, items);
 		},
-		par: function(attributes = {}, items = true) { return this.p(attributes, items); },
-		p: function(attributes = {}, items = true) {
+
+		span: function(attributes = {}, items = true) {
 			if (('object' != typeof attributes) || Array.isArray(attributes)) {
 				items = attributes;
 				attributes = {};
 			}
 
-			return this.element('p', attributes, items);
+			return this.element('span', attributes, items);
 		},
-		a: function(attributes = {}, items = true) {
-			if (('object' != typeof attributes) || Array.isArray(attributes)) {
-				items = attributes;
-				attributes = {};
-			}
 
-			return this.element('a', attributes, items);
+		br: function(attributes = {}) {
+			return this.element('br', attributes);
 		},
-		button: function(attributes = {}, model) {
-			if (('object' != typeof attributes) || Array.isArray(attributes)) {
+
+		hr: function(attributes = {}) {
+			return this.element('hr', attributes);
+		},
+
+		list: function(attributes = {}, secondaryAttributes = {}, model) {
+			if (Array.isArray(attributes)) {
 				model = attributes;
 				attributes = {};
 			}
 
-			let tagFill = `button data-ds="button"`;
+			let listTag = attributes.$tag || model.listTag || 'ul';
+			let itemTag = (['ul','ol'].includes(listTag)) ? 'li' : (secondaryAttributes.$tag || model.listItemTag || 'div');
+			let tagFill = (listTag + ' data-ds="list" ' +  _toAttributesString(attributes));
+			let result = {};
+			let items = (Array.isArray(model) ? model : model.items) || [];
 
-			return {[tagFill]: model};
+			result[tagFill] = items.map(item => {
+				let obj = {};
+				obj[itemTag + ' data-ds="listItem" ' +  _toAttributesString(secondaryAttributes)] = item;
+
+				return obj;
+			});
+
+			return result;
 		},
+
 		unit: function(attributes = {}, model) {
 			if (!model){
 				if (Object.keys(attributes).some(k => 'cap' == k || 'head' == k || 'body' == k || 'foot' == k)) {
@@ -214,27 +238,6 @@
 			
 			return result;
 		},
-		list: function(attributes = {}, secondaryAttributes = {}, model) {
-			if (Array.isArray(attributes)) {
-				model = attributes;
-				attributes = {};
-			}
-
-			let listTag = attributes.$tag || model.listTag || 'ul';
-			let itemTag = (['ul','ol'].includes(listTag)) ? 'li' : (secondaryAttributes.$tag || model.listItemTag || 'div');
-			let tagFill = (listTag + ' data-ds="list" ' +  _toAttributesString(attributes));
-			let result = {};
-			let items = (Array.isArray(model) ? model : model.items) || [];
-
-			result[tagFill] = items.map(item => {
-				let obj = {};
-				obj[itemTag + ' data-ds="item" ' +  _toAttributesString(secondaryAttributes)] = item;
-
-				return obj;
-			});
-
-			return result;
-		},
 		stack: function(attributes = {}, secondaryAttributes = {}, model) {
 			if (Array.isArray(attributes)) {
 				model = attributes;
@@ -246,9 +249,9 @@
 			let items = (Array.isArray(model) ? model : model.items) || [];
 
 			result[tagFill] = items.map(item => {
-				return fanstatic.tagFillContains(item, 'data-ds="stack_item"')
+				return fanstatic.tagFillContains(item, 'data-ds="item"')
 					? item
-					: {[(secondaryAttributes.$tag || model.itemTag || 'div') + ' data-ds="stack_item" ' +  _toAttributesString(secondaryAttributes)]: item };
+					: {[(secondaryAttributes.$tag || model.itemTag || 'div') + ' data-ds="item" ' +  _toAttributesString(secondaryAttributes)]: item };
 			});
 
 			return result;
@@ -271,9 +274,9 @@
 			let items = (Array.isArray(model) ? model : model.items) || [];
 
 			result[tagFill] = items.map(item => {
-				return fanstatic.tagFillContains(item, 'data-ds="grid_item"')
+				return fanstatic.tagFillContains(item, 'data-ds="item"')
 					? item
-					: { [(secondaryAttributes.$tag || model.itemTag || 'div') + ' data-ds="grid_item" ' +  _toAttributesString(secondaryAttributes)]: item };
+					: { [(secondaryAttributes.$tag || model.itemTag || 'div') + ' data-ds="item" ' +  _toAttributesString(secondaryAttributes)]: item };
 			});
 
 			return result;
@@ -296,9 +299,9 @@
 			let items = (Array.isArray(model) ? model : model.items) || [];
 
 			result[tagFill] = items.map(item => {
-				return fanstatic.tagFillContains(item, 'data-ds="flex_item"') 
+				return fanstatic.tagFillContains(item, 'data-ds="item"') 
 					? item
-					: { [(secondaryAttributes.$tag || model.itemTag || 'div') + 'div data-ds="flex_item" ' +  _toAttributesString(secondaryAttributes)]: item };
+					: { [(secondaryAttributes.$tag || model.itemTag || 'div') + ' data-ds="item" ' +  _toAttributesString(secondaryAttributes)]: item };
 			});
 
 			return result;
@@ -321,7 +324,7 @@
 					if (typeof obj[k] == 'string') {
 						const ruled = rules ? rules(k, obj[k]) : false;
 
-						obj[k] = ruled || fanstatic.escapeHtml(obj[k]);
+						obj[k] = ruled || this.escapeHtml(obj[k]);
 					}
 					else {
 						this.escapeHtml(obj[k], rules);

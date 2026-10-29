@@ -1,0 +1,39 @@
+<script>
+	const design = fanstatic.design;
+
+	return async function(roof, data = {}, url) {
+		const model = Object.assign({}, data);
+
+		model.id = model.$id || model.id || null;
+		model.frame = model.frame || fanstatic.resolveFrame(url);
+
+		model.backgroundImageSrc = model.backgroundImageSrc || '';
+		model.disabled = model.disabled || false;
+
+		roof.innerHTML = fanstatic.renderJhtm([
+			design.tag('article', Object.assign(model.$attr || {}, {
+				$tag: model.$tag,
+			}), [
+				design.div({ 'data-pt': 'cover' }),
+				design.div({ 'data-pt': 'reveal' }),
+			])
+		]);
+
+		const root = roof.children[0];
+
+		root.removeAttribute('data-ds');
+		Array.from(root.children).forEach(elem => elem.removeAttribute('data-ds'));
+		root.dataset.ptFrame = model.frame;
+
+		if (model.id) root.id = model.id;
+		if (model.scope) root.dataset.ptScope = model.scope;
+		
+		const coverController = await fanstatic.applyContent(root.children[0], model.cover, model.innerScope);
+		const revealController = await fanstatic.applyContent(root.children[1], model.reveal, model.innerScope);
+
+		this.controller = Object.assign(new fanstatic.partController(root, model.scope, model.frame), {
+			coverController: coverController,
+			revealController: revealController,
+		});
+	}
+</script>

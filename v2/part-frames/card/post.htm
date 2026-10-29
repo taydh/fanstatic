@@ -1,0 +1,61 @@
+<script>
+	const design = fanstatic.design;
+
+	return async function(roof, data = {}, url) {
+		const model = Object.assign({}, data);
+
+		model.id = model.$id || model.id || null;
+		model.frame = model.frame || fanstatic.resolveFrame(url);
+
+		model.featureImageSrc = model.featureImageSrc || '';
+		model.section = data.section || '';
+		model.title = data.title || '';
+		model.short = data.short || '';
+		model.date = data.date || '';
+		model.postLink = data.link || '#';
+		model.author = data.author || '';
+		model.authorLink = data.authorLink || '#';
+		model.authorPhoto = data.authorPhoto || '';
+		model.disabled = data.disabled || false;
+
+		const blockController = await fanstatic.appendPart(roof, 'block.unit', 
+			Object.assign(model, {
+				cap: {img: true},
+				head: [
+					design.tag(model.$sectionTag || 'div', { data:{'pt':'section'} }),
+					design.tag(model.$titleTag || 'div', { data:{'pt':'title'} }, design.tag('a')),
+					design.tag(model.$dateTag || 'div', { data:{'pt':'date'} }),
+					design.tag(model.$authorTag || 'div', { data:{'pt':'author'} }), 
+				],
+				body: model.body || true,
+				foot: [
+					design.div([design.tag('a', {data: {'pt': 'button-more'}}, 'Read more')]),
+				],
+
+				$tag: data.$tag || 'article',
+			})
+		);
+
+		let elem;
+
+		elem = blockController.select('cap').children[0];
+		elem.src = model.featureImageSrc;
+
+		elem = blockController.select('title').children[0];
+		elem.href = model.postLink;
+		elem.textContent = model.title;
+
+		elem = blockController.select('button-more');
+		elem.href = model.postLink;
+
+		['section', 'date', 'author'].forEach(prop => {
+			blockController.select(prop).textContent = model[prop];
+		});
+
+		const root = blockController.root;
+
+		this.controller = Object.assign(new fanstatic.partController(root, model.scope, model.frame), {
+			
+		});
+	}
+</script>

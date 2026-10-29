@@ -1,0 +1,55 @@
+<script>
+	const design = fanstatic.design;
+
+	return async function(roof, data, url) {
+		// A. SETUP MODEL
+
+		const model = Object.assign({}, data);
+
+		model.id = model.$id || model.id || null;
+		model.frame = model.frame || fanstatic.resolveFrame(url);
+
+		model.photoImageSrc = data.photoImageSrc || '';
+		model.name = data.name || true;
+		model.company = data.company || true;
+		model.jobTitle = data.jobTitle || true;
+		model.quote = data.quote || true;
+		model.disabled = data.disabled || false;
+		
+		// B. CREATE FRAME
+
+		const blockController = await fanstatic.insertPart(roof, 'block.unit',
+			Object.assign(model, {
+				cap: design.img({data: {pt: 'photoImage'}}),
+				head: [
+					design.tag(data.$nameTag || 'div', {'data-pt': 'name' }), 
+					design.tag(data.$jobTitleTag || 'div', { 'data-pt': 'jobTitle' }),
+					design.tag(data.$companyTag || 'div', { 'data-pt': 'company' })
+				],
+				body: [
+					design.tag('blockquote', {'data-pt': 'quote'})
+				],
+				$tag: data.$tag || 'article',
+			})
+		);
+
+		// C. ASSIGN PROPS & APPLY VALUES
+
+		['photoImage', 'name', 'jobTitle', 'company', 'quote'].forEach(prop => {
+			blockController[prop] = blockController.select(prop);
+		});
+
+		blockController.photoImage.src = model.photoImageSrc;
+
+		['name', 'jobTitle', 'company'].forEach(prop => {
+			blockController[prop].textContent = model[prop];
+		});
+
+		blockController.quoteController = 
+			await fanstatic.applyContent(blockController.quote, model.quote, model.innerScope);
+
+		// D. ASSIGN CONTROLLER
+
+		this.controller = blockController;
+	}
+</script>

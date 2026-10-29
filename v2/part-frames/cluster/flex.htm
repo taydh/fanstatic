@@ -1,0 +1,7 @@
+<script>
+	return async function (roof, data = {}, url) {
+		data.frame = data.frame || fanstatic.resolveFrame(url);
+		this.controller = await fanstatic.insertPart(roof, 'cluster.stack', data);
+		this.controller.root.style.display = 'flex';
+	};
+</script>

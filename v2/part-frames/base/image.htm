@@ -1,0 +1,15 @@
+<img>
+<script>
+	return function(roof, data, url) {
+		const partId = data.$id || data.id || null;
+		const frame = data.frame || fanstatic.resolveFrame(url);
+		const outerScope = data.scope;
+
+		const imgElement = roof.children[0];
+
+		if (partId) imgElement.id = partId;
+		imgElement.src = data.src; // safe with DOM assignment without prior sanitazion
+
+		this.controller = new fanstatic.partController(imgElement, outerScope, frame);
+	}
+</script>

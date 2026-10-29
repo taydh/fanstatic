@@ -1,0 +1,56 @@
+<script>
+	const design = fanstatic.design;
+
+	return async function (roof, data, url) {
+		const model = Object.assign({}, data);
+
+		model.id = data.$id || data.id || null;
+		model.frame = data.frame || fanstatic.resolveFrame(url);
+		model.scope = data.scope;
+		model.innerScope = data.innerScope || model.scope || model.partId || model.frame;
+
+		fanstatic.insertHtml(roof, fanstatic.renderJhtm(
+			design.tag('section', {data: {'pt-frame': model.frame}}, 
+				design.wrap({data: {pt: 'wrap'}}, [
+					design.div({data: {pt: 'identity'}}),
+					design.div({data: {pt: 'navigation'}}),
+					design.div({data: {pt: 'actions'}}),
+				])
+			)
+		));
+
+		const root = roof.children[0];
+
+		if (model.id) root.id = model.id;
+		if (model.scope) root.dataset.ptScope = model.scope;
+
+		const controller = new fanstatic.partController(roof, model.scope, model.frame);
+
+		controller.identity = controller.select('identity');
+		controller.navigation = controller.select('navigation');
+		controller.actions = controller.select('actions');
+
+		controller.select('wrap').removeAttribute('data-ds');
+
+		// populate with content
+
+		let identityProm, navigationProm, actionsProm;
+
+		if (model.identity)
+			identityProm = fanstatic.applyContent(controller.identity, model.identity, model.innerScope);
+		
+		if (model.navigation)
+			navigationProm = fanstatic.applyContent(controller.navigation, model.navigation, model.innerScope);
+
+		if (model.actions)
+			actionsProm = fanstatic.applyContent(controller.actions, model.actions, model.innerScope);
+
+		const allResolve = await Promise.all([identityProm, navigationProm, actionsProm]);
+
+		controller.identityController = allResolve[0];
+		controller.navigationsController = allResolve[1];
+		controller.actionsController = allResolve[2];
+
+		this.controller = controller;
+	};
+</script>

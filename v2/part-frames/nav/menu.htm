@@ -1,0 +1,51 @@
+<script>
+	const design = fanstatic.design;
+
+	return async function(roof, data, url) {
+		const model = Object.assign({}, data);
+
+		model.id = model.$id || model.id || null;
+		model.frame = model.frame || fanstatic.resolveFrame(url);
+
+		fanstatic.insertHtml(roof, fanstatic.renderJhtm(
+			design.tag('nav', [
+				design.list({ 'data-pt': 'nav_list' }, { 'data-pt': 'nav_item' },
+				{
+					items: model.items.filter(item => !!item).map(item => {
+						return  item.url
+							? design.element('a', { 'data-pt': 'nav_link' })
+							: design.element('span', { 'data-pt': 'nav_link' })
+					}),
+				})
+			])
+		))
+
+		const root = roof.children[0];
+		
+		root.dataset.ptFrame = model.frame;
+
+		if (model.id) root.id = model.id;
+		if (model.scope) root.dataset.ptScope = model.scope;
+
+		const controller = new fanstatic.partController(root, model.scope, model.frame);
+
+		controller.navList = controller.select('nav_list');
+		controller.navItems = controller.selectAll('nav_item');
+
+		for (let i=0; i<controller.navItems.length; i++) {
+			const navItem = controller.navItems[i];
+			const modelItem = model.items[i];
+			const navLink = navItem.querySelector('[data-pt=nav_link]');
+
+			if (navLink.tagName == 'A') {
+				navLink.href = modelItem.url;
+			}
+
+			await fanstatic.insertPart(navLink, 'base.text', modelItem.label) 
+		}
+
+		Array.from(controller.root.querySelectorAll('[data-ds]')).forEach(elem => elem.removeAttribute('data-ds'));
+
+		this.controller = controller;
+	}
+</script> 

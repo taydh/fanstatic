@@ -1,0 +1,61 @@
+<script>
+	const design = fanstatic.design;
+
+	return async function(roof, data, url) {
+		// A. SETUP MODEL
+
+		const model = Object.assign({}, data);
+
+		model.id = model.$id || model.id || null;
+		model.frame = model.frame || fanstatic.resolveFrame(url);
+
+		model.iconImageSrc = data.iconImageSrc || '';
+		model.subject = data.subject || '';
+		model.score = data.score || '';
+		model.description = data.description || '';
+		model.disabled = data.disabled || false;
+		
+		// B. CREATE FRAME
+		
+		const blockController = await fanstatic.insertPart(roof, 'block.unit',
+			Object.assign(model, {
+				cap: design.img({data: {pt: 'iconImage'}}),
+				head: [
+					design.tag(model.$subjectTag || 'div', {data: {pt: 'subject'}}), 
+					design.tag(model.$scoreTag || 'div', {data: {pt: 'score'}}),
+				],
+				body: [
+					design.tag(model.$descriptionTag || 'div', {data: {pt: 'description'}})
+				],
+				$tag: model.$tag || 'article',
+			})
+		);
+
+		// C. ASSIGN PROPERTIES AND APPLY VALUES
+
+		// assign element as controller properties
+		
+		['iconImage', 'subject', 'score', 'description'].forEach(prop => {
+			blockController[prop] = blockController.select(prop);
+		});
+
+		// apply attribute values
+
+		blockController.iconImage.src = model.iconImageSrc;
+
+		// apply text contents
+
+		['subject', 'score'].forEach(prop => {
+			blockController[prop].textContent = model[prop];
+		});
+
+		// apply template contents and assign result as controller properties
+
+		blockController.descriptionController = 
+			await fanstatic.applyContent(blockController.select('description'), model.description, model.innerScope);
+
+		// D. ASSIGN CONTROLLER
+
+		this.controller = blockController;
+	}
+</script>

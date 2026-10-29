@@ -1,0 +1,12 @@
+<script>
+	return async function (roof, data = {}, url) {
+		roof.innerHTML = fanstatic.renderJhtm(data);
+
+		const frame = data.frame || fanstatic.resolveFrame(url);
+		const outerScope = data.scope;
+
+		this.controller = Object.assign(new fanstatic.partController(null, outerScope, frame), {
+			elements: roof.children,
+		});
+	};
+</script>

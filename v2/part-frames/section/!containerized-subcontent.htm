@@ -1,0 +1,38 @@
+<script>
+	// NOTE: This is practically identical with containerized frame
+
+	const design = fanstatic.design;
+
+	return async function (roof, data = {}, url) {
+			const panelElementId = data.$id || data.id || null;
+			const frame = data.frame || fanstatic.resolveFrame(url);
+			const outerScope = data.scope;
+			const innerScope = data.innerScope || outerScope || panelElementId || frame;
+
+			const sectionController = await fanstatic.insertPart(roof, 'section.containerized', 
+				Object.assign(data, {
+					frame: frame,
+					scope: outerScope,
+					innerScope: innerScope,
+				})
+			);
+
+			if (fanstatic.instanceOfTemplate(data.item)) {
+				data.item.outerScope(innerScope);
+			}
+
+			const subContentTarget = sectionController.contentBlockController.root.querySelector('[data-pt=content]')
+			const subContentController = await fanstatic.applyContent(subContentTarget, data.item, innerScope, 'append');
+			
+			// await fanstatic.insertPanel(subContentTarget, subContent,
+			// 	Object.assign(data.subPanel.data, {
+			// 		panelScope: null,
+			// 		scope:scope,
+			// 	})
+			// );
+
+			sectionController.subPanelController = subContentController;
+			sectionController.subPanelController.root.dataset.pt = 'item';
+			this.controller = sectionController;
+	};
+</script>

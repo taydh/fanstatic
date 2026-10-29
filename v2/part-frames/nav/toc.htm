@@ -1,0 +1,81 @@
+<script>
+	const design = fanstatic.design;
+
+	return async function(roof, data, url) {
+		// A.
+
+		const model = Object.assign({}, data);
+
+		model.id = model.$id || model.id || null;
+		model.frame = model.frame || fanstatic.resolveFrame(url);
+
+		// B.
+
+		const getTitle = function(title, $titleTag) {
+			return design.tag($titleTag || 'div', {data: {pt: 'title' }});
+		}
+
+		const getList = function(links) {
+			return design.list({data: {pt: 'nav_list' }}, {data: {pt: 'nav_item' }},
+				links.map(link => {
+					if (Array.isArray(link)) {
+						return getList(link);
+					}
+					else {
+						return design.tag('a', {data: {pt: 'nav_link'}});
+					}
+				})
+			)
+		}
+
+		const html = fanstatic.renderJhtm(
+			design.tag('nav', [
+				design.axis({data: {pt: 'chapters' }},
+					model.chapters.map(chapter => design.wrap({data: {pt: 'chapter' }}, [
+						getTitle(chapter.title, chapter.$titleTag),
+						chapter.items ? getList(chapter.items) : false,
+					]))
+				)
+			])
+		);
+
+		roof.innerHTML = html;
+
+		// C.
+
+		const root = roof.children[0];
+		const controller = new fanstatic.partController(root);
+
+		root.querySelectorAll('[data-ds]').forEach( elem => elem.removeAttribute('data-ds'));
+		// panelElement.querySelectorAll('[data-pn=nav_item]:has(> [data-pn=nav_list])').forEach( elem => elem.dataset.pn = 'nav_items')
+
+		const titleElems = controller.selectAll('title');
+		const linkElems = controller.selectAll('nav_link');
+
+		let i = j = 0;
+
+		const applyItems = function(arr) {
+			arr.forEach(item => {
+				if (Array.isArray(item)) {
+					applyItems(item);
+				}
+				else {
+					const linkElem = linkElems[j++];
+					
+					linkElem.href = item.url
+					linkElem.textContent = item.label
+				}
+			});
+		}
+
+		model.chapters.forEach(chapter => {
+			titleElems[i++].textContent = chapter.title;
+
+			applyItems(chapter.items);
+		});
+
+		// D.
+
+		this.controller = controller;
+	}
+</script>

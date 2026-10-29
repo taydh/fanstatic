@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+		<base href=""> <!-- relative -->
+		<title>Fanstatic CV Design</title>
+		
+        <!-- CSS framework: BulmaCSS -->
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+        
+        <!-- Icons: Bootstrap icon -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+        
+        <script defer src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
+		<script defer src="https://cdn.jsdelivr.net/npm/mustache@4.2.0/mustache.min.js"></script>
+		
+		<script defer src="https://fanstatic.annexdesk.com/v2/fanstatic.js"></script>
+		<!--script defer src="http://localhost/fanstatic2/v2/fanstatic.js"></script-->
+		<script>
+			{
+                let origin = window.location.origin;
+				let host = window.location.host;
+				let hostEnv = null;
+                let searchParams = new window.URLSearchParams(window.location.search);
+
+				const resolveHostEnv = async function(){
+					let originPath = origin;
+
+					// relative path
+					[
+						'/fanstatic',
+						'/fanstatic2',
+						'/fanstatic3',
+					].forEach(path => {
+						if (window.location.href.startsWith(origin + path)) originPath = origin + path;
+					});
+
+					// absolute origin
+					if (!hostEnv) {
+						hostEnv = await fanstatic.fetchJson(originPath + '/env.' + window.location.host.replace(/[:/]/g, "_") + '.json');
+					}
+
+					document.head.querySelector('base').href = hostEnv.document_base_uri;
+				}
+
+				const loadExtensions = async function(asyncCounter) {
+					fanstatic.assign({
+						base_url: hostEnv.fanstatic_base_url,
+						theme: 'earth',
+						theme_framework: 'bulma',
+						theme_mode: 'less',
+						library_less_url: 'https://cdn.jsdelivr.net/npm/less',
+						trail_span: hostEnv.trail_span,
+						log_render: false,
+					});
+
+					await fanstatic.insertScripts([
+						fanstatic.getVersionedBaseUrl() + 'ext.tools.js?' + fanstatic.tail(),
+						fanstatic.getVersionedBaseUrl() + 'ext.visual.js?' + fanstatic.tail(),
+						fanstatic.getVersionedBaseUrl() + 'ext.design.js?' + fanstatic.tail(),
+						fanstatic.getVersionedBaseUrl() + 'ext.template.js?' + fanstatic.tail(),
+						fanstatic.getVersionedBaseUrl() + 'ext.style.js?' + fanstatic.tail(),
+					]);
+				}
+				
+				const main = async function(){
+                    await resolveHostEnv();
+					await loadExtensions();
+
+					const promises = [];
+
+					if (fanstatic.settings.theme_style) {
+						const prom = fanstatic.applyTheme();
+						if (prom) promises.push(prom);
+					}
+					
+					if ('less' == fanstatic.settings.theme_mode) {
+						const prom = fanstatic.applyLess();
+						if (prom) promises.push(prom);
+					}
+
+					Promise.all(promises).then(() => {
+						less.pageLoadFinished.then(async function() {
+							// This code will execute after Less has finished compiling and applying styles
+							console.log('Less compilation and styling complete!');
+							// You can now safely interact with the DOM or perform other actions that rely on the final CSS being loaded.
+
+							const selFramework = document.body.querySelector('[name=selFramework]')
+							const selStyle = document.body.querySelector('[name=selStyle]')
+							const header = document.body.querySelector('header');
+							const main = document.body.querySelector('main');
+							const frame = fanstatic.escapeHtml(searchParams.get('frame'));
+
+							selFramework.value = searchParams.get('framework') || 'bulma';
+							selStyle.value = searchParams.get('style') || 'earth';
+
+							header.querySelector('.title').innerHTML = frame;
+
+							if (frame) {
+								const url = new URL(document.baseURI + 'part-info.html');
+								url.searchParams.set('frame', frame);
+								url.searchParams.set('framework', selFramework.value);
+								url.searchParams.set('style', selStyle.value);
+
+								main.querySelector('iframe').src = url.toString();
+							}
+
+							document.body.querySelector('.layout').classList.remove('is-hidden');
+
+							// apply event handling
+
+							selFramework.addEventListener('change', function() {
+								const url = new URL(window.location.href);
+								url.searchParams.set('framework', this.value)
+								window.location = url.toString();
+							})
+
+							selStyle.addEventListener('change', function() {
+								const url = new URL(window.location.href);
+								url.searchParams.set('style', this.value)
+								window.location = url.toString();
+							})
+						});
+					})
+				};
+
+				document.addEventListener('DOMContentLoaded', main);
+			}
+		</script>
+	</head>
+
+	<body style="height:100vh; margin:0;">
+		<div class="layout is-flex is-flex-direction-column is-hidden m-0" style="height:100%;">
+			<div class="layout-top">
+				<header class="level p-4">
+					<div class="level-left">
+						<div>
+							Frame Info of
+							<div class="title has-text-grey-lighter"></div>
+						</div>
+					</div>
+
+					<div class="level-right">
+						<div>
+							Choose Framework
+							<div>
+								<div class="select">
+									<select name="selFramework">
+										<option value="bootstrap5">Bootstrap 5</option>
+										<option value="bulma">Bulma</option>
+										<option value="pico">Pico</option>
+										<option value="pure">Pure</option>
+										<option value="normalize">Normalize</option>
+									</select>
+								</div>
+							</div>
+						</div>
+
+						<div>
+							Choose Style
+							<div>
+								<div class="select">
+									<select name="selStyle">
+										<option value="earth">Earth</option>
+										<option value="mars">Mars</option>
+										<option value="venus">Venus</option>
+									</select>
+								</div>
+							</div>
+						</div>
+					</div>
+				</header>
+			</div>
+			<div class="layout-middle columns m-0" style="flex: 1 1 auto; overflow: auto;">
+				<div class="layout-nav-column column is-one-third p-5" style="overflow: auto;">
+					<h2 class="title">base</h2>
+					<div class="mb-4">
+						<ul>
+							<li><a href="part-index.html?frame=base.text">text</a></li>
+							<li><a href="part-index.html?frame=base.jhtm">jhtm</a></li>
+							<li><a href="part-index.html?frame=base.image">image</a></li>
+						</ul>
+					</div>
+					
+					<h2 class="title">block</h2>
+					<div class="mb-4">
+						<ul>
+							<li><a href="part-index.html?frame=block.unit">unit</a></li>
+							<li><a href="part-index.html?frame=block.content">content</a></li>
+							<li><a href="part-index.html?frame=block.actionable">actionable</a></li>
+							<li><a href="part-index.html?frame=block.identity">identity</a></li>
+						</ul>
+					</div>
+
+					<h2 class="title">cluster</h2>
+					<div class="mb-4">
+						<ul>
+							<li><a href="part-index.html?frame=cluster.list">list</a></li>
+							<li><a href="part-index.html?frame=cluster.stack">stack</a></li>
+							<li><a href="part-index.html?frame=cluster.grid">grid</a></li>
+							<li><a href="part-index.html?frame=cluster.flex">flex</a></li>
+						</ul>
+					</div>
+
+					<h2 class="title">card</h2>
+					<div class="mb-4">
+						<ul>
+							<li><a href="part-index.html?frame=card.highlight">highlight</a></li>
+							<li><a href="part-index.html?frame=card.post">post</a></li>
+							<li><a href="part-index.html?frame=card.profile">profile</a></li>
+							<li><a href="part-index.html?frame=card.quote">quote</a></li>
+							<li><a href="part-index.html?frame=card.score">score</a></li>
+						</ul>
+					</div>
+
+					<h2 class="title">nav</h2>
+					<div class="mb-4">
+						<ul>
+							<li><a href="part-index.html?frame=nav.breadcrump">breacrump</a></li>
+							<li><a href="part-index.html?frame=nav.menu">menu</a></li>
+							<li><a href="part-index.html?frame=nav.toc">toc</a></li>
+						</ul>
+					</div>
+
+					<h2 class="title">section</h2>
+					<div class="mb-4">
+						<ul>
+							<li><a href="part-index.html?frame=section.content">content</a></li>
+							<!-- <li><a href="part-index.html?frame=section.containerized-subcontent">containerized-subcontent</a></li> -->
+							<li><a href="part-index.html?frame=section.hero">hero</a></li>
+							<li><a href="part-index.html?frame=section.stack">stack</a></li>
+							<li><a href="part-index.html?frame=section.grid">grid</a></li>
+							<li><a href="part-index.html?frame=section.header">header</a></li>
+						</ul>
+					</div>
+
+					<h2 class="title">layout</h2>
+					<div class="mb-4">
+						<ul>
+							<li><a href="part-index.html?frame=layout.1-column">1-column</a></li>
+							<li><a href="part-index.html?frame=layout.3-columns">3-columns</a></li>
+						</ul>
+					</div>
+				</div>
+				<div class="layout-main-column column p-5" style="overflow: auto;">
+					<main style="height:100%">
+						<iframe src=""  style="min-height:600px; height:100%; width:100%; border:4px solid lightgray;"></iframe>
+					</main>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

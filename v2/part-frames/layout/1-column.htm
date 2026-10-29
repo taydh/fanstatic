@@ -1,0 +1,56 @@
+<script>
+	const design = fanstatic.design;
+
+	return async function(roof, data = {}, url) {
+		// A. SETUP MODEL
+
+		const model = Object.assign({}, data);
+
+		model.id = model.$id || model.id || null;
+		model.frame = model.frame || fanstatic.resolveFrame(url);
+
+		// B.
+
+		const html = fanstatic.renderJhtm(design.wrap([
+			design.element(model.$headerTag || 'header', {data: {pt: 'header'}}), 
+			design.element(data.$mainTag || 'main', {data: {pt: 'main'}}), 
+			design.element(model.$footerTag || 'footer', {data: {pt: 'footer'}}),
+		]));
+
+		roof.innerHTML = html
+		roof.querySelectorAll('[data-ds]').forEach(elem => elem.removeAttribute('data-ds'));
+
+		// C.
+
+		const root = roof.children[0];
+		const controller = new fanstatic.partController(root);
+
+		root.dataset.ptFrame = model.frame;
+
+		if (model.id) root.id = model.id;
+		if (model.scope) root.dataset.ptScope = model.scope;
+
+		controller.header = controller.select('header');
+		controller.main = controller.select('main');
+		controller.footer = controller.select('footer');
+
+		let headerProm, mainProm, footerProm;
+
+		if (model.header)
+			headerProm = fanstatic.applyContent(controller.header, model.header, model.innerScope);
+		if (model.main)
+			mainProm = fanstatic.applyContent(controller.main, model.main, model.innerScope);
+		if (model.footer)
+			footerProm = fanstatic.applyContent(controller.footer, model.footer, model.innerScope);
+			
+		const resolves = await Promise.all([headerProm, mainProm, footerProm]);
+
+		controller.headerController = resolves[0];
+		controller.mainController = resolves[1];
+		controller.footerController = resolves[2];
+
+		// D.
+
+		this.controller = controller;
+	}
+</script>

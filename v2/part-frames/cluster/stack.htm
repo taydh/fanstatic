@@ -1,0 +1,41 @@
+<script>
+	const design = fanstatic.design;
+
+	return async function (roof, data = {}, url) {
+		const model = Object.assign({}, data);
+
+		model.id = model.$id || model.id || null;
+		model.frame = model.frame || fanstatic.resolveFrame(url);
+
+		const itemControllers = [];
+
+		roof.innerHTML = fanstatic.renderJhtm(design.stack(
+			Object.assign(model.$attr || {}, { $tag: model.$tag}),
+			Object.assign(model.itemAttr || {}, { $tag: model.$itemTag }),
+			model.items ? model.items.map(item => design.placeholder()) : [],
+		));
+
+		const root = roof.children[0];
+
+		root.removeAttribute('data-ds');
+		root.dataset.ptFrame = fanstatic.sanitizeAttrValue(model.frame);
+
+		if (model.id) root.id = fanstatic.sanitizeAttrValue(model.id);
+		if (model.scope) root.dataset.ptScope = fanstatic.sanitizeAttrValue(model.scope);
+
+		const placeholders = roof.querySelectorAll('[data-ds-placeholder]');
+
+		if (model.items) {
+			for (let i=0; i<data.items.length; i++) {
+				placeholders[i].parentElement.dataset.pt = 'item';
+				placeholders[i].parentElement.removeAttribute('data-ds');
+
+				itemControllers.push(await fanstatic.applyContent(placeholders[i], model.items[i], model.innerScope, 'replace'));
+			}
+		}
+
+		this.controller = Object.assign(new fanstatic.partController(root, model.scope, model.frame), {
+			itemControllers: itemControllers,
+		});
+	};
+</script>

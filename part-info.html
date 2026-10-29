@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+		<base href=""> <!-- relative -->
+		<title>PANEL INFO</title>
+		
+        <!-- CSS framework: BulmaCSS -->
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+        
+        <!-- Icons: Bootstrap icon -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+        
+        <script defer src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
+		<script defer src="https://cdn.jsdelivr.net/npm/mustache@4.2.0/mustache.min.js"></script>
+		<script defer src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.15.4/beautify-html.min.js"></script>
+		
+		<script defer src="https://fanstatic.annexdesk.com/v2/fanstatic.js"></script>
+		<script>
+			{
+                let fanstaticVersion = 'v2';
+                let origin = window.location.origin;
+				let hostEnv = null;
+				const usp = new URLSearchParams(window.location.search);
+
+				const resolveHostEnv = async function(){
+					let originPath = origin;
+
+					// relative path
+					[
+						'/fanstatic',
+						'/fanstatic2',
+						'/fanstatic3',
+					].forEach(path => {
+						if (window.location.href.startsWith(origin + path)) originPath = origin + path;
+					});
+
+					// absolute origin
+					if (!hostEnv) {
+						hostEnv = await fanstatic.fetchJson(originPath + '/env.' + window.location.host.replace(/[:/]/g, "_") + '.json');
+					}
+
+					document.head.querySelector('base').href = hostEnv.document_base_uri;
+				}
+
+				const loadExtensions = async function(asyncCounter) {
+					fanstatic.assign({
+						base_url: hostEnv.fanstatic_base_url,
+						theme: 'earth',
+						theme_framework: 'bulma',
+						theme_mode: 'less',
+						library_less_url: 'https://cdn.jsdelivr.net/npm/less',
+						trail_span: hostEnv.trail_span,
+						log_render: false,
+					});
+
+					await fanstatic.insertScripts([
+						fanstatic.getVersionedBaseUrl() + 'ext.tools.js?' + fanstatic.tail(),
+						fanstatic.getVersionedBaseUrl() + 'ext.visual.js?' + fanstatic.tail(),
+						fanstatic.getVersionedBaseUrl() + 'ext.design.js?' + fanstatic.tail(),
+						fanstatic.getVersionedBaseUrl() + 'ext.template.js?' + fanstatic.tail(),
+						fanstatic.getVersionedBaseUrl() + 'ext.style.js?' + fanstatic.tail(),
+					]);
+				}
+				
+				const main = async function(){
+                    await resolveHostEnv();
+					await loadExtensions();
+
+					const themingPromises = [];
+
+					if (fanstatic.settings.theme_style) {
+						const prom = fanstatic.applyTheme();
+						if (prom) themingPromises.push(prom);
+					}
+					
+					if ('less' == fanstatic.settings.theme_mode) {
+						const prom = fanstatic.applyLess();
+						if (prom) themingPromises.push(prom);
+					}
+
+					Promise.all(themingPromises).then(() => {
+						less.pageLoadFinished.then(async function() {
+							// This code will execute after Less has finished compiling and applying styles
+							console.log('Less compilation and styling complete!');
+							// You can now safely interact with the DOM or perform other actions
+							// that rely on the final CSS being loaded.
+
+							const main = document.body.querySelector('main');
+							const frameInfo = usp.get('frame');
+							const prefixSafeList = ['base.', 'block.', 'cluster.', 'card.',  'nav.', 'section.', 'layout.'];
+							const selector = prefixSafeList.map(val => `template[data-url*="${val}"]`).join(',');
+							const safeList = Array.from(document.querySelectorAll(selector)).map(elem => elem.dataset.url);
+
+							if (!safeList.includes(frameInfo)) {
+								// not run
+								console.log('Not in safelist or sample not exists');
+							}
+							else {
+								main.dataset.templateUrl = 'part-info';
+								fanstatic.elementStorage.set(main, 'templateOptions', {
+									model: {
+										title: frameInfo,
+										frame: frameInfo,
+										code: html_beautify(fanstatic._getTemplateElement(frameInfo).outerHTML),
+									}
+								})
+							}
+							
+							console.log('load templates by running command')
+
+							await fanstatic.searchAndRunCommand(document.body);
+
+							console.log('Layout ready');
+
+							fanstatic.applyClassfix(document.body, fanstatic.getClassfix('general'), 'general');
+							window.dispatchEvent(new CustomEvent('document_classfixed'));
+							document.body.querySelector('.layout').classList.remove('is-hidden');
+							
+						});
+					})
+				};
+                
+                document.addEventListener('DOMContentLoaded', main);
+			}
+		</script>
+	</head>
+
+	<body>
+		<div class="layout is-hidden">
+			<div class="layout-main-column">
+				<main data-template-insert data-template-url="" data-template-renderer="mustache"></main>
+				<footer></footer>
+			</div>
+		</div>
+
+		<div id="fanstatic-area">
+			<template data-url="part-info">
+				<section id="infoSection" class="section">
+					<h2 class="title">Info</h2>
+					<div data-js="infobox" data-template-insert data-template-url="infobox">
+						<script type="text/json">
+							{ "frame": "{{frame}}" }
+						</script>
+					</div>
+				</section>
+
+				<section id="previewSection" class="section">
+					<h2 class="title">Preview</h2>
+					<div data-template-insert data-template-url="{{frame}}"></div>
+				</section>
+
+				<section id="htmlOutputSection" class="section">
+					<h2 class="title">HTML</h2>
+					<pre></pre>
+				</section>
+
+				<section id="codeSection" class="section">
+					<h2 class="title">Code</h2>
+					<pre>{{code}}</pre>
+					<div style="margin-top:1rem;">
+						<code>window.recordedController</code> is regular variable used for the purpose of this demo to store returned controller object.
+					</div>
+				</section>
+
+				<section id="controllerSection" class="section">
+					<h2 class="title">Controller Object</h2>
+					<pre></pre>
+				</section>
+
+				<script>
+					return {
+						oninsert: function(nodes) {
+							console.log('part info inserted');
+
+							window.addEventListener('document_classfixed', function() {
+								const html = nodes[0].parentNode.querySelector('#previewSection > div').innerHTML;
+								const prettyHtml = html_beautify(html,  {
+									indent_size: 4,
+									wrap_line_length: 80
+								});
+
+								nodes[0].parentNode.querySelector('#htmlOutputSection > pre').textContent = prettyHtml;
+								nodes[0].parentNode.querySelector('#controllerSection > pre').innerHTML = 
+								Object.entries(window.recordedController).map(([k,v]) => { return '<div style="margin-bottom:.5rem"><b>' + k + '</b><br>' + (v ? v.toString() : '(( empty or undefined ))') + '</div>'; }).join('');
+							});
+						}
+					}
+				</script>
+			</template>
+
+			<template data-url="infobox">
+				<div data-frame="block.unit">
+					Panel block.base-block used internally to form other panel.
+					All card panels use this panel.
+					This panel preserve the fanstatic.design.unit structure but with panel attributes and controller.
+				</div>
+
+				<div data-frame="block.content">
+					Use this part to have a specialized content section with Cap's Image, and a headline with Category, Title, Subtitle, and Caption.
+				</div>
+
+				<div data-frame="block.actionable">
+					Panel block.basic-block also used internally to form other general purpose panels.
+					It based on block-base-unit with different context properties and unlike block.base-unit this panel implement basic styling when use theme.
+					It accept direct image url and accept subjects and notes as an array.
+				</div>
+
+				<div data-frame="card.rating">
+					Use <i>card.rating</i> panel rate to implement content that show a skill rate or achivement.
+				</div>
+
+				<div data-frame="card.quote">
+					Use <i>card.quote</i> panel to implement content that show quote from person.
+				</div>
+
+				<div data-frame="nav.breadcrump">
+					Use panel nav.breadcrump to implement a breadcrump navigation with customized separator and link content.
+				</div>
+
+				<div data-frame="nav.menu">
+					Use nav.menu panel to implement a breadcrump navigation with customized separator and link content.
+				</div>
+
+				<!-- SECTION -->
+				 
+				<div data-frame="section.content">
+					Use this part to have a simple section with Title, Content, and Footnote.
+					It contains <b>block.content</b> frame as the underlying structure wrapped inside a section element.
+				</div>
+
+				<div data-frame="section.hero">
+					Use this part to have a specialized hero section with Image, Subject, Message, and Actions.
+					It contains <b>block.actionable</b> frame as the underlying structure wrapped inside a section element..
+				</div>
+
+				<div data-frame="section.stack">
+					<ul>
+						<li>Use this part to have a simple stacked content section.</li>
+						<li>It contains <b>section.block</b> and <b>cluster.stack</b> frames as the underlying structure.</li>
+						<li>Part's controller include itemControllers array from the underlying cluster controller object</li>
+					</ul>
+				</div>
+
+				<div data-frame="layout.1-column">
+					Use layout.1-columns panel to implement single flow type layout page.
+					The layout scoped by a parent element with a simple structure of &lt;header&gt;, &lt;main&gt;, and &lt;footer&gt;.
+					<p>
+					Change <i>mainTag</i> property in data option to change the main element tag instead of using &lt;main&gt;, in example:
+					</p>
+					<pre>
+{ mainTag: 'main' }
+{ mainTag: 'div' }
+{ mainTag: 'section' }
+</pre>
+				</div>
+
+				<div data-frame="layout.3-columns">
+					Use layout.3-columns panel to implement a 3 columns or dynamic layout page.
+					The layout scoped by a parent element with the &lt;main&gt; element reside inside the center of columns row.
+				</div>
+
+				<script>
+					return function(roof, data) {
+						roof.innerHTML = roof.querySelector(`[data-frame="${data.frame}"]`)?.innerHTML || '';
+					}
+				</script>
+			</template>
+
+			<!-- BASE -->
+
+			<template data-url="base.text">
+				<script>
+					return async function(roof, data) {
+						window.recordedController = await fanstatic.appendPart(roof, 'base.text', '<div>Hello Text</div>')
+					}
+				</script>
+			</template>
+
+			<template data-url="base.jhtm">
+				<script>
+					return async function(roof, data) {
+						window.recordedController = await fanstatic.appendPart(roof, 'base.jhtm', 
+						[
+							{ div: 'Hello Element 1'},
+							{ div: [
+								{ p: 'A couple of list'},
+								{ ul: [
+									{ li: 'one' },
+									{ li: 'two' },
+									{ li: 'three' },
+								]}
+							]},
+						])
+					}
+				</script>
+			</template>
+
+			<template data-url="base.image">
+				<script>
+					return async function(roof, data) {
+						window.recordedController = await fanstatic.appendPart(roof, 'base.image', {src: 'https://dummyimage.com/120x120/999/fff&text=IMG'})
+					}
+				</script>
+			</template>
+
+			<!-- BLOCKS -->
+
+			<template data-url="block.unit">
+				<script>
+					return async function(roof, data) {
+						window.recordedController = await fanstatic.appendPart(roof, 'block.unit', {
+							scope: 'my_unit_info',
+							cap: new fanstatic.part('base.image', { src: 'https://dummyimage.com/60x60/eee/fff&text=cap' }),
+							head: new fanstatic.part('base.text', 'The Head'),
+							body: new fanstatic.part('base.text', 'The Body'),
+							foot: new fanstatic.part('base.text', 'The Foot'),
+						})
+					}
+				</script>
+			</template>
+
+			<template data-url="block.content">
+				<script>
+					return async function(roof, data) {
+						window.recordedController = await fanstatic.appendPart(roof, 'block.content', {
+							scope: 'my_content',
+
+							cap: new fanstatic.part('base.image', { src: 'https://dummyimage.com/60x60/eee/fff&text=image' }),
+							category: 'Category',
+							title: 'TITLE',
+							subtitle: 'Subtitle',
+							caption: 'The caption',
+							body: new fanstatic.part('base.jhtm', [
+								{ p: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.' },
+								{ p: 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.' },
+							]),
+							foot: new fanstatic.part('base.jhtm', [
+								{ p: 'Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur?' },
+							]),
+						})
+					}
+				</script>
+			</template>
+
+			<template data-url="block.actionable">
+				<script>
+					return async function(roof, data) {
+						window.recordedController = await fanstatic.appendPart(roof, 'block.actionable', {
+							scope: 'my_action',
+							cap: new fanstatic.part('base.jhtm', fanstatic.design.tag('img', {src: 'https://dummyimage.com/60x60/eee/fff&text=image'})),
+							subjects: [
+								new fanstatic.part('base.text', 'Subject 1'), 
+								new fanstatic.part('base.text', 'Subject 2')
+							],
+							body: new fanstatic.part('base.text', 'Message area'),
+							actions: [
+								new fanstatic.part('base.text', 'Action 1'), 
+								new fanstatic.part('base.text', 'Action 2')
+							],
+						})
+					}
+				</script>
+			</template>
+
+			<template data-url="block.identity">
+				<script>
+					return async function(roof, data) {
+						window.recordedController = await fanstatic.appendPart(roof, 'block.identity', {
+							scope: 'my_identity',
+							logoImageSrc: 'https://dummyimage.com/100x100/999/fff&text=image',
+							label: 'Fanstatic',
+
+							$id: 'my_identity',
+						})
+					}
+				</script>
+			</template>
+
+			<!-- CLUSTERS -->
+
+			<template data-url="cluster.list">
+				<script>
+					return async function(roof, data) {
+						window.recordedController = await fanstatic.appendPart(roof, 'cluster.list', {
+							id: 'my_list',
+							scope: 'my_list',
+							items: [
+								new fanstatic.part('block.actionable', {
+									cap: new fanstatic.part('base.jhtm', fanstatic.design.tag('img', {src: 'https://dummyimage.com/60x60/999/fff&text=image'})),
+									subjects: ['Subject 1', 'Subject 2'],
+									body: 'Message area',
+									actions: ['Action 1', 'Action 2'],
+								}),
+								new fanstatic.part('block.actionable', {
+									cap: new fanstatic.part('base.jhtm', fanstatic.design.tag('img', {src: 'https://dummyimage.com/60x60/999/fff&text=image'})),
+									subjects: ['Subject 1', 'Subject 2'],
+									body: 'Message area',
+									actions: ['Action 1', 'Action 2'],
+								}),
+							]
+						})
+					}
+				</script>
+			</template>
+
+			<template data-url="cluster.stack">
+				<script>
+					return async function(roof, data) {
+						window.recordedController = await fanstatic.appendPart(roof, 'cluster.stack', {
+							scope: 'my_stack',
+							items: [
+								new fanstatic.part('block.actionable', {
+									cap: new fanstatic.part('base.jhtm', fanstatic.design.tag('img', {src: 'https://dummyimage.com/60x60/999/fff&text=image'})),
+									subjects: ['Subject 1', 'Subject 2'],
+									body: 'Message area',
+									actions: ['Action 1', 'Action 2'],
+								}),
+								new fanstatic.part('block.actionable', {
+									cap: new fanstatic.part('base.jhtm', fanstatic.design.tag('img', {src: 'https://dummyimage.com/60x60/999/fff&text=image'})),
+									subjects: ['Subject 1', 'Subject 2'],
+									body: 'Message area',
+									actions: ['Action 1', 'Action 2'],
+								}),
+							]
+						})
+					}
+				</script>
+			</template>
+
+			<template data-url="cluster.grid">
+				<script>
+					return async function(roof, data) {
+						window.recordedController = await fanstatic.appendPart(roof, 'cluster.grid', {
+							$id: 'my_grid',
+							scope: 'my_grid',
+							items: [
+								new fanstatic.part('block.actionable', {
+									cap: new fanstatic.part('base.jhtm', fanstatic.design.tag('img', {src: 'https://dummyimage.com/60x60/eee/fff&text=image'})),
+									subjects: ['Subject 1', 'Subject 2'],
+									body: 'Message area',
+									actions: ['Action 1', 'Action 2'],
+								}),
+								new fanstatic.part('block.identity', {
+									logoImageSrc: 'https://dummyimage.com/120x120/eee/fff&text=LOGO',
+									label: 'LOGO'
+								}),
+							]
+						})
+					}
+				</script>
+			</template>
+
+			<template data-url="cluster.flex">
+				<script>
+					return async function(roof, data) {
+						window.recordedController = await fanstatic.appendPart(roof, 'cluster.flex', {
+							$id: 'my_flex',
+							scope: 'my_flex',
+							items: [
+								new fanstatic.part('block.actionable', {
+									cap: new fanstatic.part('base.jhtm', fanstatic.design.tag('img', {src: 'https://dummyimage.com/60x60/eee/fff&text=image'})),
+									subjects: ['Subject 1', 'Subject 2'],
+									body: 'Message area',
+									actions: ['Action 1', 'Action 2'],
+								}),
+								new fanstatic.part('block.identity', {
+									logoImageSrc: 'https://dummyimage.com/120x120/eee/fff&text=LOGO',
+									label: 'LOGO'
+								}),
+							]
+						})
+					}
+				</script>
+			</template>
+
+			<!-- CARDS -->
+
+			<template data-url="card.highlight">
+				<script>
+					return async function(roof, data) {
+						window.recordedController = await fanstatic.appendPart(roof, 'card.highlight', {
+							id: 'my_highlight_1',
+							scope: 'my_highlight_1',
+
+							cover: new fanstatic.part('block.unit', {
+								cap: new fanstatic.part('base.image', { src: 'https://dummyimage.com/60x60/eee/fff&text=cap' }),
+								head: new fanstatic.part('base.text', 'The Head'),
+								body: new fanstatic.part('base.text', 'The Body'),
+								foot: new fanstatic.part('base.text', 'The Foot'),
+							}),
+
+							reveal: new fanstatic.part('block.unit', {
+								cap: new fanstatic.part('base.image', { src: 'https://dummyimage.com/60x60/eee/fff&text=cap' }),
+								head: new fanstatic.part('base.text', 'The Head'),
+								body: new fanstatic.part('base.text', 'The Body'),
+								foot: new fanstatic.part('base.text', 'The Foot'),
+							}),
+						})
+					}
+				</script>
+			</template>
+
+			<template data-url="card.post">
+				<script>
+					return async function(roof, data) {
+						window.recordedController = await fanstatic.appendPart(roof, 'card.post', {
+							id: '1',
+							scope: 'my_post_1',
+
+							featureImageSrc: 'https://dummyimage.com/300x200/999/fff&text=image',
+
+							section: 'Post Section',
+							date: '2026-01-01',
+							title: 'Post Title',
+							author: 'Me',
+
+							body: 'Perfect post',
+						})
+					}
+				</script>
+			</template>
+
+			<template data-url="card.profile">
+				<script>
+					return async function(roof, data) {
+						window.recordedController = await fanstatic.appendPart(roof, 'card.profile', {
+							id: 'my_profile_1',
+							scope: 'my_profile_1',
+							
+							photoImageSrc: 'https://dummyimage.com/150x150/eee/fff&text=Photo',
+							
+							name: 'Tony Parker',
+							jobTitle: 'CEO',
+							company: 'Tony R Us',
+							
+							description: 'Brief description about this person',
+
+							facebook: 'MyFacebook',
+							instagram: '@myinstagram',
+							twitterX: '@mytwitterx',
+							linkedIn: 'myLinkedIn',
+						})
+					}
+				</script>
+			</template>
+
+			<template data-url="card.quote">
+				<script>
+					return async function(roof, data) {
+						window.recordedController = await fanstatic.appendPart(roof, 'card.quote', {
+							scope: 'my_quote_1',
+
+							photoImageSrc: 'https://dummyimage.com/100x100/999/fff&text=photo',
+							name: 'Name',
+							company: 'Company',
+							jobTitle: 'Title',
+							
+							quote: 'Perfect quotes',
+						})
+					}
+				</script>
+			</template>
+
+			<template data-url="card.score">
+				<script>
+					return async function(roof, data) {
+						window.recordedController = await fanstatic.appendPart(roof, 'card.score', {
+							scope: 'my_score_1',
+							
+							iconImageSrc: 'https://dummyimage.com/60x60/fff/000&text=icon',
+							subject: 'Subject',
+							score: 100,
+							description: 'Perfect score',
+						})
+					}
+				</script>
+			</template>
+
+			<template data-url="nav.breadcrump">
+				<script>
+					return async function(roof, data) {
+						window.recordedController = await fanstatic.appendPart(roof, 'nav.breadcrump', {
+							scope: 'my_breadcrump',
+							separatorHtml: '&raquo;',
+							items: [
+								{ label:'Link 1' },
+								{ url:'#', label:'Link 2' },
+								{ url:'#', label:'Link 3' },
+							]
+						})
+					}
+				</script>
+			</template>
+
+			<template data-url="nav.menu">
+				<script>
+					return async function(roof, data) {
+						window.recordedController = await fanstatic.appendPart(roof, 'nav.menu', {
+							scope: 'my_menu',
+							items: [
+								{ label:'>> Link 1 <<' },
+								{ url:'#"link"&a=1', label:'>> Link 2 <<' },
+								{ url:'#"link"&a=1', label:'>> Link 3 <<' },
+							]
+						})
+					}
+				</script>
+			</template>
+
+			<template data-url="nav.toc">
+				<script>
+					return async function(roof, data) {
+						window.recordedController = await fanstatic.appendPart(roof, 'nav.toc', {
+							scope: 'my_toc',
+							chapters: [
+								{
+									title: 'Chapter 1',
+									$titleTag: 'h1',
+									items: [
+										{ url:'#', label:'I Part 1'},
+										[
+											{ url:'#', label:'1.1 Sub chapter' },
+											{ url:'#', label:'1.2 Sub chapter' },
+										],
+										{ url:'#', label:'II Link 2' },
+										{ url:'#', label:'III Link 3' },
+									]
+								},
+								{
+									title: 'Chapter 2',
+									$titleTag: 'h1',
+									items: [
+										{ url:'#', label:'Link 1' },
+										{ url:'#', label:'Link 2' },
+										{ url:'#', label:'Link 3' },
+									]
+								}
+							]
+						})
+					}
+				</script>
+			</template>
+
+			<!-- SECTION PANELS -->
+
+			<template data-url="section.content">
+				<script>
+					return async function(roof, data) {
+						window.recordedController = await fanstatic.appendPart(roof, 'section.content', {
+							id: 'my_section_1',
+							scope: 'my_scope_1',
+
+							cap: new fanstatic.part('base.jhtm', fanstatic.design.tag('img', {src: 'https://dummyimage.com/360x120/999/fff&text=SECTION'})),
+							title: 'Section',
+							body: 'Hello'
+						})
+					}
+				</script>
+			</template>
+
+			<template data-url="section.containerized-subcontent">
+				<script>
+					return async function(roof, data) {
+						window.recordedController = await fanstatic.appendPart(roof, 'section.containerized-subcontent', {
+							id: 'my_section_1',
+							scope: 'my_scope_1',
+							title: 'Section Title',
+							item: new fanstatic.part('block.actionable', {
+								image: 'https://dummyimage.com/60x60/eee/fff&text=image',
+								subjects: ['Subject 1', 'Subject 2'],
+								message: 'Message area',
+								actions: ['Action 1', 'Action 2'],
+							}),
+						})
+					}
+				</script>
+			</template>
+
+			<template data-url="section.hero">
+				<script>
+					return async function(roof, data) {
+						window.recordedController = await fanstatic.appendPart(roof, 'section.hero', {
+							id: 'my_section_1',
+							
+							cap: new fanstatic.part('base.jhtm', fanstatic.design.tag('img', {src: 'https://dummyimage.com/360x120/999/fff&text=HERO'})),
+							title: 'Section Title',
+							subjects: ['Subject 1', 'Subject 2'],
+							body: 'Message area',
+							actions: ['Action 1', 'Action 2'],
+						})
+					}
+				</script>
+			</template>
+
+			<template data-url="section.stack">
+				<script>
+					return async function(roof, data) {
+						window.recordedController = await fanstatic.appendPart(roof, 'section.stack', {
+							id: 'my_stack_section_1',
+							scope: 'my_stack_section_1',
+
+							cap: new fanstatic.part('base.jhtm', fanstatic.design.tag('img', {src: 'https://dummyimage.com/360x120/999/fff&text=STACK'})),
+							title: 'Section Title',
+							items: [
+								new fanstatic.part('block.actionable', {
+									cap: new fanstatic.part('base.jhtm', fanstatic.design.tag('img', {src: 'https://dummyimage.com/120x60/999/fff&text=ITEM'})),
+									subjects: ['Subject 1', 'Subject 2'],
+									body: 'Message area',
+									actions: ['Action 1', 'Action 2'],
+								}),
+								new fanstatic.part('block.actionable', {
+									cap: new fanstatic.part('base.jhtm', fanstatic.design.tag('img', {src: 'https://dummyimage.com/120x60/999/fff&text=ITEM'})),
+									subjects: ['Subject 1', 'Subject 2'],
+									body: 'Message area',
+									actions: ['Action 1', 'Action 2'],
+								}),
+							]
+						});
+					}
+				</script>
+			</template>
+
+			<template data-url="section.grid">
+				<script>
+					return async function(roof, data) {
+						window.recordedController = await fanstatic.appendPart(roof, 'section.containerized-grid', {
+							id: 'my_section',
+							scope: 'my_section_scope',
+							title: 'Section Title',
+							items: [
+								new fanstatic.part('block.actionable', {
+									image: 'https://dummyimage.com/240x240/eee/fff&text=image',
+									subjects: ['Subject 1', 'Subject 2'],
+									message: 'Message area',
+									actions: ['Action 1', 'Action 2'],
+								}),
+								new fanstatic.part('block.identity', {
+									logo: 'https://dummyimage.com/120x120/eee/fff&text=LOGO',
+									name: 'LOGO'
+								})
+							]
+						})
+					}
+				</script>
+			</template>
+
+			<template data-url="section.header">
+				<script>
+					return async function(roof, data) {
+						window.recordedController = await fanstatic.appendPart(roof, 'section.header', {
+							id: 'my_header',
+							scope: 'my_header',
+							innerScope: 'my_header_inner',
+							identity: new fanstatic.part('block.identity', {
+								id: 'my_identity',
+								logoImageSrc: 'https://dummyimage.com/150x150/eee/fff&text=LOGO',
+								label: 'The Company',
+							}),
+							navigation: new fanstatic.part('nav.menu', {
+								id: 'my_menu',
+								links: [
+									{ label:'Link 1' },
+									{ url:'#', label:'Link 2' },
+									{ url:'#', label:'Link 3' },
+								]
+							}),
+							actions: new fanstatic.part('cluster.flex', {
+								items: [
+									{ button: 'Action 1' },
+									{ button: 'Action 2' },
+									{ button: 'Action 3' },
+								]
+							})
+						});			
+					}
+				</script>
+			</template>
+
+			<!-- LAYOUT -->
+
+			<template data-url="layout.1-column">
+				<script>
+					return async function(roof, data) {
+						window.recordedController = await fanstatic.appendPart(roof, 'layout.1-column', {
+							header: new fanstatic.part('block.unit', {
+								body: 'hello'
+							}),
+							main: new fanstatic.part('block.unit', {
+								body: 'hello'
+							}),
+							footer: new fanstatic.part('block.unit', {
+								body: 'hello'
+							}),
+						})
+					}
+				</script>
+			</template>
+
+			<template data-url="layout.3-columns">
+				<script>
+					return async function(roof, data) {
+						window.recordedController = await fanstatic.appendPart(roof, 'layout.3-columns', {
+							id: 'the_layout',
+							scope: '3-column-layout',
+							header: new fanstatic.part('block.unit', {
+								head: 'Header Panel',
+								body: new fanstatic.part('block.unit', {
+									body: 'Secondary Unit',
+								})
+							}),
+							startColumn: new fanstatic.part('block.unit', {
+								body: 'Start Panel'
+							}),
+							mainColumn: new fanstatic.part('block.unit', {
+								body: 'Main Panel'
+							}),
+							endColumn: new fanstatic.part('block.unit', {
+								body: 'End Panel'
+							}),
+							footer: new fanstatic.part('block.unit', {
+								foot: 'Footer Panel'
+							}),
+						})
+					}
+				</script>
+			</template>
+		</div>
+	</body>
+</html>

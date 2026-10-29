@@ -1,0 +1,83 @@
+<script>
+	const design = fanstatic.design;
+
+	return async function (roof, data = {}, url) {
+		// A.
+
+		const model = Object.assign({}, data);
+
+		model.id = model.$id || model.id || null;
+		model.frame = model.frame || fanstatic.resolveFrame(url);
+
+		// B.
+		{
+			const html = fanstatic.renderJhtm(
+				design.tag('nav',
+					model.items.map((item, i, arr) => {
+						const link = [
+							item.url
+								? design.element('a', {data: {pt: 'nav_link' }})
+								: design.element('span', {data: {pt: 'nav_link' }})
+							, "\n"
+						];
+
+						if (i < arr.length - 1) {
+							link.push(design.tag('span', {data: {pt: 'separator' }}), "\n");
+						}
+
+						return link;
+
+					}).flat())
+			);
+
+			// console.log(html)
+
+			fanstatic.insertHtml(roof, html);
+		}
+
+		// C.
+
+		const root = roof.children[0];
+		
+		root.dataset.ptFrame = model.frame;
+
+		if (model.id) root.id = model.id;
+		if (model.scope) root.dataset.ptScope = model.scope;
+
+		const controller = new fanstatic.partController(root, model.scope, model.frame);
+
+		controller.selectAll('separator').forEach((elem, i) => {	
+			if (model.separatorHtml) elem.innerHTML = model.separatorHtml;
+			else if (model.separator) elem.textContent = model.separator; 
+		});
+
+		controller.navLinks = controller.selectAll('nav_link');
+
+		for (let i=0; i<controller.navLinks.length; i++) {
+			const navLink = controller.navLinks[i];
+			const modelItem = model.items[i];
+
+			if (navLink.tagName == 'A') {
+				navLink.href = modelItem.url;
+			}
+
+			navLink.textContent = modelItem.label;
+		}
+
+		// data.links.forEach((link, i) => {
+		// 	const a = panelElement.querySelector(`:scope > [data-pn="nav_link"]:nth-of-type(${i + 1})`);
+
+		// 	a.disabled = link.disabled || false;
+		// 	a.addEventListener('click', function(ev) {
+		// 		if (this.disabled) {
+		// 			console.log('nav-link element is disabled, click event cancelled!');
+		// 			ev.preventDefault();
+		// 		}
+		// 	});
+		// });
+
+		// D.
+
+		this.controller = controller;
+	};
+</script>

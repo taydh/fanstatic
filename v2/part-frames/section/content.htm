@@ -1,0 +1,38 @@
+<script>
+	const design = fanstatic.design;
+
+	return async function (roof, data = {}, url) {
+		const panelElementId = data.$id || data.id || null;
+		const frame = data.frame || fanstatic.resolveFrame(url);
+		const outerScope = data.scope;
+		const innerScope = data.innerScope || outerScope || panelElementId || frame;
+
+		roof.innerHTML = fanstatic.renderJhtm(design.element('section', data.$attr || {}, true));
+
+		const root = roof.children[0];
+		
+		root.dataset.ptFrame = frame;
+
+		if (panelElementId) root.id = panelElementId;
+		if (outerScope) root.dataset.ptScope = outerScope;
+
+		const contentBlockController = await fanstatic.insertPart(root, 'block.content', 
+			Object.assign(data, {
+				id: null,
+				frame: null,
+				scope: outerScope,
+				innerScope: innerScope,
+
+				$tag: data.blockTag,
+				$attr: data.blockAttr,
+				ignoreAttr: true,
+			})
+		);
+
+		contentBlockController.root.dataset.pt = 'container';
+
+		this.controller = Object.assign(new fanstatic.partController(root, outerScope, frame), {
+			blockController: contentBlockController,
+		});
+	}
+</script>
