@@ -1,0 +1,23 @@
+<header class="d-flex flex-wrap align-items-start justify-content-center justify-content-md-between py-3">
+	<div class="col-12 col-md-4 mb-2 mb-md-0 text-center text-md-start">
+		<a href="/" class="d-inline-flex link-body-emphasis text-decoration-none">
+			<span style="font-weight:bold; font-size:2em;">FANSTATIC</span>
+		</a>
+	</div>
+
+	<ul class="nav col-12 col-md-8 mb-2 justify-content-center justify-content-md-end mb-md-0">
+		<li><a href="./" class="nav-link text-dark px-2" data-url="/">Home</a></li>
+		<li><a href="./docs/" class="nav-link text-dark  px-2" data-url="/docs/">Documentation</a></li>
+		<li><a href="./showcases/" class="nav-link text-dark  px-2" data-url="/showcases/">Showcases</a></li>
+		<li><a href="./blog/" class="nav-link text-dark  px-2" data-url="/blog/">Blog</a></li>
+		<li><a href="./designs/" class="btn btn-primary px-2" data-url="/designs/">Designs</a></li>
+	</ul>
+
+	<div class="col-md-3 text-end"></div>
+</header>
+
+<script>
+	return function(roof) {
+		roof.querySelector(`.nav-link[data-url="${fanstatic.getLandingPath(true)}"]`)?.classList.add('fw-bold')
+	}
+</script>

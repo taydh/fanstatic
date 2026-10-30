@@ -1,0 +1,38 @@
+<section id="headbar" class="fixed-top border-bottom">
+	<div class="container"></div>
+</section>
+
+<main id="page"></main>
+
+<script>
+	return async function(roof, data) {
+		const pageBox = roof.querySelector('#page')
+		const isHomepage = window.location.href == fanstatic.settings.base_url || window.location.href == fanstatic.settings.base_url + 'index.html';
+
+		await fanstatic.insert(roof.querySelector('#headbar > .container'), './assets/templates/section_header.htm');
+
+		if (isHomepage) {	
+			await fanstatic.insert(pageBox, './assets/templates/page_homepage.htm');
+		}
+		else {
+			if (window.location.pathname.includes('/designs')){	
+				await fanstatic.insert(pageBox, './assets/templates/page_designs.htm', {
+					data: {
+						design_base_url: data.host_env.design2_base_url,
+					}
+				})
+			}
+			else if (window.location.pathname.includes('/showcases')){
+				await fanstatic.insert(pageBox, './assets/templates/page_showcases.htm')
+			}
+			else if (window.location.pathname.includes('/docs')){
+				await fanstatic.insert(pageBox, './assets/templates/page_docs.htm')
+			}
+			else if (window.location.pathname.includes('/blog')){
+				await fanstatic.insert(pageBox, './assets/templates/page_blog.htm')
+			}
+		}
+
+		await fanstatic.append(roof, './assets/templates/section_footer.htm')
+	}
+</script>

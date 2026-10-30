@@ -1,0 +1,17 @@
+<section id="hero" class="d-flex align-items-center">
+	<div class="container"></div>
+</section>
+<section id="intro" class="container"></section>
+<section id="products" class="container"></section>
+<section id="stats" class="container"></section>
+<section id="services" class="container"></section>
+
+<script>
+	return async function(roof, data) {
+		await fanstatic.insert(roof.querySelector('#hero > .container'), './contents/homepage/hero.htm');
+		await fanstatic.insert(roof.querySelector('#intro'), './contents/homepage/intro.htm');
+		await fanstatic.insert(roof.querySelector('#products'), './contents/homepage/products.htm', { renderer:'markdown' });
+		await fanstatic.insert(roof.querySelector('#stats'), './contents/homepage/stats.htm', { renderer:'markdown' });
+		await fanstatic.insert(roof.querySelector('#services'), './contents/homepage/services3.htm');	
+	}
+</script>

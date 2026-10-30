@@ -1,0 +1,51 @@
+## POINTS OF INTEREST
+
+![easy icon](https://park.annexdesk.com/resources/svgrepo/origami-filled-line-vector/hat-origami.svg)
+**Easy**
+We use basic techniques of HTML, CSS, and Javascript with few specific implementation to run script in template
+
+![optimum icon](https://park.annexdesk.com/resources/svgrepo/origami-filled-line-vector/sword-origami.svg)
+**Optimum**
+We do not focus to be the fastest client-side rendering engine, but to be optimum with resource and cache
+
+![personal icon](https://park.annexdesk.com/resources/svgrepo/origami-filled-line-vector/heart-origami.svg)
+**Personal**
+Codes executed by browser are everything that you wrote, no build tool required
+
+![scalable icon](https://park.annexdesk.com/resources/svgrepo/origami-filled-line-vector/windmill-origami.svg)
+**Scalable**
+We try to make this engine scalable for typical frontend use cases like cms website, components, and apps
+
+<script>
+	return async function (roof, nodes, data, url) {
+		roof.querySelector('h2').setAttribute('data-template', 'viewport-enter-animate')
+		roof.querySelector('h2').setAttribute('data-visual-animation', 'slideInUp')
+		roof.querySelector('h2').setAttribute('data-visual-hidden', '')
+		roof.querySelectorAll('img').forEach(n => n.style.width = '30px')
+		var newHomes = fanstatic.adoptSiblings(
+			roof.querySelectorAll('p'),
+			function(){ return fanstatic.parseHTML('<div data-adoption="parent" class="card p-3 mb-3" data-template-onplace="viewport-enter-animate" data-visual-hidden data-visual-animation="fadeInRightBig"></div>', true) },
+			function(){ return fanstatic.parseHTML('<div data-adoption="grandparent"></div>', true) })
+		roof.append(newHomes)
+		console.log(roof.innerHTML)
+		roof.querySelectorAll('p').forEach(e => fanstatic.replaceWithChildren(e, fanstatic.parseHTML('<div data-adoption="wrapper"></div>', true)))
+
+		// roof.querySelectorAll('ul').forEach(n => n.classList.add('list-unstyled'))
+		
+		// roof.querySelectorAll('li').forEach(li => {
+		// 	li.className = 'card card-body mb-3'
+		// 	let parts = {
+		// 		img: li.querySelector('img'),
+		// 		strong: li.querySelector('strong'),
+		// 		span: li.querySelector('span')
+		// 	}
+			
+			// let row = fanstatic.parseHTML('<div class="row"><div class="col" style="width:70px;"></div><div class="col"><div></div><div></div></div></div>').firstChild
+			// console.log(row.firstChild)
+			// row.firstChild.appendChild(parts.img)
+			// row.lastChild.firstChild.appendChild(parts.strong)
+			// row.lastChild.lastChild.appendChild(parts.span)
+			// li.appendChild(row)
+		// })
+	}
+</script>

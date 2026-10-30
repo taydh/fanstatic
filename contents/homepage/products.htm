@@ -1,0 +1,30 @@
+## OUR LIBRARY
+Use our fanstatic library to build any web pages yourself.
+
+### **Core Library** 
+A collection of javascript helper methods to enable our approach.  
+  
+Note: While irrelevant for single page, to correctly return 404 response status for invalid URL in multi pages setup, we need to have a server configuration file (.htaccess).
+
+### **CMS Extension**
+This extension for the core library allow you to create a conventional CMS-like website with blog posts, tags, and author pages.
+A suitable scenario for single admin to manage the posts by hand and keep pages and data in static manner.  
+  
+Note: However, to correctly return 404 response status for invalid URL, we need to have a web configuration file (.htaccess) and a couple of server-side scripting (i.e., PHP).  
+
+### **Components** 
+Quick and ready to use templates for your page, such as adding back-to-top button.
+			
+<script>
+	return async function (roof, nodes) {
+		roof.querySelector('h2').setAttribute('data-template-onplace', 'viewport-enter-animate')
+		roof.querySelector('h2').setAttribute('data-visual-animation', 'slideInUp')
+		roof.querySelector('h2').setAttribute('data-visual-hidden', '')
+		var newHomes = fanstatic.adoptSiblings(
+			roof.querySelectorAll('h3'),
+			function(){ return fanstatic.parseHTML('<div class="card card-body mb-3" data-template-onplace="viewport-enter-animate" data-visual-hidden data-visual-animation="fadeInRightBig"></div>', true) },
+			function(){ return fanstatic.parseHTML('<div class=""></div>', true) })
+		roof.append(newHomes)
+		roof.querySelector('p').classList.add('text-center')
+	}
+</script>

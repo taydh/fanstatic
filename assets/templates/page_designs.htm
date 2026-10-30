@@ -110,12 +110,12 @@
 		
 		// setup modal asynchronosly
 		const webframeModalArea = roof.querySelector('#webframe-modal-area')
-		fanstatic.append(webframeModalArea, './assets/templates/modal.html', {
+		fanstatic.append(webframeModalArea, './assets/templates/modal.htm', {
 			data: {
 				fullscreen: true,
 				idPreffix: 'Webframe',
 				loadContent: async function(modalElem) {
-					await fanstatic.insert(modalElem.querySelector('.modal-body'), './assets/templates/dialog_webframe.html', {
+					await fanstatic.insert(modalElem.querySelector('.modal-body'), './assets/templates/dialog_webframe.htm', {
 						data: {
 							modalElem: modalElem
 						}
@@ -137,7 +137,7 @@
 						modalElem.querySelector('.modal-title').textContent = dataset.name
 						modalElem.querySelector('.modal-footer').style.justifyContent = 'center'
 
-						const c = await fanstatic.insert(modalElem.querySelector('.modal-footer'), './assets/templates/dialog_footer.html', {
+						const c = await fanstatic.insert(modalElem.querySelector('.modal-footer'), './assets/templates/dialog_footer', {
 							renderer: 'mustache',
 							model: {
 								zipUrl: designBaseUrl + dataset.zipUrl,

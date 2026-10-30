@@ -1,0 +1,36 @@
+- h2 data-template-onplace="viewport-enter-animate" data-visual-hidden data-visual-animation="slideInUp": OUR SERVICES
+- div class="mb-4 text-center" data-template-onplace="viewport-enter-animate" data-visual-hidden data-visual-animation="slideInUp":
+    Services we offer to help you implementation web based application using our approach.
+- div class="row":
+{{#items}}
+  - div class="col-md-4":
+    - div class="card card-body mb-3" data-template-onplace="viewport-enter-animate" data-visual-hidden data-visual-animation="slideInUp":
+      - div class="text-center":
+        - img style="width:60px" class="mb-3" src="https://park.annexdesk.com/resources/svgrepo/{{img}}": 
+        - h3 class="mb-3": {{title}}
+      - p: {{body}}
+{{/items}}
+<script>
+	return {
+		renderer: 'mustache yhtm',
+		model: {
+			items: [
+				{
+					img: 'seo-online-marketing-8/monitor-support.svg',
+					title: 'Instant Design Support',
+					body: 'Professional editing, proofreading, and manuscript development to ensure your book meets the highest quality standards. Our expert editors work closely with authors to refine their work while maintaining their unique voice.'
+				},
+				{
+					img: 'seo-online-marketing-8/monitor-gear.svg',
+					title: 'Web Based Frontend Development',
+					body: 'Professional editing, proofreading, and manuscript development to ensure your book meets the highest quality standards. Our expert editors work closely with authors to refine their work while maintaining their unique voice.'
+				},
+				{
+					img: 'seo-online-marketing-8/monitor-gear.svg',
+					title: 'Web Based System Planning',
+					body: 'Professional editing, proofreading, and manuscript development to ensure your book meets the highest quality standards. Our expert editors work closely with authors to refine their work while maintaining their unique voice.'
+				},
+			]
+		}
+	}
+</script>
