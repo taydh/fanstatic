@@ -147,7 +147,7 @@
 			if (!tpl) {
 				const templateCustomerMap = fanstatic._templateCustomerMap;
 
-				return new Promise(resolve => {
+				return new Promise(async(resolve, reject) => {
 					window.addEventListener('fanstatic.template_loaded:' + urlRel, () => {
 						if (!tpl) {
 							tpl = this._getTemplateElement(urlRel);
@@ -162,26 +162,28 @@
 
 						try {
 							/* fetch external template */
-							this.fetchText(urlRel, opt).then(text => {
-								tpl = document.createElement('template')
-								tpl.innerHTML = text
-								tpl.setAttribute('data-url', urlRel)
+							const text = await this.fetchText(urlRel, opt)
+							tpl = document.createElement('template')
+							tpl.innerHTML = text
+							tpl.setAttribute('data-url', urlRel)
 
-								let fanArea = document.getElementById(this.settings.local_area_id)
+							let fanArea = document.getElementById(this.settings.local_area_id)
 
-								if (!fanArea) {
-									fanArea = document.createElement('div')
-									fanArea.id = this.settings.local_area_id
-									document.body.append(fanArea)
-								}
+							if (!fanArea) {
+								fanArea = document.createElement('div')
+								fanArea.id = this.settings.local_area_id
+								document.body.append(fanArea)
+							}
 
-								fanArea.appendChild(tpl)
-								window.dispatchEvent(new CustomEvent('fanstatic.template_loaded:' + urlRel));
-							})
+							fanArea.appendChild(tpl)
+							window.dispatchEvent(new CustomEvent('fanstatic.template_loaded:' + urlRel));
 						} catch (error) {
 							hasError = error
+							
 							if (error._part) throw error
 							else console.error(error.message, urlRel);
+
+							reject(error);
 						}
 					}
 					else {
