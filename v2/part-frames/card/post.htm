@@ -12,7 +12,7 @@
 		model.title = data.title || '';
 		model.short = data.short || '';
 		model.date = data.date || '';
-		model.postLink = data.link || '#';
+		model.url = data.url || '#';
 		model.author = data.author || '';
 		model.authorLink = data.authorLink || '#';
 		model.authorPhoto = data.authorPhoto || '';
@@ -20,14 +20,16 @@
 
 		const blockController = await fanstatic.appendPart(roof, 'block.unit', 
 			Object.assign(model, {
-				cap: {img: true},
+				cap: (model.featureImageSrc ? {img: true} : false),
 				head: [
 					design.tag(model.$sectionTag || 'div', { data:{'pt':'section'} }),
 					design.tag(model.$titleTag || 'div', { data:{'pt':'title'} }, design.tag('a')),
 					design.tag(model.$dateTag || 'div', { data:{'pt':'date'} }),
 					design.tag(model.$authorTag || 'div', { data:{'pt':'author'} }), 
 				],
-				body: model.body || true,
+				body: [
+					design.tag(model.$briefTag || 'div', {data: {pt: 'brief'}}),
+				],
 				foot: [
 					design.div([design.tag('a', {data: {'pt': 'button-more'}}, 'Read more')]),
 				],
@@ -38,15 +40,20 @@
 
 		let elem;
 
-		elem = blockController.select('cap').children[0];
-		elem.src = model.featureImageSrc;
+		if (model.featureImageSrc) {
+			elem = blockController.select('cap').children[0];
+			elem.src = model.featureImageSrc;
+		}
 
 		elem = blockController.select('title').children[0];
-		elem.href = model.postLink;
+		elem.href = model.url;
 		elem.textContent = model.title;
 
 		elem = blockController.select('button-more');
-		elem.href = model.postLink;
+		elem.href = model.url;
+
+		elem = blockController.select('brief');
+		elem.textContent = model.brief;
 
 		['section', 'date', 'author'].forEach(prop => {
 			blockController.select(prop).textContent = model[prop];
@@ -54,7 +61,7 @@
 
 		const root = blockController.root;
 
-		this.controller = Object.assign(new fanstatic.partController(root, model.scope, model.frame), {
+		this.controller = Object.assign(blockController, {
 			
 		});
 	}
