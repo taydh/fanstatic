@@ -209,15 +209,20 @@
 			return element.innerHTML;
 		},
 
-		sanitizeAttrValue: function(value) {
-			if ('string' != typeof(value)) return '';
+		sanitizeAttrValue: function(opt) {
+			if (typeof(opt) != 'object' || !opt.acceptHazard) {
+				throw 'Please assign attribute value through DOM instead of sanitizing it for html';
+			}
+			else {
+				if ('string' != typeof(opt.value)) return '';
 
-			return value
-				.replace(/&/g, '&amp;')
-				.replace(/"/g, '&quot;')
-				.replace(/'/g, '&#39;')
-				.replace(/</g, '&lt;')
-				.replace(/>/g, '&gt;');
+				return opt.value
+					.replace(/&/g, '&amp;')
+					.replace(/"/g, '&quot;')
+					.replace(/'/g, '&#39;')
+					.replace(/</g, '&lt;')
+					.replace(/>/g, '&gt;');
+			}
 		},
 
 		sanitizeFilename: function(input) {
@@ -250,6 +255,61 @@
 				.replace(/>/g, '')
 				.replace(/\//g, '')
 				.replace(/\\/g, '');
+		},
+
+		// case convention
+
+		toSnakeCase(s) {
+			return s
+			.trim()
+			.replace(/[\s\-]+/g, "_")             // spaces/hyphens -> underscore
+			.replace(/([a-z0-9])([A-Z])/g, "$1_$2") // helloWorld -> hello_World
+			.replace(/([A-Z])([A-Z][a-z])/g, "$1_$2") // HTTPServer -> HTTP_Server
+			.replace(/[^\w]/g, "")                // drop other punctuation
+			.replace(/_+/g, "_")                  // collapse repeated underscores
+			.replace(/^_|_$/g, "")                // trim leading/trailing underscores
+			.toLowerCase();
+		},
+
+		toKebabCase(s) {
+			return s
+				.trim()
+				.replace(/[\s_]+/g, "-")                  // spaces/underscores -> hyphen
+				.replace(/([a-z0-9])([A-Z])/g, "$1-$2")   // helloWorld -> hello-World
+				.replace(/([A-Z])([A-Z][a-z])/g, "$1-$2") // HTTPServer -> HTTP-Server
+				.replace(/[^\w-]/g, "")                   // drop other punctuation
+				.replace(/-+/g, "-")                      // collapse repeated hyphens
+				.replace(/^-|-$/g, "")                    // trim leading/trailing hyphens
+				.toLowerCase();
+		},
+
+		parseCsv(src, options = {}) {
+			return new Promise((resolve, reject) => {
+				Papa.parse(src, {
+				...options,
+				complete: results => {
+					// console.log(results);
+					resolve(results.data)
+				},
+				error: reject,
+				});
+			});
+		},
+
+		toYMD(date) {
+			const y = date.getFullYear();
+			const m = String(date.getMonth() + 1).padStart(2, '0');
+			const d = String(date.getDate()).padStart(2, '0');
+			return `${y}${m}${d}`;
+		},
+
+		scrollTo(selector, opt = {}) {
+			if (!selector) return;
+			const el = document.body.querySelector(selector);
+			if (!el) return;
+
+			console.log('scrolling to ', el);
+			el.scrollIntoView(opt);
 		},
 	});
 	

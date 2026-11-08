@@ -1,10 +1,10 @@
 {
 	const _toStyleAttributesString = function(attributes) {
-		return Object.entries(attributes).map(([k,v]) => `${k}:${fanstatic.sanitizeAttrValue(v)}`).join(';');
+		return Object.entries(attributes).map(([k,v]) => `${k}:${v}`).join(';');
 	}
 
 	const _toClassAttributesString = function(attributes) {
-		return attributes.map((v) => `${fanstatic.sanitizeAttrValue(v)}`).join(' ');
+		return attributes.join(' ');
 	}
 
 	const _toDataAttributesString = function(attributes, suffix = '') {
@@ -13,7 +13,7 @@
 				return _toDataAttributesString(v, suffix + k + '-');
 			}
 
-			return suffix + `${k}="${fanstatic.sanitizeAttrValue(v)}"`
+			return suffix + `${k}="${v}"`
 		}).join(' ');
 	}
 
@@ -22,12 +22,15 @@
 			if ('data' === k && typeof v === 'object') {
 				return _toDataAttributesString(v, 'data-');
 			}
+			else if ('aria' === k && typeof v === 'object') {
+				return _toDataAttributesString(v, 'aria-');
+			}
 			else if ('style' === k && typeof v === 'object') {
 				return 'style="' + _toStyleAttributesString(v) + '"';
 			} 
 			else if ('class' === k && Array.isArray(v)) {
 				return 'class="' + _toClassAttributesString(v) + '"';
-			} 
+			}
 			else if ('$' == k[0]) {
 				return ''; // preserved for special usage
 			} else {

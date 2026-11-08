@@ -504,7 +504,7 @@
 		insertTemplate: function(...args){ return this.insert(...args); },
 		replaceTemplate: function(...args){ return this.replace(...args); },
 
-		template: function(url, opt, optMode = 0) {
+		Template: function(url, opt, optMode = 0) {
 			this.url = url;
 			this.options = opt || {};
 			this.optMode = optMode;
@@ -562,7 +562,7 @@
 			return this._insertPart(el, frame, opt, optMode, 'after');
 		},
 
-		part: function(frame, opt, optMode = 2) {
+		Part: function(frame, opt, optMode = 2) {
 			this.frame = frame;
 			this.options = opt || {};
 			this.optMode = optMode;
@@ -588,25 +588,27 @@
 			};
 		},
 
-		partController: function(root) {
+		PartController: function(root) {
 			const obj = this;
 
-			this.root = root || null;
-
 			Object.defineProperties(obj, {
+				'root': {
+					get() { return root },
+					enumerable: true,
+				},
 				'scope': {
-					get() { return this.root ? this.root.dataset.ptScope || null : null },
+					get() { return root ? root.dataset.ptScope || null : null },
 					enumerable: true,
 				},
 				'frame': {
-					get() { return this.root ? this.root.dataset.ptFrame || null : null },
+					get() { return root ? root.dataset.ptFrame || null : null },
 					enumerable: true,
 				},
 			});
-
 			
 			this.select = function(name) { return root ? root.querySelector(`[data-pt="${name}"]`) : null; };
 			this.selectAll = function(name) { return root ? root.querySelectorAll(`[data-pt="${name}"]`) : []; };
+			this.changeRoot = function(root2) { return root = root2 };
 		},
 
 		isTemplate: function(obj) {
@@ -614,11 +616,11 @@
 		},
 
 		instanceOfTemplate: function(obj) {
-			return (obj instanceof fanstatic.template);
+			return (obj instanceof fanstatic.Template);
 		},
 
 		instanceOfPart: function(obj) {
-			return (obj instanceof fanstatic.part)
+			return (obj instanceof fanstatic.Part)
 		},
 
 		applyTemplate: async function(target, obj, insertFn) {
