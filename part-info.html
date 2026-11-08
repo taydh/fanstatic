@@ -202,7 +202,7 @@
 					Use this part to have a specialized content section with Cap's Image, and a headline with Category, Title, Subtitle, and Caption.
 				</div>
 
-				<div data-frame="block.actionable">
+				<div data-frame="block.action">
 					Panel block.basic-block also used internally to form other general purpose panels.
 					It based on block-base-unit with different context properties and unlike block.base-unit this panel implement basic styling when use theme.
 					It accept direct image url and accept subjects and notes as an array.
@@ -233,7 +233,7 @@
 
 				<div data-frame="section.hero">
 					Use this part to have a specialized hero section with Image, Subject, Message, and Actions.
-					It contains <b>block.actionable</b> frame as the underlying structure wrapped inside a section element..
+					It contains <b>block.action</b> frame as the underlying structure wrapped inside a section element..
 				</div>
 
 				<div data-frame="section.stack">
@@ -301,7 +301,11 @@
 			<template data-url="base.image">
 				<script>
 					return async function(roof, data) {
-						window.recordedController = await fanstatic.appendPart(roof, 'base.image', {src: 'https://dummyimage.com/120x120/999/fff&text=IMG'})
+						window.recordedController = await fanstatic.appendPart(roof, 'base.image', {
+							$id: 'my_base_img',
+							$scope: 'base_img',
+							src: 'https://dummyimage.com/120x120/999/fff&text=IMG'
+						})
 					}
 				</script>
 			</template>
@@ -329,10 +333,10 @@
 							scope: 'my_content',
 
 							cap: new fanstatic.part('base.image', { src: 'https://dummyimage.com/60x60/eee/fff&text=image' }),
-							category: 'Category',
+							topic: 'Nature',
 							title: 'TITLE',
 							subtitle: 'Subtitle',
-							caption: 'The caption',
+							tagline: 'A short synopsis',
 							body: new fanstatic.part('base.jhtm', [
 								{ p: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.' },
 								{ p: 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.' },
@@ -345,17 +349,17 @@
 				</script>
 			</template>
 
-			<template data-url="block.actionable">
+			<template data-url="block.action">
 				<script>
 					return async function(roof, data) {
-						window.recordedController = await fanstatic.appendPart(roof, 'block.actionable', {
+						window.recordedController = await fanstatic.appendPart(roof, 'block.action', {
 							scope: 'my_action',
 							cap: new fanstatic.part('base.jhtm', fanstatic.design.tag('img', {src: 'https://dummyimage.com/60x60/eee/fff&text=image'})),
 							subjects: [
 								new fanstatic.part('base.text', 'Subject 1'), 
 								new fanstatic.part('base.text', 'Subject 2')
 							],
-							body: new fanstatic.part('base.text', 'Message area'),
+							message: new fanstatic.part('base.text', 'Message area'),
 							actions: [
 								new fanstatic.part('base.text', 'Action 1'), 
 								new fanstatic.part('base.text', 'Action 2')
@@ -365,15 +369,15 @@
 				</script>
 			</template>
 
-			<template data-url="block.identity">
+			<template data-url="block.brand">
 				<script>
 					return async function(roof, data) {
-						window.recordedController = await fanstatic.appendPart(roof, 'block.identity', {
-							scope: 'my_identity',
+						window.recordedController = await fanstatic.appendPart(roof, 'block.brand', {
+							$id: 'my_identity',
+							$scope: 'my_identity',
+							
 							logoImageSrc: 'https://dummyimage.com/100x100/999/fff&text=image',
 							label: 'Fanstatic',
-
-							$id: 'my_identity',
 						})
 					}
 				</script>
@@ -388,14 +392,14 @@
 							id: 'my_list',
 							scope: 'my_list',
 							items: [
-								new fanstatic.part('block.actionable', {
-									cap: new fanstatic.part('base.jhtm', fanstatic.design.tag('img', {src: 'https://dummyimage.com/60x60/999/fff&text=image'})),
+								new fanstatic.part('block.action', {
+									imageSrc: 'https://dummyimage.com/60x60/999/fff&text=image',
 									subjects: ['Subject 1', 'Subject 2'],
 									body: 'Message area',
 									actions: ['Action 1', 'Action 2'],
 								}),
-								new fanstatic.part('block.actionable', {
-									cap: new fanstatic.part('base.jhtm', fanstatic.design.tag('img', {src: 'https://dummyimage.com/60x60/999/fff&text=image'})),
+								new fanstatic.part('block.action', {
+									ImageSrc: 'https://dummyimage.com/60x60/999/fff&text=image',
 									subjects: ['Subject 1', 'Subject 2'],
 									body: 'Message area',
 									actions: ['Action 1', 'Action 2'],
@@ -412,13 +416,13 @@
 						window.recordedController = await fanstatic.appendPart(roof, 'cluster.stack', {
 							scope: 'my_stack',
 							items: [
-								new fanstatic.part('block.actionable', {
+								new fanstatic.part('block.action', {
 									cap: new fanstatic.part('base.jhtm', fanstatic.design.tag('img', {src: 'https://dummyimage.com/60x60/999/fff&text=image'})),
 									subjects: ['Subject 1', 'Subject 2'],
 									body: 'Message area',
 									actions: ['Action 1', 'Action 2'],
 								}),
-								new fanstatic.part('block.actionable', {
+								new fanstatic.part('block.action', {
 									cap: new fanstatic.part('base.jhtm', fanstatic.design.tag('img', {src: 'https://dummyimage.com/60x60/999/fff&text=image'})),
 									subjects: ['Subject 1', 'Subject 2'],
 									body: 'Message area',
@@ -437,13 +441,13 @@
 							$id: 'my_grid',
 							scope: 'my_grid',
 							items: [
-								new fanstatic.part('block.actionable', {
+								new fanstatic.part('block.action', {
 									cap: new fanstatic.part('base.jhtm', fanstatic.design.tag('img', {src: 'https://dummyimage.com/60x60/eee/fff&text=image'})),
 									subjects: ['Subject 1', 'Subject 2'],
 									body: 'Message area',
 									actions: ['Action 1', 'Action 2'],
 								}),
-								new fanstatic.part('block.identity', {
+								new fanstatic.part('block.brand', {
 									logoImageSrc: 'https://dummyimage.com/120x120/eee/fff&text=LOGO',
 									label: 'LOGO'
 								}),
@@ -460,13 +464,13 @@
 							$id: 'my_flex',
 							scope: 'my_flex',
 							items: [
-								new fanstatic.part('block.actionable', {
+								new fanstatic.part('block.action', {
 									cap: new fanstatic.part('base.jhtm', fanstatic.design.tag('img', {src: 'https://dummyimage.com/60x60/eee/fff&text=image'})),
 									subjects: ['Subject 1', 'Subject 2'],
 									body: 'Message area',
 									actions: ['Action 1', 'Action 2'],
 								}),
-								new fanstatic.part('block.identity', {
+								new fanstatic.part('block.brand', {
 									logoImageSrc: 'https://dummyimage.com/120x120/eee/fff&text=LOGO',
 									label: 'LOGO'
 								}),
@@ -477,6 +481,28 @@
 			</template>
 
 			<!-- CARDS -->
+
+			<template data-url="card.action">
+				<script>
+					return async function(roof, data) {
+						window.recordedController = await fanstatic.appendPart(roof, 'card.action', {
+							$id: '1',
+							$scope: 'my_card_action',
+							
+							imageSrc: 'https://dummyimage.com/60x60/eee/fff&text=image',
+							subjects: [
+								new fanstatic.part('base.text', 'Subject 1'), 
+								new fanstatic.part('base.text', 'Subject 2')
+							],
+							message: new fanstatic.part('base.text', 'Message area'),
+							actions: [
+								new fanstatic.part('base.text', 'Action 1'), 
+								new fanstatic.part('base.text', 'Action 2')
+							],
+						})
+					}
+				</script>
+			</template>
 
 			<template data-url="card.highlight">
 				<script>
@@ -512,7 +538,7 @@
 
 							featureImageSrc: 'https://dummyimage.com/300x200/999/fff&text=image',
 
-							section: 'Post Section',
+							category: 'Post Section',
 							date: '2026-01-01',
 							title: 'Post Title',
 							author: 'Me',
@@ -533,10 +559,10 @@
 							photoImageSrc: 'https://dummyimage.com/150x150/eee/fff&text=Photo',
 							
 							name: 'Tony Parker',
-							jobTitle: 'CEO',
+							title: 'CEO',
 							company: 'Tony R Us',
 							
-							description: 'Brief description about this person',
+							short: 'Brief description about this person',
 
 							facebook: 'MyFacebook',
 							instagram: '@myinstagram',
@@ -668,7 +694,7 @@
 							id: 'my_section_1',
 							scope: 'my_scope_1',
 							title: 'Section Title',
-							item: new fanstatic.part('block.actionable', {
+							item: new fanstatic.part('block.action', {
 								image: 'https://dummyimage.com/60x60/eee/fff&text=image',
 								subjects: ['Subject 1', 'Subject 2'],
 								message: 'Message area',
@@ -705,13 +731,13 @@
 							cap: new fanstatic.part('base.jhtm', fanstatic.design.tag('img', {src: 'https://dummyimage.com/360x120/999/fff&text=STACK'})),
 							title: 'Section Title',
 							items: [
-								new fanstatic.part('block.actionable', {
+								new fanstatic.part('block.action', {
 									cap: new fanstatic.part('base.jhtm', fanstatic.design.tag('img', {src: 'https://dummyimage.com/120x60/999/fff&text=ITEM'})),
 									subjects: ['Subject 1', 'Subject 2'],
 									body: 'Message area',
 									actions: ['Action 1', 'Action 2'],
 								}),
-								new fanstatic.part('block.actionable', {
+								new fanstatic.part('block.action', {
 									cap: new fanstatic.part('base.jhtm', fanstatic.design.tag('img', {src: 'https://dummyimage.com/120x60/999/fff&text=ITEM'})),
 									subjects: ['Subject 1', 'Subject 2'],
 									body: 'Message area',
@@ -731,13 +757,13 @@
 							scope: 'my_section_scope',
 							title: 'Section Title',
 							items: [
-								new fanstatic.part('block.actionable', {
+								new fanstatic.part('block.action', {
 									image: 'https://dummyimage.com/240x240/eee/fff&text=image',
 									subjects: ['Subject 1', 'Subject 2'],
 									message: 'Message area',
 									actions: ['Action 1', 'Action 2'],
 								}),
-								new fanstatic.part('block.identity', {
+								new fanstatic.part('block.brand', {
 									logo: 'https://dummyimage.com/120x120/eee/fff&text=LOGO',
 									name: 'LOGO'
 								})
@@ -754,7 +780,7 @@
 							id: 'my_header',
 							scope: 'my_header',
 							innerScope: 'my_header_inner',
-							identity: new fanstatic.part('block.identity', {
+							identity: new fanstatic.part('block.brand', {
 								id: 'my_identity',
 								logoImageSrc: 'https://dummyimage.com/150x150/eee/fff&text=LOGO',
 								label: 'The Company',

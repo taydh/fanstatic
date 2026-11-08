@@ -1,0 +1,78 @@
+<script>
+	const design = fanstatic.design;
+
+	return async function(roof, data, url) {
+		const model = Object.assign({}, data);
+
+		model.id = model.$id || model.id || null;
+		model.frame = model.frame || fanstatic.resolveFrame(url);
+		model.scope = model.scope || model.innerScope;
+
+		const currentPage = model.currentPage || 1;
+		const totalPage = model.totalPage || 1;
+		const range = model.range || 5;
+		const totalRange = Math.ceil(totalPage / range);
+		const currentRange = Math.ceil(currentPage / range);
+		const pagingLinks = [];
+
+		for (let i=0; i<totalRange; i++) {
+			pagingLinks.push(
+				design.tag('a', {data: {pt: 'paging_link'}, class: 'button'}, (currentRange * totalRange) + i));
+		}
+
+		fanstatic.insertHtml(roof, fanstatic.renderJhtm(
+			design.tag('nav', [
+				design.list({data: {pt: 'paging_list'}, style: {display: 'flex'}}, {data: {pt: 'paging_item'}},
+					{
+						items: [
+							design.tag('a', {data: {pt: 'paging_first'}, class: 'button'}, '&laquo;'),
+							design.tag('a', {data: {pt: 'paging_range_prev'}, class: 'button'}, '&lsaquo;'), 
+							...pagingLinks,
+							design.tag('a', {data: {pt: 'paging_range_next'}, class: 'button'}, '&rsaquo;'),
+							design.tag('a', {data: {pt: 'paging_last'}, class: 'button'}, '&raquo;'),
+						],
+					}),
+			])
+		))
+
+		const root = roof.children[0];
+		
+		root.dataset.ptFrame = model.frame;
+
+		if (model.id) root.id = model.id;
+		if (model.scope) root.dataset.ptScope = model.scope;
+
+		const controller = new fanstatic.PartController(root, model.scope, model.frame);
+
+		if (currentPage == 1)
+			controller.select('paging_first').classList.add('disabled');
+
+		if (currentRange == 1)
+			controller.select('paging_range_prev').classList.add('disabled');
+
+		if (currentRange == totalRange)
+			controller.select('paging_range_next').classList.add('disabled');
+
+		if (currentPage == totalPage)
+			controller.select('paging_last').classList.add('disabled');
+
+		controller.navList = controller.select('nav_list');
+		controller.navItems = controller.selectAll('nav_item');
+
+		for (let i=0; i<controller.navItems.length; i++) {
+			const navItem = controller.navItems[i];
+			const modelItem = model.items[i];
+			const navLink = navItem.querySelector('[data-pt=nav_link]');
+
+			if (navLink.tagName == 'A') {
+				navLink.href = modelItem.url;
+			}
+
+			await fanstatic.insertPart(navLink, 'base.text', modelItem.label) 
+		}
+
+		Array.from(controller.root.querySelectorAll('[data-ds]')).forEach(elem => elem.removeAttribute('data-ds'));
+
+		this.controller = controller;
+	}
+</script> 

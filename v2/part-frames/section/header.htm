@@ -10,13 +10,12 @@
 		model.innerScope = data.innerScope || model.scope || model.partId || model.frame;
 
 		fanstatic.insertHtml(roof, fanstatic.renderJhtm(
-			design.tag('section', {data: {'pt-frame': model.frame}}, 
+			design.tag('section', {data: {'pt-frame': model.frame}},
 				design.wrap({data: {pt: 'wrap'}}, [
 					design.div({data: {pt: 'identity'}}),
 					design.div({data: {pt: 'navigation'}}),
 					design.div({data: {pt: 'actions'}}),
-				])
-			)
+				]))
 		));
 
 		const root = roof.children[0];
@@ -24,8 +23,7 @@
 		if (model.id) root.id = model.id;
 		if (model.scope) root.dataset.ptScope = model.scope;
 
-		const controller = new fanstatic.partController(roof, model.scope, model.frame);
-
+		const controller = new fanstatic.PartController(roof, model.scope, model.frame);
 		controller.identity = controller.select('identity');
 		controller.navigation = controller.select('navigation');
 		controller.actions = controller.select('actions');

@@ -31,7 +31,7 @@
 		const coverController = await fanstatic.applyContent(root.children[0], model.cover, model.innerScope);
 		const revealController = await fanstatic.applyContent(root.children[1], model.reveal, model.innerScope);
 
-		this.controller = Object.assign(new fanstatic.partController(root, model.scope, model.frame), {
+		this.controller = Object.assign(new fanstatic.PartController(root, model.scope, model.frame), {
 			coverController: coverController,
 			revealController: revealController,
 		});

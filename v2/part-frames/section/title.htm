@@ -1,0 +1,17 @@
+<script>
+	return async function (roof, data = {}, url) {
+		const model = Object.assign({}, data, {
+			$frame: data.$frame || fanstatic.resolveFrame(url)
+		});
+
+		model.title = model.title || '';
+
+		const baseController = await fanstatic.appendPart(roof, 'base.section', Object.assign(model, {
+			content: fanstatic.design.tag(model.$titleTag || 'h1', {data: {pt: 'title'}})
+		}));
+		
+		baseController.select('title').textContent = model.title;
+
+		this.controller = baseController;
+	}
+</script>

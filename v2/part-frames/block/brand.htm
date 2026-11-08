@@ -1,0 +1,39 @@
+<script>
+	const design = fanstatic.design;
+
+	return async function(roof, data, url) {
+		const model = Object.assign({}, data, {
+			$frame: data.$frame || fanstatic.resolveFrame(url)
+		});
+
+		model.cap = true,
+		model.head = false;
+		model.foot = false;
+		model.body = design.tag(model.$labelTag || 'div', {data: {pt: 'label'}})
+
+		const unitController = await fanstatic.insertPart(roof, 'block.unit', model);
+
+		unitController.label = unitController.select('label');
+
+		let imgProm, labelProm;
+
+		if (model.logoImageSrc) {
+			imgProm = fanstatic.insertPart(unitController.cap, 'base.image', { src: model.logoImageSrc });
+		}
+
+		if (model.label) {
+			labelProm = fanstatic.insertPart(unitController.label, 'base.text', model.label);
+		}
+
+		const resolves = await Promise.all([imgProm, labelProm]);
+
+		if (model.logoImageSrc) {
+			unitController.cap.children[0].dataset.pt = 'logoImage';
+		}
+		
+		unitController.logoImageController = resolves[0];
+		unitController.labelController = resolves[1];
+
+		this.controller = unitController;
+	}
+</script>

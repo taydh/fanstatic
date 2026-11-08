@@ -11,9 +11,9 @@
 
 		model.photoImageSrc = model.photoImageSrc || '';
 		model.name = model.name || '';
-		model.jobTitle = data.jobTitle || '';
+		model.title = data.title || '';
 		model.company = data.company || '';
-		model.description = data.description || '';
+		model.short = data.short || '';
 		model.facebook = data.facebook || '';
 		model.instagram = data.instagram || '';
 		model.twitterX = data.twitterX || '';
@@ -25,13 +25,13 @@
 
 		const blockController = await fanstatic.appendPart(roof, 'block.unit', 
 			Object.assign(model, {
-				cap: design.img({data: {pt: 'photoImage'}}),
+				cap: design.tag('img', {data: {pt: 'photoImage'}}),
 				head: [
-					design.tag(data.$nameTag || 'div', {data: {pt: 'name'}}),
-					design.tag(data.$jobTitleTag || 'div', {data: {pt: 'jobTitle'}}),
+					design.tag(data.$nameTag || 'h3', {data: {pt: 'name'}}),
+					design.tag(data.$titleTag || 'div', {data: {pt: 'title'}}),
 					design.tag(data.$companyTag || 'div', {data: {pt: 'company'}}),
 				],
-				body: design.tag(model.$descriptionTag || 'div', {data: {pt: 'description'}}),
+				body: design.tag(model.$shortTag || 'div', {data: {pt: 'short'}}),
 				foot: design.axis([
 					design.div({data: {'pt': 'facebook'}}),
 					design.div({data: {'pt': 'instagram'}}),
@@ -46,18 +46,19 @@
 
 		// C.
 
-		['photoImage', 'name', 'jobTitle', 'company', 'description'].forEach(prop => {
+		['photoImage', 'name', 'title', 'company', 'short'].forEach(prop => {
 			blockController[prop] = blockController.select(prop);
 		});
 
 		blockController.photoImage.src = model.photoImageSrc;
 
-		['name', 'jobTitle'].forEach(prop => {
+		['name', 'title'].forEach(prop => {
 			blockController[prop].textContent = model[prop];
 		});
 
-		blockController.descriptionController = 
-			await fanstatic.applyContent(blockController.description, model.description, model.innerScope);
+		blockController.shortController = 
+			await fanstatic.applyContent(blockController.short, model.short, model.innerScope);
+
 
 		// D.
 

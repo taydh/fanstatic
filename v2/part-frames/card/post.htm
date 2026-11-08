@@ -8,9 +8,10 @@
 		model.frame = model.frame || fanstatic.resolveFrame(url);
 
 		model.featureImageSrc = model.featureImageSrc || '';
-		model.section = data.section || '';
+		model.category = data.category || '';
 		model.title = data.title || '';
-		model.short = data.short || '';
+		model.$titleLink = data.$titleLink === false ? false : true;
+		model.brief = data.brief || '';
 		model.date = data.date || '';
 		model.url = data.url || '#';
 		model.author = data.author || '';
@@ -22,8 +23,8 @@
 			Object.assign(model, {
 				cap: (model.featureImageSrc ? {img: true} : false),
 				head: [
-					design.tag(model.$sectionTag || 'div', { data:{'pt':'section'} }),
-					design.tag(model.$titleTag || 'div', { data:{'pt':'title'} }, design.tag('a')),
+					design.tag(model.$categoryTag || 'div', { data:{'pt':'category'} }),
+					design.tag(model.$titleTag || 'h3', { data:{'pt':'title'} }, design.tag(model.$titleLink ? 'a' : 'span')),
 					design.tag(model.$dateTag || 'div', { data:{'pt':'date'} }),
 					design.tag(model.$authorTag || 'div', { data:{'pt':'author'} }), 
 				],
@@ -46,8 +47,11 @@
 		}
 
 		elem = blockController.select('title').children[0];
-		elem.href = model.url;
 		elem.textContent = model.title;
+
+		if (model.$titleLink) {
+			elem.href = model.url;
+		}
 
 		elem = blockController.select('button-more');
 		elem.href = model.url;
@@ -55,7 +59,7 @@
 		elem = blockController.select('brief');
 		elem.textContent = model.brief;
 
-		['section', 'date', 'author'].forEach(prop => {
+		['category', 'date', 'author'].forEach(prop => {
 			blockController.select(prop).textContent = model[prop];
 		});
 

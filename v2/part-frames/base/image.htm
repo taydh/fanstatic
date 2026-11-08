@@ -1,15 +1,24 @@
-<img>
 <script>
 	return function(roof, data, url) {
-		const partId = data.$id || data.id || null;
-		const frame = data.frame || fanstatic.resolveFrame(url);
-		const outerScope = data.scope;
+		const model = Object.assign({}, data, {
+			$frame: data.$frame || fanstatic.resolveFrame(url)
+		});
 
-		const imgElement = roof.children[0];
+		if (model.$attr) model.$attr.src = null; // invalidate src in attribute, see next comment below
 
-		if (partId) imgElement.id = partId;
-		imgElement.src = data.src; // safe with DOM assignment without prior sanitazion
+		fanstatic.insertHtml(roof, fanstatic.renderJhtm(
+			fanstatic.design.tag('img', model.$attr)
+		));
+		
+		const baseElement = roof.children[0];
 
-		this.controller = new fanstatic.partController(imgElement, outerScope, frame);
+		baseElement.dataset.ptFrame = model.$frame;
+
+		if (model.$id) baseElement.id = model.$id;
+		if (model.$scope) baseElement.dataset.ptScope = model.$scope;
+
+		baseElement.src = model.src; // safe with DOM assignment without prior sanitazion
+
+		this.controller = new fanstatic.PartController(baseElement, model.$scope, model.$frame);
 	}
 </script>

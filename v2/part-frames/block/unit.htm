@@ -2,10 +2,9 @@
 	const design = fanstatic.design;
 
 	return async function (roof, data = {}, url) {
-		const model = Object.assign({}, data);
-
-		model.id = model.$id || model.id || null;
-		model.frame = model.frame || fanstatic.resolveFrame(url);
+		const model = Object.assign({}, data, {
+			$frame: data.$frame || fanstatic.resolveFrame(url)
+		});
 
 		roof.innerHTML = fanstatic.renderJhtm([
 			design.unit(Object.assign(model.$attr || {}, {
@@ -25,10 +24,10 @@
 
 		const root = roof.children[0];
 
-		root.dataset.ptFrame = model.frame;
+		root.dataset.ptFrame = model.$frame;
 
-		if (model.id) root.id = model.id;
-		if (model.scope) root.dataset.ptScope = model.scope;
+		if (model.$id) root.id = model.$id;
+		if (model.$scope) root.dataset.ptScope = model.$scope;
 
 		let capElem, headElem, bodyElem, footElem;
 		let capProm, headProm, bodyProm, footProm;
@@ -36,25 +35,25 @@
 		if (model.cap) {
 			const target = capElem = root.querySelector('[data-ds=cap]')
 			target.dataset.pt = 'cap';
-			capProm = fanstatic.applyContent(target, model.cap, model.innerScope);
+			capProm = fanstatic.applyContent(target, model.cap, model.$innerScope);
 		}
 		
 		if (model.head) {
 			const target = headElem = root.querySelector('[data-ds=head]');
 			target.dataset.pt = 'head';
-			headProm = fanstatic.applyContent(target, model.head, model.innerScope);
+			headProm = fanstatic.applyContent(target, model.head, model.$innerScope);
 		}
 
 		if (model.body) {
 			const target = bodyElem = root.querySelector('[data-ds=body]');
 			target.dataset.pt = 'body';
-			bodyProm = fanstatic.applyContent(target, model.body, model.innerScope);
+			bodyProm = fanstatic.applyContent(target, model.body, model.$innerScope);
 		}
 
 		if (model.foot) {
 			const target = footElem = root.querySelector('[data-ds=foot]')
 			target.dataset.pt = 'foot';
-			footProm = fanstatic.applyContent(target, model.foot, model.innerScope);
+			footProm = fanstatic.applyContent(target, model.foot, model.$innerScope);
 		}
 
 		root.querySelectorAll(':scope > [data-ds]').forEach(elem => elem.removeAttribute('data-ds'));
@@ -62,7 +61,7 @@
 
 		const resolves = await Promise.all([capProm, headProm, bodyProm, footProm]);
 
-		const controller = new fanstatic.partController(root);
+		const controller = new fanstatic.PartController(root);
 
 		// D.
 		

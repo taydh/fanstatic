@@ -1,0 +1,43 @@
+<script>
+	const design = fanstatic.design;
+
+	return async function (roof, data, url) {
+		const model = Object.assign({}, data, {
+			$frame: data.$frame || fanstatic.resolveFrame(url)
+		});
+
+		const itemControllers = [];
+
+		const baseController = await fanstatic.appendPart(roof, 'base.section', {
+			$id: model.$id,
+			$frame: model.$frame,
+			$scope: model.$scope,
+			$attr: model.$attr,
+
+			content: new fanstatic.Part('block.content', 
+				Object.assign(model, {
+					$id: null,
+					$frame: null,
+					$attr: null,
+
+					$titleTag: model.$titleTag || 'h2',
+				})
+			)
+		});
+
+		const clusterController = await fanstatic.insertPart(baseController.contentController.body, model.clusterFrame || 'cluster.stack', {
+			$scope: model.$scope,
+			$tag: model.$listTag,
+			$itemTag: model.$itemTag,
+
+			items: model.items,
+		});
+
+		clusterController.root.dataset.pt = 'cluster';
+		baseController.clusterController = clusterController;
+
+		this.controller = baseController;
+
+		console.log(this.controller)
+	}
+</script>

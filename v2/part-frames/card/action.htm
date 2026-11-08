@@ -1,0 +1,24 @@
+<script>
+	const design = fanstatic.design;
+
+	return async function(roof, data = {}, url) {
+		const model = Object.assign({}, data, {
+			$frame: data.$frame || fanstatic.resolveFrame(url)
+		});
+
+		const baseController = await fanstatic.appendPart(roof, 'base.card', {
+			$id: model.$id,
+			$frame: model.$frame,
+			$scope: model.$scope,
+			$attr: model.$attr,
+
+			content: new fanstatic.Part('block.action', Object.assign(model, {
+				$id: null,
+				$frame: null,
+				$scope: null,
+			})),
+		});
+
+		this.controller = baseController;
+	}
+</script>

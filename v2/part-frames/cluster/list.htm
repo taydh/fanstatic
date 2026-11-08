@@ -2,10 +2,9 @@
 	const design = fanstatic.design;
 
 	return async function (roof, data = {}, url) {
-		const model = Object.assign({}, data);
-
-		model.id = model.$id || model.id || null;
-		model.frame = model.frame || fanstatic.resolveFrame(url);
+		const model = Object.assign({}, data, {
+			$frame: data.$frame || fanstatic.resolveFrame(url)
+		});
 
 		const itemControllers = [];
 
@@ -18,23 +17,23 @@
 		const root = roof.children[0];
 
 		root.removeAttribute('data-ds');
-		root.dataset.ptFrame = fanstatic.sanitizeAttrValue(model.frame);
+		root.dataset.ptFrame = model.$frame;
 
-		if (model.id) root.id = fanstatic.sanitizeAttrValue(model.id);
-		if (model.scope) root.dataset.ptScope = fanstatic.sanitizeAttrValue(model.scope);
+		if (model.$id) root.id = model.$id;
+		if (model.$scope) root.dataset.ptScope = model.$scope;
 
 		const placeholders = roof.querySelectorAll('[data-ds-placeholder]');
 
 		if (model.items) {
-			for (let i=0; i<data.items.length; i++) {
-				placeholders[i].parentElement.dataset.pt = 'listItem';
+			for (let i=0; i<model.items.length; i++) {
+				placeholders[i].parentElement.dataset.pt = 'item';
 				placeholders[i].parentElement.removeAttribute('data-ds');
 
 				itemControllers.push(await fanstatic.applyContent(placeholders[i], model.items[i], model.innerScope, 'replace'));
 			}
 		}
 
-		this.controller = Object.assign(new fanstatic.partController(root, model.scope, model.frame), {
+		this.controller = Object.assign(new fanstatic.PartController(root, model.scope, model.frame), {
 			itemControllers: itemControllers,
 		});
 	};

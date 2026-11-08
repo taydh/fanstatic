@@ -2,10 +2,9 @@
 	return async function (roof, data = {}, url) {
 		roof.innerHTML = fanstatic.renderJhtm(data);
 
-		const frame = data.frame || fanstatic.resolveFrame(url);
-		const outerScope = data.scope;
+		const frame = fanstatic.resolveFrame(url);
 
-		this.controller = Object.assign(new fanstatic.partController(null, outerScope, frame), {
+		this.controller = Object.assign(new fanstatic.PartController(null, null, frame), {
 			elements: roof.children,
 		});
 	};

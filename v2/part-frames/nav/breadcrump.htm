@@ -44,7 +44,7 @@
 		if (model.id) root.id = model.id;
 		if (model.scope) root.dataset.ptScope = model.scope;
 
-		const controller = new fanstatic.partController(root, model.scope, model.frame);
+		const controller = new fanstatic.PartController(root, model.scope, model.frame);
 
 		controller.selectAll('separator').forEach((elem, i) => {	
 			if (model.separatorHtml) elem.innerHTML = model.separatorHtml;

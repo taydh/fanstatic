@@ -1,0 +1,24 @@
+<script>
+	return async function(roof, data, url) {
+		const model = Object.assign({}, data, {
+			$frame: data.$frame || fanstatic.resolveFrame(url)
+		});
+
+		fanstatic.insertHtml(roof, fanstatic.renderJhtm(
+			fanstatic.design.tag(model.$tag || 'article', model.$attr)
+		));
+
+		const baseElement = roof.children[0];
+
+		baseElement.dataset.ptFrame = model.$frame;
+
+		if (model.$id) baseElement.id = model.$id;
+		if (model.$scope) baseElement.dataset.ptScope = model.$scope;
+
+		const partController = new fanstatic.PartController(baseElement, model.$scope, model.$frame);
+
+		partController.contentController = await fanstatic.applyContent(baseElement, model.content, model.$innerScope);
+
+		this.controller = partController;
+	}
+</script>

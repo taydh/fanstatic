@@ -1,7 +1,12 @@
 <script>
 	return async function (roof, data = {}, url) {
-		data.frame = data.frame || fanstatic.resolveFrame(url);
-		this.controller = await fanstatic.insertPart(roof, 'cluster.stack', data);
+		const model = Object.assign({}, data, {
+			$tag: data.$tag || 'div',
+			$itemTag: data.$itemTag || 'div',
+			$frame: data.$frame || fanstatic.resolveFrame(url)
+		});
+
+		this.controller = await fanstatic.insertPart(roof, 'cluster.list', model);
 		this.controller.root.style.display = 'flex';
 	};
 </script>
