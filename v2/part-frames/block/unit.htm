@@ -8,7 +8,7 @@
 
 		roof.innerHTML = fanstatic.renderJhtm([
 			design.unit(Object.assign(model.$attr || {}, {
-				$tag: model.$tag,
+				$tag: model.href ? 'a' : model.$tag,
 				$capTag: model.$capTag,
 				$headTag: model.$headTag,
 				$bodyTag: model.$bodyTag,
@@ -60,8 +60,12 @@
 		root.removeAttribute('data-ds');
 
 		const resolves = await Promise.all([capProm, headProm, bodyProm, footProm]);
-
 		const controller = new fanstatic.PartController(root);
+
+		if (model.href) {
+			controller.root.href = model.href;
+			controller.root.dataset.ptLink = "wrap";
+		}
 
 		// D.
 		

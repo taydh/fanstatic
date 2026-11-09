@@ -2,10 +2,8 @@
 	const design = fanstatic.design;
 
 	return async function(roof, data = {}, url) {
-		const model = Object.assign({}, data);
-
-		model.id = model.$id || model.id || null;
-		model.frame = model.frame || fanstatic.resolveFrame(url);
+			$frame: data.$frame || fanstatic.resolveFrame(url)
+		});
 
 		model.featureImageSrc = model.featureImageSrc || '';
 		model.category = data.category || '';
@@ -63,10 +61,6 @@
 			blockController.select(prop).textContent = model[prop];
 		});
 
-		const root = blockController.root;
-
-		this.controller = Object.assign(blockController, {
-			
-		});
+		this.controller = blockController;
 	}
 </script>

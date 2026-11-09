@@ -2,17 +2,14 @@
 	const design = fanstatic.design;
 
 	return async function (roof, data, url) {
-		const model = Object.assign({}, data);
-
-		model.id = data.$id || data.id || null;
-		model.frame = data.frame || fanstatic.resolveFrame(url);
-		model.scope = data.scope;
-		model.innerScope = data.innerScope || model.scope || model.partId || model.frame;
+		const model = Object.assign({}, data, {
+			$frame: data.$frame || fanstatic.resolveFrame(url)
+		});
 
 		fanstatic.insertHtml(roof, fanstatic.renderJhtm(
 			design.tag('section', {data: {'pt-frame': model.frame}},
 				design.wrap({data: {pt: 'wrap'}}, [
-					design.div({data: {pt: 'identity'}}),
+					design.div({data: {pt: 'brand'}}),
 					design.div({data: {pt: 'navigation'}}),
 					design.div({data: {pt: 'actions'}}),
 				]))
@@ -20,11 +17,13 @@
 
 		const root = roof.children[0];
 
-		if (model.id) root.id = model.id;
-		if (model.scope) root.dataset.ptScope = model.scope;
+		root.dataset.ptFrame = model.$frame;
+
+		if (model.$id) root.id = model.$id;
+		if (model.$scope) root.dataset.ptScope = model.$scope;
 
 		const controller = new fanstatic.PartController(roof, model.scope, model.frame);
-		controller.identity = controller.select('identity');
+		controller.brand = controller.select('brand');
 		controller.navigation = controller.select('navigation');
 		controller.actions = controller.select('actions');
 
@@ -32,10 +31,10 @@
 
 		// populate with content
 
-		let identityProm, navigationProm, actionsProm;
+		let brandProm, navigationProm, actionsProm;
 
-		if (model.identity)
-			identityProm = fanstatic.applyContent(controller.identity, model.identity, model.innerScope);
+		if (model.brand)
+			brandProm = fanstatic.applyContent(controller.brand, model.brand, model.innerScope);
 		
 		if (model.navigation)
 			navigationProm = fanstatic.applyContent(controller.navigation, model.navigation, model.innerScope);
@@ -43,9 +42,9 @@
 		if (model.actions)
 			actionsProm = fanstatic.applyContent(controller.actions, model.actions, model.innerScope);
 
-		const allResolve = await Promise.all([identityProm, navigationProm, actionsProm]);
+		const allResolve = await Promise.all([brandProm, navigationProm, actionsProm]);
 
-		controller.identityController = allResolve[0];
+		controller.brandController = allResolve[0];
 		controller.navigationsController = allResolve[1];
 		controller.actionsController = allResolve[2];
 
