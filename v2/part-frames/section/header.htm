@@ -8,7 +8,7 @@
 
 		fanstatic.insertHtml(roof, fanstatic.renderJhtm(
 			design.tag('section', {data: {'pt-frame': model.frame}},
-				design.wrap({data: {pt: 'wrap'}}, [
+				design.wrap([
 					design.div({data: {pt: 'brand'}}),
 					design.div({data: {pt: 'navigation'}}),
 					design.div({data: {pt: 'actions'}}),
@@ -27,7 +27,7 @@
 		controller.navigation = controller.select('navigation');
 		controller.actions = controller.select('actions');
 
-		controller.select('wrap').removeAttribute('data-ds');
+		// controller.select('wrap').removeAttribute('data-ds');
 
 		// populate with content
 

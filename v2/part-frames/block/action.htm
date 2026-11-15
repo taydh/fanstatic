@@ -10,13 +10,17 @@
 		if (data.actions && !Array.isArray(data.actions)) model.actions = [data.actions];
 		
 		model.head = model.subjects ? model.subjects.map(() => design.div({data: {pt: 'subject'}})) : false;
-		model.body = design.div({data: {pt: 'message'}});
+		model.body = model.messages ? model.messages.map(() => design.div({data: {pt: 'message'}})) : false;
 		model.foot = model.actions ? model.actions.map(() => design.div({data: {pt: 'action'}})) : false;
 
 		const unitController = await fanstatic.insertPart(roof, 'block.unit', model);
 		
+		delete unitController.headController;
+		delete unitController.bodyController;
+		delete unitController.footController;
+
 		unitController.subjectControllers = [];
-		unitController.messageController = null;
+		unitController.messageControllers = [];
 		unitController.actionControllers = [];
 
 		if (model.subjects) {
@@ -27,7 +31,13 @@
 			}
 		}
 
-		unitController.messageController = await fanstatic.applyContent(unitController.select('message'), model.message, model.innerScope);
+		if (model.messages) {
+			const divs = Array.from(unitController.body.children);
+
+			for (let i=0; i<data.messages.length; i++) {
+				unitController.messageControllers.push(await fanstatic.applyContent(divs[i], model.messages[i], model.innerScope));
+			}
+		}
 
 		if (model.actions) {
 			const divs = Array.from(unitController.foot.children);

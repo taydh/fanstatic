@@ -3,7 +3,7 @@
 
 	return async function (roof, data = {}, url) {
 		const model = Object.assign({}, data, {
-			$frame: data.$frame || fanstatic.resolveFrame(url)
+			$frame: data.$frame || fanstatic.resolveFrame(url),
 		});
 
 		roof.innerHTML = fanstatic.renderJhtm([

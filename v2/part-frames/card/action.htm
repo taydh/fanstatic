@@ -11,14 +11,15 @@
 			$frame: model.$frame,
 			$scope: model.$scope,
 			$attr: model.$attr,
-
-			content: new fanstatic.Part('block.action', Object.assign(model, {
-				$id: null,
-				$frame: null,
-				$scope: null,
-			})),
 		});
 
-		this.controller = baseController;
+		const blockController = await fanstatic.appendPart(baseController.root, 'block.action', Object.assign(model, {
+			$id: null,
+			$frame: null,
+			$tag: null,
+		}));
+
+		blockController.changeRoot(baseController.root);
+		this.controller = blockController;
 	}
 </script>

@@ -4,10 +4,9 @@
 	return async function(roof, data = {}, url) {
 		// A.
 
-		const model = Object.assign({}, data);
-
-		model.id = model.$id || model.id || null;
-		model.frame = model.frame || fanstatic.resolveFrame(url);
+		const model = Object.assign({}, data, {
+			$frame: data.$frame || fanstatic.resolveFrame(url)
+		});
 
 		model.photoImageSrc = model.photoImageSrc || '';
 		model.name = model.name || '';
@@ -23,15 +22,25 @@
 		
 		// B.
 
-		const blockController = await fanstatic.appendPart(roof, 'block.unit', 
+		const baseController = await fanstatic.appendPart(roof, 'base.card', {
+			$id: model.$id,
+			$frame: model.$frame,
+			$scope: model.$scope,
+			$tag: model.$tag || null,
+		})
+
+		const blockController = await fanstatic.appendPart(baseController.root, 'block.unit', 
 			Object.assign(model, {
+				$id: null,
+				$frame: null,
+				$tag: null,
+
 				cap: design.tag('img', {data: {pt: 'photoImage'}}),
 				head: [
 					design.tag(data.$nameTag || 'h3', {data: {pt: 'name'}}),
 					design.tag(data.$titleTag || 'div', {data: {pt: 'title'}}),
 					design.tag(data.$companyTag || 'div', {data: {pt: 'company'}}),
 				],
-				body: design.tag(model.$shortTag || 'div', {data: {pt: 'short'}}),
 				foot: design.axis([
 					design.div({data: {'pt': 'facebook'}}),
 					design.div({data: {'pt': 'instagram'}}),
@@ -39,28 +48,28 @@
 					design.div({data: {'pt': 'tiktok'}}),
 					design.div({data: {'pt': 'linkedIn'}}),
 				]),
-
-				$tag: data.$tag || 'article',
 			})
 		);
 
 		// C.
 
-		['photoImage', 'name', 'title', 'company', 'short'].forEach(prop => {
-			blockController[prop] = blockController.select(prop);
+		// ['photoImage', 'name', 'title', 'company', 'short'].forEach(prop => {
+		// 	blockController[prop] = blockController.select(prop);
+		// });
+
+		blockController.select('photoImage').src = model.photoImageSrc;
+
+		['name', 'title', 'company'].forEach(prop => {
+			const elem = blockController.select(prop);
+
+			if (elem) {
+				elem.textContent = model[prop];
+			}
 		});
-
-		blockController.photoImage.src = model.photoImageSrc;
-
-		['name', 'title'].forEach(prop => {
-			blockController[prop].textContent = model[prop];
-		});
-
-		blockController.shortController = 
-			await fanstatic.applyContent(blockController.short, model.short, model.innerScope);
-
 
 		// D.
+
+		blockController.changeRoot(baseController.root);
 
 		this.controller = blockController;
 	}

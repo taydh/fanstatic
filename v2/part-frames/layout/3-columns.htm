@@ -1,10 +1,14 @@
 <div>
 	<header></header>
-	<div data-pn="columns">
-		<div data-pn="startColumn"></div>
+	
+	<div data-pt="columns">
+		<div data-pt="startColumn"></div>
+		
 		<span data-ds-placeholder="main"></span>
-		<div data-pn="endColumn"></div>
+
+		<div data-pt="endColumn"></div>
 	</div>
+
 	<footer></footer>
 </div>
 
@@ -12,66 +16,69 @@
 	const design = fanstatic.design;
 
 	return async function(roof, data = {}, url) {
-		const panelElementId = data.$id || data.id || null;
-		const panelScope = data.panelScope || fanstatic.resolvePanelScope(url)
-		const outerScope = data.scope;
-		const innerScope = data.innerScope || outerScope || panelElementId || panelScope;
-		
+		const model = Object.assign({}, data, {
+			$frame: data.$frame || fanstatic.resolveFrame(url)
+		});
+
 		const panelElement = roof.children[0];
+		
+		panelElement.dataset.ptFrame = model.$frame;
+
+		if (model.$id) panelElement.id = model.$id;
+		if (model.$scope) panelElement.dataset.ptScope = model.$scope;
+		
 		const headerElement = panelElement.children[0];
 		const columnsElement = panelElement.children[1];
-		const footerElement = panelElement.children[2];
+		const footerElement = panelElement.children[2];		
 
-		if (panelElementId) panelElement.id = panelElementId;
-		if (outerScope) panelElement.dataset.pnScope = outerScope;
-		panelElement.dataset.pnPanel = panelScope;
+		const middleColumnElement = document.createElement(data.$mainColumnTag || 'main');
+		middleColumnElement.dataset.pt = 'middleColumn';
 
-		const mainColumnElement = document.createElement(data.$mainTag || 'main');
-		mainColumnElement.dataset.pn = 'mainColumn';
-		columnsElement.children[1].replaceWith(mainColumnElement),
+		columnsElement.children[1].replaceWith(middleColumnElement);
 
-		this.controller = {
-			panelElement: panelElement,
-			headerElement: headerElement,
-			startColumnElement: columnsElement.children[0],
-			mainColumnElement: columnsElement.children[1],
-			endColumnElement: columnsElement.children[2],
-			footerElement: footerElement,
-		}
+		const controller = new fanstatic.PartController(panelElement);
+
+		Object.assign(controller, {
+			header: headerElement,
+			startColumn: columnsElement.children[0],
+			mainColumn: columnsElement.children[1],
+			endColumn: columnsElement.children[2],
+			footer: footerElement,
+		});
 
 		let headerProm, startProm, mainProm, endProm, footerProm;
 
-		if (data.header) {
-			headerProm = fanstatic.applyContent(headerElement, data.header, innerScope);
+		if (model.header) {
+			headerProm = fanstatic.applyContent(controller.header, model.header, model.$innerScope);
 		}
 
-		if (data.startColumn) {
-			startProm = fanstatic.applyContent(this.controller.startColumnElement, data.startColumn, innerScope);
+		if (model.startColumn) {
+			startProm = fanstatic.applyContent(controller.startColumn, model.startColumn, model.$innerScope);
 		}
 
-		if (data.mainColumn) {
+		if (model.mainColumn) {
 			//if (fanstatic.isTemplate(data.mainColumn)) data.mainColumn.assignData({ scope: outerScope });
-			mainProm = fanstatic.applyContent(this.controller.mainColumnElement, data.mainColumn, innerScope);
+			mainProm = fanstatic.applyContent(controller.mainColumn, model.mainColumn, model.$innerScope);
 		}
 
-		if (data.endColumn) {
+		if (model.endColumn) {
 			//if (fanstatic.isTemplate(data.endColumn)) data.endColumn.assignData({ scope: outerScope });
-			endProm = fanstatic.applyContent(this.controller.endColumnElement, data.endColumn, innerScope);
+			endProm = fanstatic.applyContent(controller.endColumn, data.endColumn, model.$innerScope);
 		}
 
-		if (data.footer) {
+		if (model.footer) {
 			//if (fanstatic.isTemplate(data.footer)) data.footer.assignData({ scope: outerScope });
-			footerProm = fanstatic.applyContent(footerElement, data.footer, innerScope);
+			footerProm = fanstatic.applyContent(controller.footer, data.footer, model.$innerScope);
 		}
 
 		const resolves = await Promise.all([headerProm, startProm, mainProm, endProm, footerProm]);
 
-		this.controller.headerController = resolves[0];
-		this.controller.startColumnController = resolves[1];
-		this.controller.mainColumnController = resolves[2];
-		this.controller.endColumnController = resolves[3];
-		this.controller.footerColumnController = resolves[4];
-		this.controller.scope = outerScope;
-		this.controller.panelScope = panelScope;
+		controller.headerController = resolves[0];
+		controller.startColumnController = resolves[1];
+		controller.mainColumnController = resolves[2];
+		controller.endColumnController = resolves[3];
+		controller.footerController = resolves[4];
+		
+		this.controller = controller
 	}
 </script>

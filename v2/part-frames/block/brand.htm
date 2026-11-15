@@ -15,6 +15,11 @@
 
 		unitController.label = unitController.select('label');
 
+		delete unitController.capController;
+		delete unitController.headController;
+		delete unitController.bodyController;
+		delete unitController.footController;
+
 		let imgProm, labelProm;
 
 		if (model.logoImageSrc) {
@@ -30,7 +35,7 @@
 		if (model.logoImageSrc) {
 			unitController.cap.children[0].dataset.pt = 'logoImage';
 		}
-		
+
 		unitController.logoImageController = resolves[0];
 		unitController.labelController = resolves[1];
 

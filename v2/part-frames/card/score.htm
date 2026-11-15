@@ -19,7 +19,7 @@
 		
 		const blockController = await fanstatic.insertPart(roof, 'block.unit',
 			Object.assign(model, {
-				cap: design.img({data: {pt: 'iconImage'}}),
+				cap: design.tag('image', {data: {pt: 'iconImage'}}),
 				head: [
 					design.tag(model.$subjectTag || 'div', {data: {pt: 'subject'}}), 
 					design.tag(model.$scoreTag || 'div', {data: {pt: 'score'}}),

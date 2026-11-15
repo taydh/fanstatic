@@ -2,38 +2,41 @@
 	const design = fanstatic.design;
 
 	return async function(roof, data = {}, url) {
-		const model = Object.assign({}, data);
+		// A.
 
-		model.id = model.$id || model.id || null;
-		model.frame = model.frame || fanstatic.resolveFrame(url);
+		const model = Object.assign({}, data, {
+			$frame: data.$frame || fanstatic.resolveFrame(url)
+		});
 
 		model.backgroundImageSrc = model.backgroundImageSrc || '';
 		model.disabled = model.disabled || false;
 
-		roof.innerHTML = fanstatic.renderJhtm([
-			design.tag('article', Object.assign(model.$attr || {}, {
-				$tag: model.$tag,
-			}), [
-				design.div({ 'data-pt': 'cover' }),
-				design.div({ 'data-pt': 'reveal' }),
-			])
-		]);
+		// B.
 
-		const root = roof.children[0];
+		const baseController = await fanstatic.appendPart(roof, 'base.card', {
+			$id: model.$id,
+			$frame: model.$frame,
+			$scope: model.$scope,
+			$tag: model.$tag || null,
+		})
 
-		root.removeAttribute('data-ds');
-		Array.from(root.children).forEach(elem => elem.removeAttribute('data-ds'));
-		root.dataset.ptFrame = model.frame;
+		fanstatic.appendHtml(baseController.root, fanstatic.renderJhtm([
+			design.div({ 'data-pt': 'cover' }),
+			design.div({ 'data-pt': 'reveal' }),
+		]));
 
-		if (model.id) root.id = model.id;
-		if (model.scope) root.dataset.ptScope = model.scope;
+		baseController.root.querySelectorAll('[data-ds]').forEach(elem => elem.removeAttribute('data-ds'));
+
+		// C.
 		
-		const coverController = await fanstatic.applyContent(root.children[0], model.cover, model.innerScope);
-		const revealController = await fanstatic.applyContent(root.children[1], model.reveal, model.innerScope);
+		const partController = new fanstatic.PartController(baseController.root);
 
-		this.controller = Object.assign(new fanstatic.PartController(root, model.scope, model.frame), {
-			coverController: coverController,
-			revealController: revealController,
-		});
+		partController.cover = partController.select('cover');
+		partController.reveal = partController.select('reveal');
+
+		partController.coverController = await fanstatic.applyContent(partController.cover, model.cover, model.$innerScope);
+		partController.revealController = await fanstatic.applyContent(partController.reveal, model.reveal, model.$innerScope);
+
+		this.controller = partController;
 	}
 </script>

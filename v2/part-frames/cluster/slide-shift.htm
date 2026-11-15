@@ -1,4 +1,4 @@
-<div data-pn-panel="cluster.slide-shift">
+<div data-pt-frame="cluster.slide-shift">
     <div class="fanstatic---units" style="display:none"></div>
     <div class="fanstatic---blocks"></div>
     <div class="fanstatic---slides"></div>
@@ -65,19 +65,20 @@
 
     return {
         onload: async function(roof, data, url) {
-            const panelScope = data.panelScope || fanstatic.resolvePanelScope(url);
-            const outerScope = data.scope;
-            const innerScope = data.innerScope || outerScope || data.id || panelScope;
+            const model = Object.assign({}, data, {
+                $frame: data.$frame || fanstatic.resolveFrame(url)
+            });
+
             const itemControllers = [];
 
-            _props = Object.assign(_props, data.props || {});
+            _props = Object.assign(_props, model.props || {});
             _container = roof.firstChild;
 
             const unitsElem = _container.querySelector('.fanstatic---units');
 
-            if (data.items) {
-                for (let i=0; i<data.items.length; i++) {
-                    itemControllers.push(await fanstatic.applyContent(unitsElem, data.items[i], innerScope, 'append'));
+            if (model.items) {
+                for (let i=0; i<model.items.length; i++) {
+                    itemControllers.push(await fanstatic.applyContent(unitsElem, model.items[i], model.$innerScope, 'append'));
                 }
 
                 _units = Array.from(unitsElem.childNodes);

@@ -2,6 +2,8 @@
 	const design = fanstatic.design;
 
 	return async function(roof, data = {}, url) {
+		// A.
+
 		const model = Object.assign({}, data, {
 			$frame: data.$frame || fanstatic.resolveFrame(url)
 		});
@@ -9,7 +11,7 @@
 		model.featureImageSrc = model.featureImageSrc || '';
 		model.category = data.category || '';
 		model.title = data.title || '';
-		model.$titleLink = data.$titleLink === false ? false : true;
+		model.$titleLink = data.$titleLink || false;
 		model.brief = data.brief || '';
 		model.date = data.date || '';
 		model.url = data.url || '#';
@@ -18,8 +20,21 @@
 		model.authorPhoto = data.authorPhoto || '';
 		model.disabled = data.disabled || false;
 
-		const blockController = await fanstatic.appendPart(roof, 'block.unit', 
+		// B.
+
+		const baseController = await fanstatic.appendPart(roof, 'base.card', {
+			$id: model.$id,
+			$frame: model.$frame,
+			$scope: model.$scope,
+			$tag: model.$tag || null,
+		});
+
+		const blockController = await fanstatic.appendPart(baseController.root, 'block.unit', 
 			Object.assign(model, {
+				$id: null,
+				$frame: null,
+				$tag: null,
+			
 				cap: (model.featureImageSrc ? {img: true} : false),
 				head: [
 					design.tag(model.$categoryTag || 'div', { data:{'pt':'category'} }),
@@ -27,16 +42,15 @@
 					design.tag(model.$dateTag || 'div', { data:{'pt':'date'} }),
 					design.tag(model.$authorTag || 'div', { data:{'pt':'author'} }), 
 				],
-				body: [
-					design.tag(model.$briefTag || 'div', {data: {pt: 'brief'}}),
-				],
 				foot: [
-					design.div([design.tag('a', {data: {'pt': 'button-more'}}, 'Read more')]),
+					design.wrap([
+						design.tag('a', {data: {pt: 'postLink'}}, 'Read more')
+					]),
 				],
-
-				$tag: data.$tag || 'article',
 			})
 		);
+
+		// C.
 
 		let elem;
 
@@ -49,18 +63,17 @@
 		elem.textContent = model.title;
 
 		if (model.$titleLink) {
-			elem.href = model.url;
+			elem.href = model.postUrl;
 		}
 
-		elem = blockController.select('button-more');
-		elem.href = model.url;
-
-		elem = blockController.select('brief');
-		elem.textContent = model.brief;
+		elem = blockController.select('postLink');
+		elem.href = model.postUrl;
 
 		['category', 'date', 'author'].forEach(prop => {
 			blockController.select(prop).textContent = model[prop];
 		});
+
+		blockController.changeRoot(baseController.root);
 
 		this.controller = blockController;
 	}

@@ -19,7 +19,9 @@
 
 		const unitController = await fanstatic.appendPart(roof, 'block.unit', model);
 
-		if (unitController.head) { 
+		delete unitController.headController;
+
+		if (model.head) { 
 			fanstatic.insertHtml(unitController.head, fanstatic.renderJhtm([
 				design.tag((model.$topicTag || 'div'), {'data-pt':'topic'}),
 				design.tag((model.$titleTag || 'div'), {'data-pt':'title'}),

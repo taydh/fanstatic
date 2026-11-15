@@ -16,10 +16,10 @@
 		if (panelElementId) root.id = panelElementId;
 		if (outerScope) root.dataset.ptScope = outerScope;
 
-		const blockController = await fanstatic.insertPart(root, 'block.actionable', 
+		const blockController = await fanstatic.insertPart(root, 'block.action', 
 			Object.assign(data, {
-				id: null,
-				frame: null,
+				$id: null,
+				$frame: null,
 				$attr: null
 			})
 		);

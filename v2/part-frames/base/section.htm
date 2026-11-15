@@ -5,8 +5,11 @@
 		});
 
 		fanstatic.insertHtml(roof, fanstatic.renderJhtm(
-			fanstatic.design.tag(model.$tag || 'section', model.$attr)
-		));
+			fanstatic.design.tag(model.$tag || 'section', model.$attr,
+				model.content 
+					? fanstatic.design.tag(model.$contentTag || 'div', {data: {pt: 'content'}})
+					: true
+		)));
 
 		const baseElement = roof.children[0];
 
@@ -17,7 +20,15 @@
 
 		const partController = new fanstatic.PartController(baseElement, model.$scope, model.$frame);
 
-		partController.contentController = await fanstatic.applyContent(baseElement, model.content, model.$innerScope);
+		if (model.content) {
+			partController.content = baseElement.children[0];
+
+			partController.contentController = await fanstatic.applyContent(partController.content, model.content, model.$innerScope);
+
+			if (partController.contentController) {
+				partController.content.dataset.pt = 'content';
+			}
+		}
 
 		this.controller = partController;
 	}
