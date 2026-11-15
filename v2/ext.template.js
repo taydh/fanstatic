@@ -574,9 +574,9 @@
 
 				return this.options;
 			};
-			this.scope = function(scope) {
+			this.setScope = function(scope) {
 				const data = this.getData();
-				data.scope = data.scope || scope;
+				data.$scope = data.$scope || scope;
 			};
 			this.assignData = function(assignment) {
 				if (fanstatic.TEMPLATE_OPTMODE.data == this.optMode) {
@@ -608,7 +608,7 @@
 			
 			this.select = function(name) { return root ? root.querySelector(`[data-pt="${name}"]`) : null; };
 			this.selectAll = function(name) { return root ? root.querySelectorAll(`[data-pt="${name}"]`) : []; };
-			this.changeRoot = function(root2) { return root = root2 };
+			this.changeRoot = function(newRoot) { return root = newRoot };
 		},
 
 		isTemplate: function(obj) {
@@ -639,7 +639,9 @@
 		/* Don't implemented array here, use one of the cluster frame and base.jhtm frame to mix */
 		applyContent: function(target, content, scope = null, insertFn = 'append') {	
 			if (fanstatic.isTemplate(content)){
-				if (scope && fanstatic.instanceOfPart(content)) content.scope(scope);
+				if (scope && fanstatic.instanceOfPart(content)) {
+					content.setScope(scope);
+				}
 
 				return fanstatic.applyTemplate(target, content, insertFn);
 			} else {

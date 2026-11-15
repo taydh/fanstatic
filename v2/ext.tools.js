@@ -13,6 +13,13 @@
 			return elementOrFragment.firstChild ? elementOrFragment.querySelector('*:not(:has(*))') : elementOrFragment;
 		},
 
+		detachElement: function(roof, elemOrSelector, prop = null) {
+			elem = typeof(elemOrSelector) == 'string' ? roof.querySelector(elemOrSelector) : elemOrSelector;
+			elem.remove();
+
+			return prop ? elem[prop] : elem;
+		},
+
 		parseHTML: function (html, extractFirstElement = false) {
 			if (typeof html == 'string') {
 				var t = document.createElement('template');
