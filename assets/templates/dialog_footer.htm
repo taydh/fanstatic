@@ -1,14 +1,36 @@
-<div class="d-flex justify-content-between w-100">
+<div class="d-flex justify-content-between w-100 gap-1">
 	<div>
-		<select class="form-select">
-			<option value="">Change content model</option>
-			{{#models}}
+		Content model<br>
+		<select class="form-select" name="contentModel">
+			<!-- <option value="">Change content model</option> -->
+			{{#group.models}}
 			<option value="{{.}}">{{.}}</option>
-			{{/models}}
+			{{/group.models}}
+		</select>
+	</div>
+
+	<div>
+		Variant<br>
+		<select class="form-select" name="variant">
+			<!-- <option value="">Change variant</option> -->
+			{{#design.variants}}
+			<option value="{{name}}" data-themes="{{themes}}">{{name}}</option>
+			{{/design.variants}}
+		</select>
+	</div>
+
+	<div data-prop="theme">
+		Theme<br>
+		<select class="form-select" name="theme">
+			<!-- <option value="">Change theme</option> -->
+			{{#design.themes}}
+			<option value="{{.}}">{{.}}</option>
+			{{/design.themes}}
 		</select>
 	</div>
 	
-	<div class="text-end">
-		<small><a title="download design" href="{{zipUrl}}">{{zipUrl}}</a></small>
+	<div class="flex-fill text-end">
+		CSS Framework: <span data-prop="framework"></span><br>
+		<small><a title="download design" class="button" role="button" href="{{design.designBaseUrl}}{{design.zipUrl}}">Download ZIP</a></small>
 	</div>
 </div>

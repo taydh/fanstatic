@@ -48,10 +48,10 @@
 				const loadExtensions = async function(asyncCounter) {
 					fanstatic.assign({
 						base_url: hostEnv.fanstatic_base_url,
-						theme: 'earth',
-						theme_framework: 'bulma',
-						theme_mode: 'less',
-						library_less_url: 'https://cdn.jsdelivr.net/npm/less',
+						// theme: 'earth',
+						// theme_framework: 'bulma',
+						// theme_mode: 'less',
+						// library_less_url: 'https://cdn.jsdelivr.net/npm/less',
 						trail_span: hostEnv.trail_span,
 						log_render: false,
 					});
@@ -69,60 +69,83 @@
                     await resolveHostEnv();
 					await loadExtensions();
 
+					const header = document.body.querySelector('header');
+					const aside = document.body.querySelector('aside');
+					const main = document.body.querySelector('main');
+					const frame = fanstatic.escapeHtml(searchParams.get('frame'));
+
+					header.querySelector('.title').innerHTML = frame;
+
+					if (frame) {
+						const url = new URL(document.baseURI + 'part-info.html');
+						url.searchParams.set('frame', frame);
+						main.querySelector('iframe').src = url.toString();
+
+						const link = aside.querySelector(`a[href*="frame=${frame}"]`);
+						link.classList.add('is-active');
+					}
+
+
+				}
+
+				const mainOld1 = async function(){
+                    await resolveHostEnv();
+					await loadExtensions();
+
 					const promises = [];
 
-					if (fanstatic.settings.theme_style) {
-						const prom = fanstatic.applyTheme();
-						if (prom) promises.push(prom);
-					}
+					// if (fanstatic.settings.theme_style) {
+					// 	const prom = fanstatic.applyTheme();
+					// 	if (prom) promises.push(prom);
+					// }
 					
-					if ('less' == fanstatic.settings.theme_mode) {
-						const prom = fanstatic.applyLess();
-						if (prom) promises.push(prom);
-					}
+					// if ('less' == fanstatic.settings.theme_mode) {
+					// 	const prom = fanstatic.applyLess();
+					// 	if (prom) promises.push(prom);
+					// }
 
 					Promise.all(promises).then(() => {
-						less.pageLoadFinished.then(async function() {
+						// less.pageLoadFinished.then(async function() {
 							// This code will execute after Less has finished compiling and applying styles
 							console.log('Less compilation and styling complete!');
 							// You can now safely interact with the DOM or perform other actions that rely on the final CSS being loaded.
 
-							const selFramework = document.body.querySelector('[name=selFramework]')
-							const selStyle = document.body.querySelector('[name=selStyle]')
+							// const selFramework = document.body.querySelector('[name=selFramework]')
+							// const selStyle = document.body.querySelector('[name=selStyle]')
 							const header = document.body.querySelector('header');
 							const main = document.body.querySelector('main');
-							const frame = fanstatic.escapeHtml(searchParams.get('frame'));
+							// const frame = fanstatic.escapeHtml(searchParams.get('frame'));
 
-							selFramework.value = searchParams.get('framework') || 'bulma';
-							selStyle.value = searchParams.get('style') || 'earth';
+							// selFramework.value = searchParams.get('framework') || 'bulma';
+							// selStyle.value = searchParams.get('style') || 'earth';
 
 							header.querySelector('.title').innerHTML = frame;
 
 							if (frame) {
 								const url = new URL(document.baseURI + 'part-info.html');
 								url.searchParams.set('frame', frame);
-								url.searchParams.set('framework', selFramework.value);
-								url.searchParams.set('style', selStyle.value);
+								// url.searchParams.set('framework', selFramework.value);
+								// url.searchParams.set('style', selStyle.value);
 
 								main.querySelector('iframe').src = url.toString();
 							}
 
-							document.body.querySelector('.layout').classList.remove('is-hidden');
+							// document.body.querySelector('.layout').classList.remove('is-hidden');
 
 							// apply event handling
 
-							selFramework.addEventListener('change', function() {
-								const url = new URL(window.location.href);
-								url.searchParams.set('framework', this.value)
-								window.location = url.toString();
-							})
+							// selFramework.addEventListener('change', function() {
+							// 	const url = new URL(window.location.href);
+							// 	url.searchParams.set('framework', this.value)
+							// 	window.location = url.toString();
+							// })
 
-							selStyle.addEventListener('change', function() {
-								const url = new URL(window.location.href);
-								url.searchParams.set('style', this.value)
-								window.location = url.toString();
-							})
-						});
+							// selStyle.addEventListener('change', function() {
+							// 	const url = new URL(window.location.href);
+							// 	url.searchParams.set('style', this.value)
+							// 	window.location = url.toString();
+							// })
+						// });
 					})
 				};
 
@@ -131,127 +154,95 @@
 		</script>
 	</head>
 
-	<body style="height:100vh; margin:0;">
-		<div class="layout is-flex is-flex-direction-column is-hidden m-0" style="height:100%;">
-			<div class="layout-top">
-				<header class="level p-4">
-					<div class="level-left">
-						<div>
-							Frame Info of
-							<div class="title has-text-grey-lighter"></div>
-						</div>
-					</div>
+	<body class="has-background-white-bis" style="height:100vh; margin:0;">
+		<div class="is-flex is-flex-direction-column" style="height:100%;">
 
-					<div class="level-right">
-						<div>
-							Choose Framework
-							<div>
-								<div class="select">
-									<select name="selFramework">
-										<option value="bootstrap5">Bootstrap 5</option>
-										<option value="bulma">Bulma</option>
-										<option value="pico">Pico</option>
-										<option value="pure">Pure</option>
-										<option value="normalize">Normalize</option>
-									</select>
-								</div>
-							</div>
-						</div>
-
-						<div>
-							Choose Style
-							<div>
-								<div class="select">
-									<select name="selStyle">
-										<option value="earth">Earth</option>
-										<option value="mars">Mars</option>
-										<option value="venus">Venus</option>
-									</select>
-								</div>
-							</div>
-						</div>
+			<!-- Top bar -->
+			<header class="has-background-white px-5 py-4" style="border-bottom:1px solid #e8e8e8;">
+			<div class="level">
+				<div class="level-left">
+				<div class="level-item">
+					<div>
+					<p class="is-size-7 has-text-grey is-uppercase has-text-weight-semibold" style="letter-spacing:.08em;">Frame Info of</p>
+					<h1 class="title is-4 has-text-primary mb-0">block.unit</h1>
 					</div>
-				</header>
+				</div>
+				</div>
 			</div>
-			<div class="layout-middle columns m-0" style="flex: 1 1 auto; overflow: auto;">
-				<div class="layout-nav-column column is-one-third p-5" style="overflow: auto;">
-					<h2 class="title">base</h2>
-					<div class="mb-4">
-						<ul>
-							<li><a href="part-index.html?frame=base.text">text</a></li>
-							<li><a href="part-index.html?frame=base.jhtm">jhtm</a></li>
-							<li><a href="part-index.html?frame=base.image">image</a></li>
-							<li><a href="part-index.html?frame=base.card">card</a></li>
-							<li><a href="part-index.html?frame=base.section">section</a></li>
-						</ul>
-					</div>
-					
-					<h2 class="title">block</h2>
-					<div class="mb-4">
-						<ul>
-							<li><a href="part-index.html?frame=block.unit">unit</a></li>
-							<li><a href="part-index.html?frame=block.content">content</a></li>
-							<li><a href="part-index.html?frame=block.action">action</a></li>
-							<li><a href="part-index.html?frame=block.brand">brand</a></li>
-						</ul>
-					</div>
+			</header>
 
-					<h2 class="title">cluster</h2>
-					<div class="mb-4">
-						<ul>
-							<li><a href="part-index.html?frame=cluster.list">list</a></li>
-							<li><a href="part-index.html?frame=cluster.stack">stack</a></li>
-							<li><a href="part-index.html?frame=cluster.grid">grid</a></li>
-							<li><a href="part-index.html?frame=cluster.flex">flex</a></li>
-						</ul>
-					</div>
+			<!-- Middle -->
+			<div class="columns is-gapless m-0 is-flex-grow-1" style="min-height:0;">
 
-					<h2 class="title">card</h2>
-					<div class="mb-4">
-						<ul>
-							<li><a href="part-index.html?frame=card.action">action</a></li>
-							<li><a href="part-index.html?frame=card.highlight">highlight</a></li>
-							<li><a href="part-index.html?frame=card.post">post</a></li>
-							<li><a href="part-index.html?frame=card.profile">profile</a></li>
-							<li><a href="part-index.html?frame=card.quote">quote</a></li>
-							<li><a href="part-index.html?frame=card.score">score</a></li>
-						</ul>
-					</div>
+			<!-- Sidebar -->
+			<aside class="column is-one-quarter has-background-white p-4" style="overflow:auto; border-right:1px solid #e8e8e8;">
+				<nav class="menu p-3">
 
-					<h2 class="title">nav</h2>
-					<div class="mb-4">
-						<ul>
-							<li><a href="part-index.html?frame=nav.breadcrump">breacrump</a></li>
-							<li><a href="part-index.html?frame=nav.menu">menu</a></li>
-							<li><a href="part-index.html?frame=nav.toc">toc</a></li>
-						</ul>
-					</div>
+				<p class="menu-label">base</p>
+				<ul class="menu-list">
+					<li><a href="part-index.html?frame=base.text">text</a></li>
+					<li><a href="part-index.html?frame=base.jhtm">jhtm</a></li>
+					<li><a href="part-index.html?frame=base.image">image</a></li>
+					<li><a href="part-index.html?frame=base.card">card</a></li>
+					<li><a href="part-index.html?frame=base.section">section</a></li>
+				</ul>
 
-					<h2 class="title">section</h2>
-					<div class="mb-4">
-						<ul>
-							<li><a href="part-index.html?frame=section.content">content</a></li>
-							<!-- <li><a href="part-index.html?frame=section.containerized-subcontent">containerized-subcontent</a></li> -->
-							<li><a href="part-index.html?frame=section.hero">hero</a></li>
-							<li><a href="part-index.html?frame=section.stack">stack</a></li>
-							<li><a href="part-index.html?frame=section.grid">grid</a></li>
-							<li><a href="part-index.html?frame=section.header">header</a></li>
-						</ul>
-					</div>
+				<p class="menu-label mt-5">block</p>
+				<ul class="menu-list">
+					<li><a href="part-index.html?frame=block.unit">unit</a></li>
+					<li><a href="part-index.html?frame=block.content">content</a></li>
+					<li><a href="part-index.html?frame=block.action">action</a></li>
+					<li><a href="part-index.html?frame=block.brand">brand</a></li>
+				</ul>
 
-					<h2 class="title">layout</h2>
-					<div class="mb-4">
-						<ul>
-							<li><a href="part-index.html?frame=layout.1-column">1-column</a></li>
-							<li><a href="part-index.html?frame=layout.3-columns">3-columns</a></li>
-						</ul>
-					</div>
+				<p class="menu-label mt-5">cluster</p>
+				<ul class="menu-list">
+					<li><a href="part-index.html?frame=cluster.list">list</a></li>
+					<li><a href="part-index.html?frame=cluster.stack">stack</a></li>
+					<li><a href="part-index.html?frame=cluster.grid">grid</a></li>
+					<li><a href="part-index.html?frame=cluster.flex">flex</a></li>
+				</ul>
+
+				<p class="menu-label mt-5">card</p>
+				<ul class="menu-list">
+					<li><a href="part-index.html?frame=card.action">action</a></li>
+					<li><a href="part-index.html?frame=card.highlight">highlight</a></li>
+					<li><a href="part-index.html?frame=card.post">post</a></li>
+					<li><a href="part-index.html?frame=card.profile">profile</a></li>
+					<li><a href="part-index.html?frame=card.quote">quote</a></li>
+					<li><a href="part-index.html?frame=card.score">score</a></li>
+				</ul>
+
+				<p class="menu-label mt-5">nav</p>
+				<ul class="menu-list">
+					<li><a href="part-index.html?frame=nav.breadcrump">breadcrumb</a></li>
+					<li><a href="part-index.html?frame=nav.menu">menu</a></li>
+					<li><a href="part-index.html?frame=nav.toc">toc</a></li>
+				</ul>
+
+				<p class="menu-label mt-5">section</p>
+				<ul class="menu-list">
+					<li><a href="part-index.html?frame=section.hero">hero</a></li>
+					<li><a href="part-index.html?frame=section.content">content</a></li>
+					<li><a href="part-index.html?frame=section.content-cluster">cluster</a></li>
+				</ul>
+
+				<p class="menu-label mt-5">layout</p>
+				<ul class="menu-list">
+					<li><a href="part-index.html?frame=layout.1-column">1-column</a></li>
+					<li><a href="part-index.html?frame=layout.3-columns">3-columns</a></li>
+				</ul>
+
+				</nav>
+			</aside>
+
+			<!-- Preview -->
+			<main class="column p-5 is-flex is-flex-direction-column" style="overflow:auto;">
+				<div class="box p-0 is-flex-grow-1 is-clipped" style="min-height:600px;">
+				<iframe src="" class="is-block" style="width:100%; height:100%; border:0;"></iframe>
 				</div>
-				<div class="layout-main-column column p-5" style="overflow: auto;">
-					<main style="height:100%">
-						<iframe src=""  style="min-height:600px; height:100%; width:100%; border:4px solid lightgray;"></iframe>
-					</main>
-				</div>
+			</main>
+
 			</div>
 		</div>
 	</body>

@@ -48,10 +48,10 @@
 				const loadExtensions = async function(asyncCounter) {
 					fanstatic.assign({
 						base_url: hostEnv.fanstatic_base_url,
-						theme: 'earth',
-						theme_framework: 'bulma',
-						theme_mode: 'less',
-						library_less_url: 'https://cdn.jsdelivr.net/npm/less',
+						// theme: 'earth',
+						// theme_framework: 'bulma',
+						// theme_mode: 'less',
+						// library_less_url: 'https://cdn.jsdelivr.net/npm/less',
 						trail_span: hostEnv.trail_span,
 						log_render: false,
 					});
@@ -66,6 +66,43 @@
 				}
 				
 				const main = async function(){
+                    await resolveHostEnv();
+					await loadExtensions();
+
+					const main = document.body.querySelector('main');
+					const frameInfo = usp.get('frame');
+					const prefixSafeList = ['base.', 'block.', 'cluster.', 'card.',  'nav.', 'section.', 'layout.'];
+					const selector = prefixSafeList.map(val => `template[data-url*="${val}"]`).join(',');
+					const safeList = Array.from(document.querySelectorAll(selector)).map(elem => elem.dataset.url);
+
+					if (!safeList.includes(frameInfo)) {
+						// not run
+						console.log('Not in safelist or sample not exists');
+					}
+					else {
+						main.dataset.templateUrl = 'part-info';
+						fanstatic.elementStorage.set(main, 'templateOptions', {
+							model: {
+								title: frameInfo,
+								frame: frameInfo,
+								code: html_beautify(fanstatic._getTemplateElement(frameInfo).outerHTML),
+							}
+						})
+					}
+					
+					console.log('loading templates by running command')
+
+					await fanstatic.searchAndRunCommand(document.body);
+
+					console.log('Layout ready');
+
+					fanstatic.applyClassfix(document.body, fanstatic.getClassfix('general'), 'general');
+					window.dispatchEvent(new CustomEvent('document_classfixed'));
+					document.body.querySelector('.layout').classList.remove('is-hidden');
+					
+				}
+
+				const mainOld1 = async function(){
                     await resolveHostEnv();
 					await loadExtensions();
 
@@ -109,7 +146,7 @@
 								})
 							}
 							
-							console.log('load templates by running command')
+							console.log('loading templates by running command')
 
 							await fanstatic.searchAndRunCommand(document.body);
 
@@ -236,7 +273,7 @@
 					It contains <b>block.action</b> frame as the underlying structure wrapped inside a section element..
 				</div>
 
-				<div data-frame="section.stack">
+				<div data-frame="section.content-cluster">
 					<ul>
 						<li>Use this part to have a simple stacked content section.</li>
 						<li>It contains <b>section.block</b> and <b>cluster.stack</b> frames as the underlying structure.</li>
@@ -310,6 +347,35 @@
 				</script>
 			</template>
 
+			<template data-url="base.card">
+				<script>
+					return async function(roof, data) {
+						window.recordedController = await fanstatic.appendPart(roof, 'base.card', {
+							$id: 'my_base_card',
+							$scope: 'base_card',
+							$innerScope: 'inner_scope',
+							content: new fanstatic.Part('block.unit', {
+								body: 'This is a base frame for card'
+							}),
+						})
+					}
+				</script>
+			</template>
+
+			<template data-url="base.section">
+				<script>
+					return async function(roof, data) {
+						window.recordedController = await fanstatic.appendPart(roof, 'base.section', {
+							$id: 'my_base_section',
+							$scope: 'base_section',
+							content: new fanstatic.Part('block.unit', {
+								body: 'This is a base frame for section'
+							}),
+						})
+					}
+				</script>
+			</template>
+
 			<!-- BLOCKS -->
 
 			<template data-url="block.unit">
@@ -317,10 +383,10 @@
 					return async function(roof, data) {
 						window.recordedController = await fanstatic.appendPart(roof, 'block.unit', {
 							scope: 'my_unit_info',
-							cap: new fanstatic.part('base.image', { src: 'https://dummyimage.com/60x60/eee/fff&text=cap' }),
-							head: new fanstatic.part('base.text', 'The Head'),
-							body: new fanstatic.part('base.text', 'The Body'),
-							foot: new fanstatic.part('base.text', 'The Foot'),
+							cap: new fanstatic.Part('base.image', { src: 'https://dummyimage.com/60x60/eee/fff&text=cap' }),
+							head: new fanstatic.Part('base.text', 'The Head'),
+							body: new fanstatic.Part('base.text', 'The Body'),
+							foot: new fanstatic.Part('base.text', 'The Foot'),
 						})
 					}
 				</script>
@@ -332,16 +398,16 @@
 						window.recordedController = await fanstatic.appendPart(roof, 'block.content', {
 							scope: 'my_content',
 
-							cap: new fanstatic.part('base.image', { src: 'https://dummyimage.com/60x60/eee/fff&text=image' }),
+							cap: new fanstatic.Part('base.image', { src: 'https://dummyimage.com/60x60/eee/fff&text=image' }),
 							topic: 'Nature',
 							title: 'TITLE',
 							subtitle: 'Subtitle',
 							tagline: 'A short synopsis',
-							body: new fanstatic.part('base.jhtm', [
+							body: new fanstatic.Part('base.jhtm', [
 								{ p: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.' },
 								{ p: 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.' },
 							]),
-							foot: new fanstatic.part('base.jhtm', [
+							foot: new fanstatic.Part('base.jhtm', [
 								{ p: 'Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur?' },
 							]),
 						})
@@ -354,15 +420,17 @@
 					return async function(roof, data) {
 						window.recordedController = await fanstatic.appendPart(roof, 'block.action', {
 							scope: 'my_action',
-							cap: new fanstatic.part('base.jhtm', fanstatic.design.tag('img', {src: 'https://dummyimage.com/60x60/eee/fff&text=image'})),
+							cap: new fanstatic.Part('base.jhtm', fanstatic.design.tag('img', {src: 'https://dummyimage.com/60x60/eee/fff&text=image'})),
 							subjects: [
-								new fanstatic.part('base.text', 'Subject 1'), 
-								new fanstatic.part('base.text', 'Subject 2')
+								new fanstatic.Part('base.text', 'Subject 1'), 
+								new fanstatic.Part('base.text', 'Subject 2')
 							],
-							message: new fanstatic.part('base.text', 'Message area'),
+							messages: [
+								new fanstatic.Part('base.text', 'Message area')
+							],
 							actions: [
-								new fanstatic.part('base.text', 'Action 1'), 
-								new fanstatic.part('base.text', 'Action 2')
+								new fanstatic.Part('base.text', 'Action 1'), 
+								new fanstatic.Part('base.text', 'Action 2')
 							],
 						})
 					}
@@ -392,13 +460,13 @@
 							id: 'my_list',
 							scope: 'my_list',
 							items: [
-								new fanstatic.part('block.action', {
+								new fanstatic.Part('block.action', {
 									imageSrc: 'https://dummyimage.com/60x60/999/fff&text=image',
 									subjects: ['Subject 1', 'Subject 2'],
 									body: 'Message area',
 									actions: ['Action 1', 'Action 2'],
 								}),
-								new fanstatic.part('block.action', {
+								new fanstatic.Part('block.action', {
 									ImageSrc: 'https://dummyimage.com/60x60/999/fff&text=image',
 									subjects: ['Subject 1', 'Subject 2'],
 									body: 'Message area',
@@ -416,14 +484,14 @@
 						window.recordedController = await fanstatic.appendPart(roof, 'cluster.stack', {
 							scope: 'my_stack',
 							items: [
-								new fanstatic.part('block.action', {
-									cap: new fanstatic.part('base.jhtm', fanstatic.design.tag('img', {src: 'https://dummyimage.com/60x60/999/fff&text=image'})),
+								new fanstatic.Part('block.action', {
+									cap: new fanstatic.Part('base.jhtm', fanstatic.design.tag('img', {src: 'https://dummyimage.com/60x60/999/fff&text=image'})),
 									subjects: ['Subject 1', 'Subject 2'],
 									body: 'Message area',
 									actions: ['Action 1', 'Action 2'],
 								}),
-								new fanstatic.part('block.action', {
-									cap: new fanstatic.part('base.jhtm', fanstatic.design.tag('img', {src: 'https://dummyimage.com/60x60/999/fff&text=image'})),
+								new fanstatic.Part('block.action', {
+									cap: new fanstatic.Part('base.jhtm', fanstatic.design.tag('img', {src: 'https://dummyimage.com/60x60/999/fff&text=image'})),
 									subjects: ['Subject 1', 'Subject 2'],
 									body: 'Message area',
 									actions: ['Action 1', 'Action 2'],
@@ -441,13 +509,13 @@
 							$id: 'my_grid',
 							scope: 'my_grid',
 							items: [
-								new fanstatic.part('block.action', {
-									cap: new fanstatic.part('base.jhtm', fanstatic.design.tag('img', {src: 'https://dummyimage.com/60x60/eee/fff&text=image'})),
+								new fanstatic.Part('block.action', {
+									cap: new fanstatic.Part('base.jhtm', fanstatic.design.tag('img', {src: 'https://dummyimage.com/60x60/eee/fff&text=image'})),
 									subjects: ['Subject 1', 'Subject 2'],
 									body: 'Message area',
 									actions: ['Action 1', 'Action 2'],
 								}),
-								new fanstatic.part('block.brand', {
+								new fanstatic.Part('block.brand', {
 									logoImageSrc: 'https://dummyimage.com/120x120/eee/fff&text=LOGO',
 									label: 'LOGO'
 								}),
@@ -464,13 +532,13 @@
 							$id: 'my_flex',
 							scope: 'my_flex',
 							items: [
-								new fanstatic.part('block.action', {
-									cap: new fanstatic.part('base.jhtm', fanstatic.design.tag('img', {src: 'https://dummyimage.com/60x60/eee/fff&text=image'})),
+								new fanstatic.Part('block.action', {
+									cap: new fanstatic.Part('base.jhtm', fanstatic.design.tag('img', {src: 'https://dummyimage.com/60x60/eee/fff&text=image'})),
 									subjects: ['Subject 1', 'Subject 2'],
 									body: 'Message area',
 									actions: ['Action 1', 'Action 2'],
 								}),
-								new fanstatic.part('block.brand', {
+								new fanstatic.Part('block.brand', {
 									logoImageSrc: 'https://dummyimage.com/120x120/eee/fff&text=LOGO',
 									label: 'LOGO'
 								}),
@@ -491,13 +559,15 @@
 							
 							imageSrc: 'https://dummyimage.com/60x60/eee/fff&text=image',
 							subjects: [
-								new fanstatic.part('base.text', 'Subject 1'), 
-								new fanstatic.part('base.text', 'Subject 2')
+								new fanstatic.Part('base.text', 'Subject 1'), 
+								new fanstatic.Part('base.text', 'Subject 2')
 							],
-							message: new fanstatic.part('base.text', 'Message area'),
+							messages: [
+								new fanstatic.Part('base.text', 'Message area')
+							],
 							actions: [
-								new fanstatic.part('base.text', 'Action 1'), 
-								new fanstatic.part('base.text', 'Action 2')
+								new fanstatic.Part('base.text', 'Action 1'), 
+								new fanstatic.Part('base.text', 'Action 2')
 							],
 						})
 					}
@@ -508,21 +578,22 @@
 				<script>
 					return async function(roof, data) {
 						window.recordedController = await fanstatic.appendPart(roof, 'card.highlight', {
-							id: 'my_highlight_1',
-							scope: 'my_highlight_1',
+							$id: 'my_highlight',
+							$scope: 'my_highlight_scope',
+							$innerScope: 'inner_scope',
 
-							cover: new fanstatic.part('block.unit', {
-								cap: new fanstatic.part('base.image', { src: 'https://dummyimage.com/60x60/eee/fff&text=cap' }),
-								head: new fanstatic.part('base.text', 'The Head'),
-								body: new fanstatic.part('base.text', 'The Body'),
-								foot: new fanstatic.part('base.text', 'The Foot'),
+							cover: new fanstatic.Part('block.unit', {
+								cap: new fanstatic.Part('base.image', { src: 'https://dummyimage.com/60x60/eee/fff&text=cap' }),
+								head: new fanstatic.Part('base.text', 'The Head'),
+								body: new fanstatic.Part('base.text', 'The Body'),
+								foot: new fanstatic.Part('base.text', 'The Foot'),
 							}),
 
-							reveal: new fanstatic.part('block.unit', {
-								cap: new fanstatic.part('base.image', { src: 'https://dummyimage.com/60x60/eee/fff&text=cap' }),
-								head: new fanstatic.part('base.text', 'The Head'),
-								body: new fanstatic.part('base.text', 'The Body'),
-								foot: new fanstatic.part('base.text', 'The Foot'),
+							reveal: new fanstatic.Part('block.unit', {
+								cap: new fanstatic.Part('base.image', { src: 'https://dummyimage.com/60x60/eee/fff&text=cap' }),
+								head: new fanstatic.Part('base.text', 'The Head'),
+								body: new fanstatic.Part('base.text', 'The Body'),
+								foot: new fanstatic.Part('base.text', 'The Foot'),
 							}),
 						})
 					}
@@ -533,8 +604,8 @@
 				<script>
 					return async function(roof, data) {
 						window.recordedController = await fanstatic.appendPart(roof, 'card.post', {
-							id: '1',
-							scope: 'my_post_1',
+							$id: 'my_post',
+							$scope: 'my_post_scope',
 
 							featureImageSrc: 'https://dummyimage.com/300x200/999/fff&text=image',
 
@@ -543,7 +614,9 @@
 							title: 'Post Title',
 							author: 'Me',
 
-							brief: 'Perfect post',
+							body: 'Perfect post',
+
+							postUrl: 'https://google.com',
 						})
 					}
 				</script>
@@ -553,8 +626,8 @@
 				<script>
 					return async function(roof, data) {
 						window.recordedController = await fanstatic.appendPart(roof, 'card.profile', {
-							id: 'my_profile_1',
-							scope: 'my_profile_1',
+							$id: 'my_profile_1',
+							$scope: 'my_profile_1',
 							
 							photoImageSrc: 'https://dummyimage.com/150x150/eee/fff&text=Photo',
 							
@@ -562,7 +635,7 @@
 							title: 'CEO',
 							company: 'Tony R Us',
 							
-							short: 'Brief description about this person',
+							body: 'Brief description about this person',
 
 							facebook: 'MyFacebook',
 							instagram: '@myinstagram',
@@ -577,15 +650,17 @@
 				<script>
 					return async function(roof, data) {
 						window.recordedController = await fanstatic.appendPart(roof, 'card.quote', {
-							scope: 'my_quote_1',
+							$id: 'my_quote',
+							$scope: 'my_quote_scope',
 
 							photoImageSrc: 'https://dummyimage.com/100x100/999/fff&text=photo',
+
 							name: 'Name',
 							company: 'Company',
 							jobTitle: 'Title',
 							
-							quote: 'Perfect quotes',
-						})
+							body: new fanstatic.Part('base.jhtm', 'Perfect quotes'),
+						});
 					}
 				</script>
 			</template>
@@ -679,7 +754,7 @@
 							id: 'my_section_1',
 							scope: 'my_scope_1',
 
-							cap: new fanstatic.part('base.jhtm', fanstatic.design.tag('img', {src: 'https://dummyimage.com/360x120/999/fff&text=SECTION'})),
+							cap: new fanstatic.Part('base.jhtm', fanstatic.design.tag('img', {src: 'https://dummyimage.com/360x120/999/fff&text=SECTION'})),
 							title: 'Section',
 							body: 'Hello'
 						})
@@ -694,7 +769,7 @@
 							id: 'my_section_1',
 							scope: 'my_scope_1',
 							title: 'Section Title',
-							item: new fanstatic.part('block.action', {
+							item: new fanstatic.Part('block.action', {
 								image: 'https://dummyimage.com/60x60/eee/fff&text=image',
 								subjects: ['Subject 1', 'Subject 2'],
 								message: 'Message area',
@@ -711,7 +786,7 @@
 						window.recordedController = await fanstatic.appendPart(roof, 'section.hero', {
 							id: 'my_section_1',
 							
-							cap: new fanstatic.part('base.jhtm', fanstatic.design.tag('img', {src: 'https://dummyimage.com/360x120/999/fff&text=HERO'})),
+							cap: new fanstatic.Part('base.jhtm', fanstatic.design.tag('img', {src: 'https://dummyimage.com/360x120/999/fff&text=HERO'})),
 							title: 'Section Title',
 							subjects: ['Subject 1', 'Subject 2'],
 							body: 'Message area',
@@ -721,24 +796,24 @@
 				</script>
 			</template>
 
-			<template data-url="section.stack">
+			<template data-url="section.content-cluster">
 				<script>
 					return async function(roof, data) {
-						window.recordedController = await fanstatic.appendPart(roof, 'section.stack', {
+						window.recordedController = await fanstatic.appendPart(roof, 'section.content-cluster', {
 							id: 'my_stack_section_1',
 							scope: 'my_stack_section_1',
 
-							cap: new fanstatic.part('base.jhtm', fanstatic.design.tag('img', {src: 'https://dummyimage.com/360x120/999/fff&text=STACK'})),
+							cap: new fanstatic.Part('base.jhtm', fanstatic.design.tag('img', {src: 'https://dummyimage.com/360x120/999/fff&text=STACK'})),
 							title: 'Section Title',
 							items: [
-								new fanstatic.part('block.action', {
-									cap: new fanstatic.part('base.jhtm', fanstatic.design.tag('img', {src: 'https://dummyimage.com/120x60/999/fff&text=ITEM'})),
+								new fanstatic.Part('block.action', {
+									cap: new fanstatic.Part('base.jhtm', fanstatic.design.tag('img', {src: 'https://dummyimage.com/120x60/999/fff&text=ITEM'})),
 									subjects: ['Subject 1', 'Subject 2'],
 									body: 'Message area',
 									actions: ['Action 1', 'Action 2'],
 								}),
-								new fanstatic.part('block.action', {
-									cap: new fanstatic.part('base.jhtm', fanstatic.design.tag('img', {src: 'https://dummyimage.com/120x60/999/fff&text=ITEM'})),
+								new fanstatic.Part('block.action', {
+									cap: new fanstatic.Part('base.jhtm', fanstatic.design.tag('img', {src: 'https://dummyimage.com/120x60/999/fff&text=ITEM'})),
 									subjects: ['Subject 1', 'Subject 2'],
 									body: 'Message area',
 									actions: ['Action 1', 'Action 2'],
@@ -757,13 +832,13 @@
 							scope: 'my_section_scope',
 							title: 'Section Title',
 							items: [
-								new fanstatic.part('block.action', {
+								new fanstatic.Part('block.action', {
 									image: 'https://dummyimage.com/240x240/eee/fff&text=image',
 									subjects: ['Subject 1', 'Subject 2'],
 									message: 'Message area',
 									actions: ['Action 1', 'Action 2'],
 								}),
-								new fanstatic.part('block.brand', {
+								new fanstatic.Part('block.brand', {
 									logo: 'https://dummyimage.com/120x120/eee/fff&text=LOGO',
 									name: 'LOGO'
 								})
@@ -780,12 +855,12 @@
 							id: 'my_header',
 							scope: 'my_header',
 							innerScope: 'my_header_inner',
-							identity: new fanstatic.part('block.brand', {
+							identity: new fanstatic.Part('block.brand', {
 								id: 'my_identity',
 								logoImageSrc: 'https://dummyimage.com/150x150/eee/fff&text=LOGO',
 								label: 'The Company',
 							}),
-							navigation: new fanstatic.part('nav.menu', {
+							navigation: new fanstatic.Part('nav.menu', {
 								id: 'my_menu',
 								links: [
 									{ label:'Link 1' },
@@ -793,7 +868,7 @@
 									{ url:'#', label:'Link 3' },
 								]
 							}),
-							actions: new fanstatic.part('cluster.flex', {
+							actions: new fanstatic.Part('cluster.flex', {
 								items: [
 									{ button: 'Action 1' },
 									{ button: 'Action 2' },
@@ -811,13 +886,13 @@
 				<script>
 					return async function(roof, data) {
 						window.recordedController = await fanstatic.appendPart(roof, 'layout.1-column', {
-							header: new fanstatic.part('block.unit', {
+							header: new fanstatic.Part('block.unit', {
 								body: 'hello'
 							}),
-							main: new fanstatic.part('block.unit', {
+							main: new fanstatic.Part('block.unit', {
 								body: 'hello'
 							}),
-							footer: new fanstatic.part('block.unit', {
+							footer: new fanstatic.Part('block.unit', {
 								body: 'hello'
 							}),
 						})
@@ -831,22 +906,22 @@
 						window.recordedController = await fanstatic.appendPart(roof, 'layout.3-columns', {
 							id: 'the_layout',
 							scope: '3-column-layout',
-							header: new fanstatic.part('block.unit', {
+							header: new fanstatic.Part('block.unit', {
 								head: 'Header Panel',
-								body: new fanstatic.part('block.unit', {
+								body: new fanstatic.Part('block.unit', {
 									body: 'Secondary Unit',
 								})
 							}),
-							startColumn: new fanstatic.part('block.unit', {
+							startColumn: new fanstatic.Part('block.unit', {
 								body: 'Start Panel'
 							}),
-							mainColumn: new fanstatic.part('block.unit', {
+							mainColumn: new fanstatic.Part('block.unit', {
 								body: 'Main Panel'
 							}),
-							endColumn: new fanstatic.part('block.unit', {
+							endColumn: new fanstatic.Part('block.unit', {
 								body: 'End Panel'
 							}),
-							footer: new fanstatic.part('block.unit', {
+							footer: new fanstatic.Part('block.unit', {
 								foot: 'Footer Panel'
 							}),
 						})

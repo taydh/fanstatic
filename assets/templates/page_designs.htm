@@ -17,7 +17,7 @@
 		</div>
 	</div>
 
-	<div id="designGrid" class="card-grid row justify-content-start"></div>
+	<div id="designGrid" class="card-grid justify-content-start"></div>
 
 	<div id="webframe-modal-area">
 		<button type="button" class="btn btn-primary d-none" data-bs-toggle="modal" data-bs-target="#Webframe_Modal">
@@ -26,7 +26,7 @@
 	</div>
 </div>
 
-<script type="text/plain">
+<script id="design1Template" type="text/plain">
 <div class="col-12 col-lg-6 mb-3">
 	<div class="card flex-row" 
 		data-template-onplace="viewport-enter-animate" 
@@ -34,12 +34,12 @@
 
 		<div 
 			class="card-img-left bg-light border-end"
-			style="border-radius:var(--bs-card-border-radius) 0 0 var(--bs-card-border-radius); flex: 2; background: url('{{designBaseUrl}}(assets)/diy-thumbnails/{{id}}.jpg') top left / cover">
+			style="border-radius:var(--bs-card-border-radius) 0 0 var(--bs-card-border-radius); flex: 2; background: url('{{designBaseUrl}}(assets)/thumbnails/{{group}}.jpg') top left / cover">
 		</div>
 
 		<div class="card-body d-flex flex-column" style="flex: 3; min-height: 300px;">
 			<div class="flex-fill">
-				<h4>{{name}}</strong></h4>
+				<h4>{{label}}</strong></h4>
 				<p>
 					{{#tags}}
 					<a class="btn btn-sm btn-link ps-0" href="?tag={{.}}">{{.}}</a>
@@ -48,7 +48,7 @@
 			</div>
 			<div>
 				<button class="x-live-demo-button btn btn-primary" 
-					data-id="{{id}}" data-gesture="{{gesture}}" data-name="{{name}}" data-url="{{url}}" 
+					data-id="{{id}}" data-gesture="{{gesture}}" data-label="{{label}}" data-url="{{url}}" 
 					data-bs-toggle="modal" data-bs-target="#Webframe_Modal">🎨 Live Demo</button>
 				<a href="{{download}}" class="x-download-button btn btn-primary">{{gesture}} download</a>
 			</div>
@@ -57,44 +57,51 @@
 </div>
 </script>
 
-<script id="design2template" type="text/plain">
+<script id="designTemplate" type="text/plain">
 {{#groups}}
-<div class="col-12 mb-3" id="group_{{group}}">
-	<div class="card flex-row" 
+<div class="mb-3" id="group_{{group}}">
+	<div class="card" 
 		data-template-onplace="viewport-enter-animate" 
 		data-visual-hidden data-visual-animation="slideInUp">
 
-		<div 
-			class="card-img-left bg-light border-end"
-			style="border-radius:var(--bs-card-border-radius) 0 0 var(--bs-card-border-radius); flex: 2; background: url('{{designBaseUrl}}(assets)/diy-thumbnails/{{id}}.jpg') top left / cover">
-		</div>
-
 		<div class="card-body" style="min-height: 300px;">
 			<div class="d-flex justify-content-between align-items-center">
-				<h3>{{name}}</h3>
+				<h3>{{label}}</h3>
 				<div>
-					{{designs.length}} base variant(s) &bull; <a href="#" title="view the data model sample">data model sample</a>
+					{{designs.length}} Layout(s) &bull; <a href="#" title="view the data model sample">data model sample</a>
 				</div>
 			</div>
 
 			<hr class="mb-4">
 
-			{{#designs}}
-			<div class="d-flex mb-3">
-				<div class="flex-fill" style="align-content:center;">
-					<strong>{{name}}</strong><br>
-					{{description}}
+			<div class="row g-3">
+				{{#designs}}
+				<div class="col-6">
+					<div class="card mb-3">
+						<div class="card-header">
+							<h4><strong>{{label}}</strong></h4>
+						</div>
+						<div class="card-body" style="align-content:center;">
+							<div>
+								<figure>
+									<img src="{{previewImageSrc}}" style="width:100%">
+								</figure>
+							</div>
+							<div>
+								{{description}}<br>
+								{{totalVariants}} Variant(s)
+							</div>
+						</div>
+						<div class="card-footer" style="align-content:center;">
+							<button class="x-live-demo-button btn btn-info" title="preview"
+								data-id="{{id}}" data-gesture="{{gesture}}" data-group={{group}} data-category="{{category}}" data-design-name="{{name}}" data-design-label="{{label}}" data-url="{{url}}" data-zip-url="{{zipUrl}}"
+								data-bs-toggle="modal" data-bs-target="#Webframe_Modal"><i class="bi bi-eye"></i></button>
+							<a href="{{download}}" class="x-download-button btn btn-primary" title="download"><i class="bi bi-download"></i></a>
+						</div>
+					</div>
 				</div>
-				<div style="align-content:center;">
-					<button class="x-live-demo-button btn btn-info" title="preview"
-						data-id="{{id}}" data-gesture="{{gesture}}" data-group={{group}} data-category="{{category}}" data-name="{{name}}" data-url="{{url}}" data-zip-url="{{zipUrl}}"
-						data-bs-toggle="modal" data-bs-target="#Webframe_Modal"><i class="bi bi-eye"></i></button>
-					<a href="{{download}}" class="x-download-button btn btn-primary" title="download"><i class="bi bi-download"></i></a>
-				</div>
-			</div>
-			{{/designs}}
-
-			
+				{{/designs}}
+			</div>		
 		</div>
 	</div>
 </div>
@@ -104,10 +111,10 @@
 <script>
 	//# sourceURL=page_templates.js`;
 	return async function (roof, data, url) {
-		var cardGrid = roof.querySelector('.card-grid');
-		var designBaseUrl = data.design_base_url;
-		var designGridTemplate = roof.querySelector('#design2template').innerText;
-		
+		const designBaseUrl = data.design_base_url;
+		const designMap = await fanstatic.fetchYaml(designBaseUrl + '(assets)/design-map.yaml?' + fanstatic.tail());
+		const designGrid = roof.querySelector('#designGrid');
+
 		// setup modal asynchronosly
 		const webframeModalArea = roof.querySelector('#webframe-modal-area')
 		fanstatic.append(webframeModalArea, './assets/templates/modal.htm', {
@@ -127,67 +134,149 @@
 					})
 
 					modalElem.addEventListener('show.bs.modal', async function(ev) {
-						console.log('#group_' + ev.relatedTarget.dataset.group);
-
-						const dataset = ev.relatedTarget.dataset
-						const elementGroup = fanstatic.elementStorage.get(document.querySelector('#group_' + ev.relatedTarget.dataset.group), 'group');
+						const dataset = ev.relatedTarget.dataset;
+						const group = designMap.groups.find(o => o.group == dataset.group);
+						const groupDesign = group.designs.find(d => d.name == dataset.designName)
+						// const group = fanstatic.elementStorage.get(document.querySelector('#group_' + ev.relatedTarget.dataset.group), 'group');
 
 						modalElem.querySelector('iframe').src = designBaseUrl + dataset.url
 						modalElem.querySelector('.modal-category').textContent = dataset.category
-						modalElem.querySelector('.modal-title').textContent = dataset.name
+						modalElem.querySelector('.modal-title').textContent = dataset.designLabel
 						modalElem.querySelector('.modal-footer').style.justifyContent = 'center'
 
-						const c = await fanstatic.insert(modalElem.querySelector('.modal-footer'), './assets/templates/dialog_footer', {
+						const c = await fanstatic.insert(modalElem.querySelector('.modal-footer'), './assets/templates/dialog_footer.htm', {
 							renderer: 'mustache',
 							model: {
-								zipUrl: designBaseUrl + dataset.zipUrl,
-								models: elementGroup.models,
-							}
+								group: group,
+								design: groupDesign,
+							},
 						})
 
-						c._template.target.querySelector('select').addEventListener('change', function(){
-							if (this.value) {
-								modalElem.querySelector('iframe').src = designBaseUrl + dataset.url + '?__model=' + this.value
+						const selModel = c._template.target.querySelector('select[name=contentModel]');
+						const selVariant = c._template.target.querySelector('select[name=variant]');
+						const selTheme = c._template.target.querySelector('select[name=theme]');
+						const divTheme = c._template.target.querySelector('[data-prop=theme]');
+						const spanFramework = c._template.target.querySelector('[data-prop=framework]');
+
+						const onVariantChange = function(variant)
+						{
+							const variantOption = selVariant.querySelector(`option[value="${variant}"]`);
+							const designVariant = groupDesign.variants.find(o => o.name == variant);
+
+							//>>
+							const variantThemes = variantOption.dataset.themes.length > 0
+								? variantOption.dataset.themes.split(',')
+								: []
+
+							if (variantThemes.length > 0) {
+								selTheme.innerHTML = '';
+								fanstatic.insertHtml(selTheme, fanstatic.renderJhtm(
+									variantThemes.map(theme => fanstatic.design.tag('option', {value: theme}, theme))
+								));
+								divTheme.style.display = 'block';
 							}
-						})
+							else {
+								divTheme.style.display = 'none';
+							}
+
+							//>>
+							spanFramework.textContent = designVariant.framework;
+						}
+
+						onVariantChange(selVariant.value);
+
+						selModel.addEventListener('change', function(){
+							const url = new URL(modalElem.querySelector('iframe').src);
+
+							if (this.value) {
+								url.searchParams.set('instant_model', this.value);
+								modalElem.querySelector('iframe').src = url.href;
+							}
+						});
+
+						selVariant.addEventListener('change', function(){
+							const url = new URL(modalElem.querySelector('iframe').src);
+
+							if (this.value) {
+								url.searchParams.set('instant_variant', this.value);
+								modalElem.querySelector('iframe').src = url.href;
+
+								onVariantChange(this.value);
+							}
+						});
+
+						selTheme.addEventListener('change', function(){
+							const url = new URL(modalElem.querySelector('iframe').src);
+
+							if (this.value) {
+								url.searchParams.set('instant_theme', this.value);
+								modalElem.querySelector('iframe').src = url.href;
+							}
+						});						
 					})
 				}
 			}
 		})
 
-		const designMap = await fanstatic.fetchYaml(designBaseUrl + '(assets)/design-map.yaml?' + fanstatic.tail());
+		const designGridTemplate = fanstatic.detachElement(roof, '#designTemplate', 'innerText');
 
-		fanstatic.insertScripts(['https://cdn.jsdelivr.net/npm/papaparse@5.5.2/papaparse.min.js']).then(function(){
+		for (let g of designMap.groups) {
+			g.designs = g.designs || [];
+			
+			for (let d of g.designs) {
+				d.variants = d.variants || [];
+				d.variants.push({
+					name: 'none',
+					framework: '-',
+					themes: [],
+				});
+				d.totalVariants = d.variants.length - 1;
 
-			/* instant-v2 */
+				d.designBaseUrl = designBaseUrl;
+				d.url = g.group + '/index-' + d.name + '.html';
+				d.zipUrl = g.group + '/(downloadable)/' + g.group + '--' + d.name + '.zip';
+				d.category = g.label;
+			}
+		}
 
-			Papa.parse(designBaseUrl + '(assets)/design-list.csv?' + fanstatic.tail(), {
-				download: true,
-				header: true,
-				complete: function(results) {
-					console.log('[templates data]', results.data);
+		designGrid.append(fanstatic.parseHTML(Mustache.render(designGridTemplate, { groups: designMap.groups })));
+		fanstatic.searchOnPlaceAndRun(designGrid);
 
-					for (let r of results.data) {
-						r.designBaseUrl = designBaseUrl;
-						r.url = r.group + '/' + r.index;
-						r.zipUrl = r.group + '/' + r.name + '.zip';
-						r.category = designMap.groups.find(o => o.group == r.group)?.name;
-					}
+		// for (let g of designMap.groups) {
+		// 	fanstatic.elementStorage.set(designGrid.querySelector('#group_' + g.group), 'group', g);
+		// }
 
-					const groups = designMap.groups;
+		// fanstatic.insertScripts(['https://cdn.jsdelivr.net/npm/papaparse@5.5.2/papaparse.min.js']).then(function(){
 
-					for (let g of groups) {
-						g.designs = results.data.filter(item => item.group === g.group);
-					}
+		// 	/* instant-v2 */
 
-					cardGrid.append(fanstatic.parseHTML(Mustache.render(designGridTemplate, { groups: groups })));
-					fanstatic.searchOnPlaceAndRun(cardGrid);
+		// 	Papa.parse(designBaseUrl + '(assets)/design-list.csv?' + fanstatic.tail(), {
+		// 		download: true,
+		// 		header: true,
+		// 		complete: function(results) {
+		// 			console.log('[templates data]', results.data);
 
-					for (let g of groups) {
-						fanstatic.elementStorage.set(cardGrid.querySelector('#group_' + g.group), 'group', g);
-					}
-				}
-			});
+		// 			for (let r of results.data) {
+		// 				r.designBaseUrl = designBaseUrl;
+		// 				r.url = r.group + '/' + r.index;
+		// 				r.zipUrl = r.group + '/(downloadable)/' + r.group + '--' + r.variant + '.zip';
+		// 				r.category = designMap.groups.find(o => o.group == r.group)?.label;
+		// 			}
+
+		// 			const groups = designMap.groups;
+
+		// 			for (let g of groups) {
+		// 				g.designs = results.data.filter(item => item.group === g.group);
+		// 			}
+
+		// 			cardGrid.append(fanstatic.parseHTML(Mustache.render(designGridTemplate, { groups: groups })));
+		// 			fanstatic.searchOnPlaceAndRun(cardGrid);
+
+		// 			for (let g of groups) {
+		// 				fanstatic.elementStorage.set(cardGrid.querySelector('#group_' + g.group), 'group', g);
+		// 			}
+		// 		}
+		// 	});
 
 			/* design2 (v1) */
 
@@ -207,6 +296,6 @@
 			// 		fanstatic.searchOnPlaceAndRun(cardGrid);
 			// 	}
 			// });
-		});
+		// });
 	}
 </script>
