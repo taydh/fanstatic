@@ -145,6 +145,18 @@
 			}
 		},
 
+		insertPreloadedScripts: function(items) {
+			const items_ = [];
+
+			for (let item of items) {
+				if (!document.querySelector('head > link[rel="preload"][href="' + item.url + '"]')) {
+					items_.push(item);
+				}
+			}
+
+			return this.insertScripts(items_, defaultProperties);
+		},
+
 		includeScripts: function(urls, defaultProperties = { defer: 1 }) {
 			const urls_ = [];
 
@@ -167,18 +179,6 @@
 			}
 
 			return this.insertStyles(urls_);
-		},
-
-		insertPreloads: function(items) {
-			const items_ = [];
-
-			for (let item of items) {
-				if (!document.querySelector('head > link[rel="preload"][href="' + item.url + '"]')) {
-					items_.push(item);
-				}
-			}
-
-			return this.insertScripts(items_, defaultProperties);
 		},
 
 		asyncCounter : function(count, onComplete) {

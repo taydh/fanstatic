@@ -162,20 +162,8 @@
 
 						try {
 							/* fetch external template */
-							const text = await this.fetchText(urlRel, opt)
-							tpl = document.createElement('template')
-							tpl.innerHTML = text
-							tpl.setAttribute('data-url', urlRel)
-
-							let fanArea = document.getElementById(this.settings.local_area_id)
-
-							if (!fanArea) {
-								fanArea = document.createElement('div')
-								fanArea.id = this.settings.local_area_id
-								document.body.append(fanArea)
-							}
-
-							fanArea.appendChild(tpl)
+							const text = await this.fetchText(urlRel, opt);
+							this.registerTemplateFromText(urlRel, text);
 							window.dispatchEvent(new CustomEvent('fanstatic.template_loaded:' + urlRel));
 						} catch (error) {
 							hasError = error
@@ -471,6 +459,22 @@
 			)
 
 			return Promise.all(promises)
+		},
+
+		registerTemplateFromText: function(urlRel, text) {
+			tpl = document.createElement('template');
+			tpl.innerHTML = text;
+			tpl.setAttribute('data-url', urlRel);
+
+			let fanArea = document.getElementById(this.settings.local_area_id);
+
+			if (!fanArea) {
+				fanArea = document.createElement('div');
+				fanArea.id = this.settings.local_area_id;
+				document.body.append(fanArea);
+			}
+
+			fanArea.appendChild(tpl);
 		},
 
 		append: function(target, url, opt, optMode = 0){
