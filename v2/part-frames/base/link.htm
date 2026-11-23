@@ -1,0 +1,28 @@
+<script>
+	return function(roof, data, url) {
+		const model = Object.assign({}, data, {
+			$frame: data.$frame || fanstatic.resolveFrame(url)
+		});
+
+		if (model.$attr) model.$attr.href = null; // invalidate href in attribute, see next comment below
+
+		fanstatic.insertHtml(roof, fanstatic.renderJhtm(
+			fanstatic.design.tag('a', model.$attr)
+		));
+		
+		const baseElement = roof.children[0];
+
+		baseElement.dataset.ptFrame = model.$frame;
+
+		if (model.$id) baseElement.id = model.$id;
+		if (model.$scope) baseElement.dataset.ptScope = model.$scope;
+
+		baseElement.href = model.href; // safe with DOM assignment without prior sanitazion
+
+		if (model.text) {
+			baseElement.textContent = model.text;
+		}
+
+		this.controller = new fanstatic.PartController(baseElement);
+	}
+</script>

@@ -6,12 +6,14 @@
 
 		model.title = model.title || '';
 
-		const baseController = await fanstatic.appendPart(roof, 'base.section', Object.assign(model, {
+		const basePart = await fanstatic.appendPart(roof, 'base.section', Object.assign(model, {
 			content: fanstatic.design.tag(model.$titleTag || 'h1', {data: {pt: 'title'}})
 		}));
 		
-		baseController.select('title').textContent = model.title;
+		basePart.select('title').textContent = model.title;
+		
+		delete basePart.contentController;
 
-		this.controller = baseController;
+		this.controller = basePart;
 	}
 </script>

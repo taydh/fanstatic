@@ -9,7 +9,7 @@
 		const itemControllers = [];
 
 		roof.innerHTML = fanstatic.renderJhtm(design.stack(
-			Object.assign(model.$attr || {}, { $tag: model.$tag || 'ul'}),
+			Object.assign(model.$attr || {}, { $tag: model.$tag || 'ul', data: {'pt-role': 'axis'}}),
 			Object.assign(model.itemAttr || {}, { $tag: model.$itemTag || 'li' }),
 			model.items ? model.items.map(item => design.placeholder()) : [],
 		));

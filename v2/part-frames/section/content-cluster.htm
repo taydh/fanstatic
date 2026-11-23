@@ -14,10 +14,17 @@
 			$scope: model.$scope,
 			$tag: model.$listTag,
 			$itemTag: model.$itemTag,
+			$attr: {
+				data: {pt: 'cluster'}
+			},
 
 			items: model.items,
 		});
 
+		clusterController.root.removeAttribute('data-pt-frame');
+		clusterController.root.removeAttribute('data-pt-scope');
+
+		baseController.cluster = clusterController.root;
 		baseController.clusterController = clusterController;
 
 		this.controller = baseController;

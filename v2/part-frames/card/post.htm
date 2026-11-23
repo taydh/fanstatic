@@ -27,15 +27,18 @@
 			$frame: model.$frame,
 			$scope: model.$scope,
 			$tag: model.$tag || null,
+
+			content: true,
 		});
 
-		const blockController = await fanstatic.appendPart(baseController.root, 'block.unit', 
+		const blockController = await fanstatic.replacePart(baseController.content, 'block.unit', 
 			Object.assign(model, {
 				$id: null,
 				$frame: null,
 				$tag: null,
+				$attr: {data: {pt: 'content'}},
 			
-				cap: (model.featureImageSrc ? {img: true} : false),
+				cap: (model.featureImageSrc ? new fanstatic.Part('base.image', {data: {pt: 'featureImage'}}) : false),
 				head: [
 					design.tag(model.$categoryTag || 'div', { data:{'pt':'category'} }),
 					design.tag(model.$titleTag || 'h3', { data:{'pt':'title'} }, design.tag(model.$titleLink ? 'a' : 'span')),
@@ -55,8 +58,7 @@
 		let elem;
 
 		if (model.featureImageSrc) {
-			elem = blockController.select('cap').children[0];
-			elem.src = model.featureImageSrc;
+			blockController.capController.root.src = model.featureImageSrc;
 		}
 
 		elem = blockController.select('title').children[0];
@@ -73,7 +75,18 @@
 			blockController.select(prop).textContent = model[prop];
 		});
 
+		['data-pt-frame', 'data-pt-scope'].forEach(attr => {
+			blockController.root.removeAttribute(attr);
+		});
+
+		blockController.content = baseController.content;
+
+		delete blockController.headController;
+		delete blockController.footController;
+
 		blockController.changeRoot(baseController.root);
+
+		// D. 
 
 		this.controller = blockController;
 	}

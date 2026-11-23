@@ -18,16 +18,15 @@
 		if (model.$id) baseElement.id = model.$id;
 		if (model.$scope) baseElement.dataset.ptScope = model.$scope;
 
-		const partController = new fanstatic.PartController(baseElement, model.$scope, model.$frame);
+		const partController = new fanstatic.PartController(baseElement);
 
 		if (model.content) {
 			partController.content = baseElement.children[0];
-
 			partController.contentController = await fanstatic.applyContent(partController.content, model.content, model.$innerScope);
 
-			if (partController.contentController) {
-				partController.content.dataset.pt = 'content';
-			}
+			// if (partController.contentController) {
+			// 	partController.content.dataset.pt = 'content';
+			// }
 		}
 
 		this.controller = partController;

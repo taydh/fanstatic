@@ -17,26 +17,25 @@
 			$id: model.$id,
 			$frame: model.$frame,
 			$scope: model.$scope,
+			$innerScope: model.$innerScope,
 			$tag: model.$tag || null,
+
+			content: model.content,
 		})
 
-		fanstatic.appendHtml(baseController.root, fanstatic.renderJhtm([
+		fanstatic.prependHtml(baseController.root, fanstatic.renderJhtm([
 			design.div({ 'data-pt': 'cover' }),
-			design.div({ 'data-pt': 'reveal' }),
 		]));
 
 		baseController.root.querySelectorAll('[data-ds]').forEach(elem => elem.removeAttribute('data-ds'));
 
 		// C.
 		
-		const partController = new fanstatic.PartController(baseController.root);
+		baseController.cover = baseController.select('cover');
+		baseController.coverController = await fanstatic.applyContent(baseController.cover, model.cover, model.$innerScope);
 
-		partController.cover = partController.select('cover');
-		partController.reveal = partController.select('reveal');
+		// D. 
 
-		partController.coverController = await fanstatic.applyContent(partController.cover, model.cover, model.$innerScope);
-		partController.revealController = await fanstatic.applyContent(partController.reveal, model.reveal, model.$innerScope);
-
-		this.controller = partController;
+		this.controller = baseController;
 	}
 </script>

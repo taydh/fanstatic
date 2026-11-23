@@ -1,0 +1,39 @@
+<script>
+	const design = fanstatic.design;
+
+	return async function (roof, data = {}, url) {
+		const model = Object.assign({}, data, {
+			$frame: data.$frame || fanstatic.resolveFrame(url)
+		});
+
+		const basePart = await fanstatic.appendPart(roof, 'base.section', {
+			$id: model.$id,
+			$frame: model.$frame,
+			$scope: model.$scope,
+			$attr: model.$attr,
+
+			content: true,
+		});
+
+		const blockPart = await fanstatic.replacePart(basePart.content, 'block.action', 
+			Object.assign(model, {
+				$id: null,
+				$frame: null,
+				$scope: null,
+				$attr: {
+					data: {pt: 'content'}
+				}
+			})
+		);
+
+		blockPart.content = blockPart.select('content');
+
+		blockPart.root.removeAttribute('data-pt-frame');
+		blockPart.root.removeAttribute('data-pt-scope');
+
+		blockPart.changeRoot(basePart.root);
+
+		this.controller = blockPart;
+
+	};
+</script>

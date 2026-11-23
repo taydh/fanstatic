@@ -2,57 +2,82 @@
 	const design = fanstatic.design;
 
 	return async function(roof, data, url) {
-		// A. SETUP MODEL
+		// A. SET UP MODEL
 
-		const model = Object.assign({}, data);
-
-		model.id = model.$id || model.id || null;
-		model.frame = model.frame || fanstatic.resolveFrame(url);
+		const model = Object.assign({}, data, {
+			$frame: data.$frame || fanstatic.resolveFrame(url)
+		});
 
 		model.iconImageSrc = data.iconImageSrc || '';
 		model.subject = data.subject || '';
 		model.score = data.score || '';
-		model.description = data.description || '';
+		model.note = data.note || '';
 		model.disabled = data.disabled || false;
 		
 		// B. CREATE FRAME
 		
-		const blockController = await fanstatic.insertPart(roof, 'block.unit',
+		const baseController = await fanstatic.appendPart(roof, 'base.card', {
+			$id: model.$id,
+			$frame: model.$frame,
+			$scope: model.$scope,
+			$tag: model.$tag || null,
+			content: true,
+		});
+
+		const blockController = await fanstatic.replacePart(baseController.content, 'block.unit',
 			Object.assign(model, {
-				cap: design.tag('image', {data: {pt: 'iconImage'}}),
+				$id: null,
+				$frame: null,
+				$tag: null,
+				$attr: {data: {pt: 'content'}},
+
+				cap: model.iconImageSrc 
+					? new fanstatic.Part('base.image', {
+						data: {pt: 'iconImage'},
+						src: model.iconImageSrc
+					})
+					: false,
 				head: [
+					design.tag(model.$scoreTag || 'div', {data: {pt: 'score'}}),	
 					design.tag(model.$subjectTag || 'div', {data: {pt: 'subject'}}), 
-					design.tag(model.$scoreTag || 'div', {data: {pt: 'score'}}),
 				],
 				body: [
-					design.tag(model.$descriptionTag || 'div', {data: {pt: 'description'}})
+					design.tag(model.$noteTag || 'div', {data: {pt: 'note'}})
 				],
-				$tag: model.$tag || 'article',
 			})
 		);
 
 		// C. ASSIGN PROPERTIES AND APPLY VALUES
 
 		// assign element as controller properties
-		
-		['iconImage', 'subject', 'score', 'description'].forEach(prop => {
-			blockController[prop] = blockController.select(prop);
-		});
+
+		blockController.content = blockController.root;
+		blockController.note = blockController.select('note');
 
 		// apply attribute values
 
-		blockController.iconImage.src = model.iconImageSrc;
 
 		// apply text contents
 
 		['subject', 'score'].forEach(prop => {
-			blockController[prop].textContent = model[prop];
+			blockController.select(prop).textContent = model[prop];
 		});
 
 		// apply template contents and assign result as controller properties
 
-		blockController.descriptionController = 
-			await fanstatic.applyContent(blockController.select('description'), model.description, model.innerScope);
+		blockController.noteController = 
+			await fanstatic.applyContent(blockController.select('note'), model.note, model.$innerScope);
+
+		// remove attributes and propertyes
+		
+		blockController.root.removeAttribute('data-pt-frame');
+		blockController.root.removeAttribute('data-pt-scope');
+		
+		delete blockController.headController;
+		delete blockController.footController;
+		delete blockController.foot;
+
+		blockController.changeRoot(baseController.root);
 
 		// D. ASSIGN CONTROLLER
 

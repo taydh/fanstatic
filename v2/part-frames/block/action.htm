@@ -9,9 +9,9 @@
 		if (data.subjects && !Array.isArray(data.subjects)) model.subjects = [data.subjects];
 		if (data.actions && !Array.isArray(data.actions)) model.actions = [data.actions];
 		
-		model.head = model.subjects ? model.subjects.map(() => design.div({data: {pt: 'subject'}})) : false;
-		model.body = model.messages ? model.messages.map(() => design.div({data: {pt: 'message'}})) : false;
-		model.foot = model.actions ? model.actions.map(() => design.div({data: {pt: 'action'}})) : false;
+		model.head = model.subjects ? design.div({data: {'pt-role': 'axis'}}, model.subjects.map(() => design.div({data: {pt: 'subject'}}))) : false;
+		model.body = model.messages ? design.div({data: {'pt-role': 'axis'}}, model.messages.map(() => design.div({data: {pt: 'message'}}))) : false;
+		model.foot = model.actions ? design.div({data: {'pt-role': 'axis'}}, model.actions.map(() => design.div({data: {pt: 'action'}}))) : false;
 
 		const unitController = await fanstatic.insertPart(roof, 'block.unit', model);
 		
@@ -23,27 +23,25 @@
 		unitController.messageControllers = [];
 		unitController.actionControllers = [];
 
-		if (model.subjects) {
-			const divs = Array.from(unitController.head.children);
+		const subjectElems = Array.from(unitController.selectAll('subject'));
+		const messageElems = Array.from(unitController.selectAll('message'));
+		const actionElems = Array.from(unitController.selectAll('action'));
 
-			for (let i=0; i<data.subjects.length; i++) {
-				unitController.subjectControllers.push(await fanstatic.applyContent(divs[i], model.subjects[i], model.innerScope));
+		if (model.subjects) {
+			for (let i=0; i<model.subjects.length; i++) {
+				unitController.subjectControllers.push(await fanstatic.applyContent(subjectElems[i], model.subjects[i], model.$innerScope));
 			}
 		}
 
 		if (model.messages) {
-			const divs = Array.from(unitController.body.children);
-
 			for (let i=0; i<data.messages.length; i++) {
-				unitController.messageControllers.push(await fanstatic.applyContent(divs[i], model.messages[i], model.innerScope));
+				unitController.messageControllers.push(await fanstatic.applyContent(messageElems[i], model.messages[i], model.$innerScope));
 			}
 		}
 
 		if (model.actions) {
-			const divs = Array.from(unitController.foot.children);
-
 			for (let i=0; i<data.actions.length; i++) {
-				unitController.actionControllers.push(await fanstatic.applyContent(divs[i], model.actions[i], model.innerScope));
+				unitController.actionControllers.push(await fanstatic.applyContent(actionElems[i], model.actions[i], model.$innerScope));
 			}
 		}
 

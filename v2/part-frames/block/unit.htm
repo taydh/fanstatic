@@ -3,16 +3,17 @@
 
 	return async function (roof, data = {}, url) {
 		const model = Object.assign({}, data, {
-			$frame: data.$frame || fanstatic.resolveFrame(url),
+			$frame: data.$frame || fanstatic.resolveFrame(url)
 		});
 
 		roof.innerHTML = fanstatic.renderJhtm([
 			design.unit(Object.assign(model.$attr || {}, {
-				$tag: model.href ? 'a' : model.$tag,
+				$tag: model.$tag,
 				$capTag: model.$capTag,
 				$headTag: model.$headTag,
 				$bodyTag: model.$bodyTag,
 				$footTag: model.$footTag,
+				$wrapTag: model.$wrapTag,
 			}), {
 				mode: model.mode,
 				cap: !!model.cap,
@@ -62,9 +63,22 @@
 		const resolves = await Promise.all([capProm, headProm, bodyProm, footProm]);
 		const controller = new fanstatic.PartController(root);
 
-		if (model.href) {
-			controller.root.href = model.href;
-			controller.root.dataset.ptLink = "wrap";
+		if (model.$wrapTag) {
+			const wrapElem = document.createElement('div');
+
+			wrapElem.dataset.ptRole = "wrap";
+			wrapElem.replaceChildren(...root.children);
+			root.appendChild(wrapElem);
+		}
+
+		if (model.$linkHref) {
+			const linkElem = document.createElement('a');
+			
+			linkElem.dataset.ptRole = "unitLink";
+			if (model.$linkLabel) linkElem.setAttribute('aria-labbeledby', model.$linkLabel)
+			linkElem.href = model.$linkHref;
+			
+			root.appendChild(linkElem);
 		}
 
 		// D.

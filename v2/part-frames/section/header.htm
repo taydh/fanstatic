@@ -6,41 +6,39 @@
 			$frame: data.$frame || fanstatic.resolveFrame(url)
 		});
 
-		fanstatic.insertHtml(roof, fanstatic.renderJhtm(
-			design.tag('section', {data: {'pt-frame': model.frame}},
-				design.wrap([
-					design.div({data: {pt: 'brand'}}),
-					design.div({data: {pt: 'navigation'}}),
-					design.div({data: {pt: 'actions'}}),
-				]))
-		));
+		const baseController = await fanstatic.appendPart(roof, 'base.section', {
+			$id: model.$id,
+			$frame: model.$frame,
+			$scope: model.$scope,
+			$attr: model.$attr,
 
-		const root = roof.children[0];
+			content: true,
+		});
 
-		root.dataset.ptFrame = model.$frame;
+		fanstatic.insertHtml(baseController.content, fanstatic.renderJhtm([
+			design.div({data: {pt: 'brand'}}),
+			design.div({data: {pt: 'navigation'}}),
+			design.div({data: {pt: 'actions'}}),
+		]));
 
-		if (model.$id) root.id = model.$id;
-		if (model.$scope) root.dataset.ptScope = model.$scope;
+		const controller = new fanstatic.PartController(baseController.root);
 
-		const controller = new fanstatic.PartController(roof, model.scope, model.frame);
 		controller.brand = controller.select('brand');
 		controller.navigation = controller.select('navigation');
 		controller.actions = controller.select('actions');
-
-		// controller.select('wrap').removeAttribute('data-ds');
 
 		// populate with content
 
 		let brandProm, navigationProm, actionsProm;
 
 		if (model.brand)
-			brandProm = fanstatic.applyContent(controller.brand, model.brand, model.innerScope);
+			brandProm = fanstatic.applyContent(controller.brand, model.brand, model.$innerScope);
 		
 		if (model.navigation)
-			navigationProm = fanstatic.applyContent(controller.navigation, model.navigation, model.innerScope);
+			navigationProm = fanstatic.applyContent(controller.navigation, model.navigation, model.$innerScope);
 
 		if (model.actions)
-			actionsProm = fanstatic.applyContent(controller.actions, model.actions, model.innerScope);
+			actionsProm = fanstatic.applyContent(controller.actions, model.actions, model.$innerScope);
 
 		const allResolve = await Promise.all([brandProm, navigationProm, actionsProm]);
 

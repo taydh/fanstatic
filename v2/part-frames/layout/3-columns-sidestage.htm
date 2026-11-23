@@ -1,0 +1,90 @@
+<div data-pt-role="layout">
+	<div data-pt="layoutTop"></div>
+	<div data-pt="layoutSide"></div>
+	<div data-pt="layoutStage">
+		<header></header>
+		<main>
+			<div data-pt-role="wrap">
+				<div data-pt="startColumn"></div>
+				<div data-pt="midColumn"></div>
+				<div data-pt="endColumn"></div>
+			</div>
+		</main>
+		<footer></footer>
+	</div>
+	<div data-pt="layoutBottom"></div>
+</div>
+
+<script>
+	const design = fanstatic.design;
+
+	return async function(roof, data = {}, url) {
+		const model = Object.assign({}, data, {
+			$frame: data.$frame || fanstatic.resolveFrame(url),
+			$wrapped: !!data.$wrapped, // default no wrap
+		});
+
+		const root = roof.children[0];
+		
+		root.dataset.ptFrame = model.$frame;
+
+		if (model.$id) root.id = model.$id;
+		if (model.$scope) root.dataset.ptScope = model.$scope;
+
+		if (model.$wrapped) {
+			const wrapElem = document.createElement('div');
+
+			wrapElem.dataset.ptRole = "wrap";
+			wrapElem.replaceChildren(...root.children);
+			root.appendChild(wrapElem);
+		}
+
+		const controller = new fanstatic.PartController(root);
+
+		Object.assign(controller, {
+			header: root.querySelector('header'),
+			main: root.querySelector('main'),
+			footer: root.querySelector('footer'),
+
+			startColumn: controller.select('startColumn'),
+			midColumn: controller.select('midColumn'),
+			endColumn: controller.select('endColumn'),
+
+			top: controller.select('layoutTop'),
+			side: controller.select('layoutSide'),
+			bottom: controller.select('layoutBottom'),
+		});
+
+		let headerProm, startProm, midProm, endProm, footerProm;
+
+		if (model.header) {
+			headerProm = fanstatic.applyContent(controller.header, model.header, model.$innerScope);
+		}
+
+		if (model.startColumn) {
+			startProm = fanstatic.applyContent(controller.startColumn, model.startColumn, model.$innerScope);
+		}
+
+		if (model.midColumn) {
+			midProm = fanstatic.applyContent(controller.midColumn, model.midColumn, model.$innerScope);
+		}
+
+		if (model.endColumn) {
+			endProm = fanstatic.applyContent(controller.endColumn, data.endColumn, model.$innerScope);
+		}
+
+		if (model.footer) {
+			footerProm = fanstatic.applyContent(controller.footer, data.footer, model.$innerScope);
+		}
+
+		const resolves = await Promise.all([headerProm, startProm, midProm, endProm, footerProm]);
+
+		controller.headerController = resolves[0];
+		controller.startColumnController = resolves[1];
+		controller.midColumnController = resolves[2];
+		controller.endColumnController = resolves[3];
+		controller.footerController = resolves[4];
+
+		this.controller = controller
+	}
+</script>

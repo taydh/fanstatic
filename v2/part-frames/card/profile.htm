@@ -13,11 +13,34 @@
 		model.title = data.title || '';
 		model.company = data.company || '';
 		model.short = data.short || '';
-		model.facebook = data.facebook || '';
-		model.instagram = data.instagram || '';
-		model.twitterX = data.twitterX || '';
-		model.linkedIn = data.linkedIn || '';
-		model.tiktok = data.tiktok || '';
+		model.socialLinks = [
+				model.facebook ? {
+					network: 'facebook',
+					username: model.facebook,
+					url: `https://www.facebook.com/${model.facebook}`,
+				} : null,
+				model.instagram ? {
+					network: 'instagram',
+					username: model.instagram,
+					url: `https://www.instagram.com/${model.instagram}`,
+				} : null,
+				model.tiktok ? {
+					network: 'tiktok',
+					username: model.tiktok,
+					url: `https://www.tiktok.com/${model.tiktok}`,
+				} : null,
+				model.twitterX ? {
+					network: 'twitterX',
+					username: model.twitterX,
+					url: `https://www.x.com/${model.twitterX}`,
+				} : null,
+				model.linkedIn ? {
+					network: 'linkedIn',
+					username: model.linkedIn,
+					url: `https://www.linkedin.com/in/${model.linkedIn}`,
+				} : null,
+		].filter(o => !!o);
+
 		model.disabled = data.disabled || false;
 		
 		// B.
@@ -27,29 +50,40 @@
 			$frame: model.$frame,
 			$scope: model.$scope,
 			$tag: model.$tag || null,
+
+			content: true,
 		})
 
-		const blockController = await fanstatic.appendPart(baseController.root, 'block.unit', 
+		const blockController = await fanstatic.replacePart(baseController.content, 'block.unit', 
 			Object.assign(model, {
 				$id: null,
 				$frame: null,
 				$tag: null,
+				$attr: {data: {pt: 'content'}},
 
-				cap: design.tag('img', {data: {pt: 'photoImage'}}),
+				cap: model.photoImageSrc ? new fanstatic.Part('base.image', {data: {pt: 'photoImage'}}) : false,
 				head: [
 					design.tag(data.$nameTag || 'h3', {data: {pt: 'name'}}),
 					design.tag(data.$titleTag || 'div', {data: {pt: 'title'}}),
 					design.tag(data.$companyTag || 'div', {data: {pt: 'company'}}),
 				],
-				foot: design.axis([
-					design.div({data: {'pt': 'facebook'}}),
-					design.div({data: {'pt': 'instagram'}}),
-					design.div({data: {'pt': 'twitterX'}}),
-					design.div({data: {'pt': 'tiktok'}}),
-					design.div({data: {'pt': 'linkedIn'}}),
-				]),
+				foot: design.axis(
+					{data: {pt:'socialLinks'}}, 
+					model.socialLinks.map(o => design.div({data: {'pt-network': o.network}})
+				)),
 			})
 		);
+
+		for (let elem of blockController.select('socialLinks').children) {
+			const network = elem.dataset.ptNetwork;
+			const socialLink = model.socialLinks.find(o => o.network == network);
+			const link = Object.assign(document.createElement('a'), {
+				href: socialLink.url,
+				textContent: socialLink.username
+			});
+
+			elem.appendChild(link);
+		};
 
 		// C.
 
@@ -57,19 +91,24 @@
 		// 	blockController[prop] = blockController.select(prop);
 		// });
 
-		blockController.select('photoImage').src = model.photoImageSrc;
+		if (model.photoImageSrc) {
+			blockController.capController.root.src = model.photoImageSrc;
+		}
 
 		['name', 'title', 'company'].forEach(prop => {
-			const elem = blockController.select(prop);
-
-			if (elem) {
-				elem.textContent = model[prop];
-			}
+			blockController.select(prop).textContent = model[prop];
 		});
 
-		// D.
+		['data-pt-frame', 'data-pt-scope'].forEach(attr => {
+			blockController.root.removeAttribute(attr);
+		});
+
+		delete blockController.headController;
+		delete blockController.footController;
 
 		blockController.changeRoot(baseController.root);
+
+		// D.
 
 		this.controller = blockController;
 	}

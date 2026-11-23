@@ -11,20 +11,27 @@
 			$frame: model.$frame,
 			$scope: model.$scope,
 			$attr: model.$attr,
+
+			content: true,
 		});
 
-		const blockController = await fanstatic.appendPart(baseController.root, 'block.content', 
+		const blockPart = await fanstatic.replacePart(baseController.content, 'block.content', 
 			Object.assign(model, {
 				$id: null,
 				$frame: null,
-				$attr: null,
+				$attr: {
+					data: {pt: 'content'}
+				},
 
 				$titleTag: model.$titleTag || 'h2',
 			})
 		);
 
-		blockController.changeRoot(baseController.root);
+		blockPart.root.removeAttribute('data-pt-frame');
+		blockPart.root.removeAttribute('data-pt-scope');
 
-		this.controller = blockController;
+		blockPart.changeRoot(blockPart.root);
+
+		this.controller = blockPart;
 	}
 </script>

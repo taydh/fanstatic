@@ -22,44 +22,48 @@
 			$frame: model.$frame,
 			$scope: model.$scope,
 			$tag: model.$tag || null,
+
+			content: true,
 		})
 
-		const blockController = await fanstatic.insertPart(baseController.root, 'block.unit',
+		const blockController = await fanstatic.replacePart(baseController.content, 'block.unit',
 			Object.assign(model, {
 				$id: null,
 				$frame: null,
 				$tag: null,
+				$attr: {data: {pt: 'content'}},
 
-				cap: model.photoImageSrc || false,
+				cap: model.photoImageSrc 
+					? new fanstatic.Part('base.image', { src: model.photoImageSrc, data: {pt: 'photoImage'} }) 
+					: false,
 				head: [
 					design.tag(data.$nameTag || 'div', {'data-pt': 'name' }), 
 					design.tag(data.$positionTag || 'div', { 'data-pt': 'position' }),
 					design.tag(data.$companyTag || 'div', { 'data-pt': 'company' })
 				],
+				body: [
+					design.tag(model.$quoteTag || 'blockquote', {data: {pt: 'quote'}})
+				],
 			})
 		);
-
-		if (model.photoImageSrc) {
-			await fanstatic.insertPart(blockController.cap, 'base.image', { 
-				$attr: {
-					data: {pt: 'photoImage'}
-				},
-				src: model.photoImageSrc,
-			});
-		}
 
 		// C. ASSIGN PROPS & APPLY VALUES
 
 		['name', 'position', 'company'].forEach(prop => {
-			const elem = blockController.select(prop);
-
-			if (elem) {
-				elem.textContent = model[prop];
-			}
+			blockController.select(prop).textContent = model[prop];
 		});
 
-		delete blockController.capController;
+		['data-pt-frame', 'data-pt-scope'].forEach(attr => {
+			blockController.root.removeAttribute(attr);
+		});
+
+		blockController.quote = blockController.select('quote');
+		blockController.quoteController = await fanstatic.applyContent(blockController.quote, model.quote, model.$innerScope);
+
 		delete blockController.headController;
+		delete blockController.bodyController;
+		delete blockController.footController;
+		delete blockController.foot;
 
 		// D. ASSIGN CONTROLLER
 

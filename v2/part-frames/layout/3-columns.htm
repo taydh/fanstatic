@@ -1,14 +1,12 @@
-<div>
+<div data-pt-role="layout">
 	<header></header>
-	
-	<div data-pt="columns">
-		<div data-pt="startColumn"></div>
-		
-		<span data-ds-placeholder="main"></span>
-
-		<div data-pt="endColumn"></div>
-	</div>
-
+	<main>
+		<div data-pt-role="wrap">
+			<div data-pt="startColumn"></div>
+			<div data-pt="midColumn"></div>
+			<div data-pt="endColumn"></div>
+		</div>
+	</main>
 	<footer></footer>
 </div>
 
@@ -17,36 +15,38 @@
 
 	return async function(roof, data = {}, url) {
 		const model = Object.assign({}, data, {
-			$frame: data.$frame || fanstatic.resolveFrame(url)
+			$frame: data.$frame || fanstatic.resolveFrame(url),
+			$wrapped: !!data.$wrapped, // default no wrap
 		});
 
-		const panelElement = roof.children[0];
+		const root = roof.children[0];
 		
-		panelElement.dataset.ptFrame = model.$frame;
+		root.dataset.ptFrame = model.$frame;
 
-		if (model.$id) panelElement.id = model.$id;
-		if (model.$scope) panelElement.dataset.ptScope = model.$scope;
+		if (model.$id) root.id = model.$id;
+		if (model.$scope) root.dataset.ptScope = model.$scope;
+
+		if (model.$wrapped) {
+			const wrapElem = document.createElement('div');
+
+			wrapElem.dataset.ptRole = "wrap";
+			wrapElem.replaceChildren(...root.children);
+			root.appendChild(wrapElem);
+		}
 		
-		const headerElement = panelElement.children[0];
-		const columnsElement = panelElement.children[1];
-		const footerElement = panelElement.children[2];		
-
-		const middleColumnElement = document.createElement(data.$mainColumnTag || 'main');
-		middleColumnElement.dataset.pt = 'middleColumn';
-
-		columnsElement.children[1].replaceWith(middleColumnElement);
-
-		const controller = new fanstatic.PartController(panelElement);
+		const controller = new fanstatic.PartController(root);
 
 		Object.assign(controller, {
-			header: headerElement,
-			startColumn: columnsElement.children[0],
-			mainColumn: columnsElement.children[1],
-			endColumn: columnsElement.children[2],
-			footer: footerElement,
+			header: root.querySelector('header'),
+			main: root.querySelector('main'),
+			footer: root.querySelector('footer'),
+
+			startColumn: controller.select('startColumn'),
+			midColumn: controller.select('midColumn'),
+			endColumn: controller.select('endColumn'),
 		});
 
-		let headerProm, startProm, mainProm, endProm, footerProm;
+		let headerProm, startProm, midProm, endProm, footerProm;
 
 		if (model.header) {
 			headerProm = fanstatic.applyContent(controller.header, model.header, model.$innerScope);
@@ -56,29 +56,26 @@
 			startProm = fanstatic.applyContent(controller.startColumn, model.startColumn, model.$innerScope);
 		}
 
-		if (model.mainColumn) {
-			//if (fanstatic.isTemplate(data.mainColumn)) data.mainColumn.assignData({ scope: outerScope });
-			mainProm = fanstatic.applyContent(controller.mainColumn, model.mainColumn, model.$innerScope);
+		if (model.midColumn) {
+			midProm = fanstatic.applyContent(controller.midColumn, model.midColumn, model.$innerScope);
 		}
 
 		if (model.endColumn) {
-			//if (fanstatic.isTemplate(data.endColumn)) data.endColumn.assignData({ scope: outerScope });
 			endProm = fanstatic.applyContent(controller.endColumn, data.endColumn, model.$innerScope);
 		}
 
 		if (model.footer) {
-			//if (fanstatic.isTemplate(data.footer)) data.footer.assignData({ scope: outerScope });
 			footerProm = fanstatic.applyContent(controller.footer, data.footer, model.$innerScope);
 		}
 
-		const resolves = await Promise.all([headerProm, startProm, mainProm, endProm, footerProm]);
+		const resolves = await Promise.all([headerProm, startProm, midProm, endProm, footerProm]);
 
 		controller.headerController = resolves[0];
 		controller.startColumnController = resolves[1];
-		controller.mainColumnController = resolves[2];
+		controller.midColumnController = resolves[2];
 		controller.endColumnController = resolves[3];
 		controller.footerController = resolves[4];
-		
+
 		this.controller = controller
 	}
 </script>
